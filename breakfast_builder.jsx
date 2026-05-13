@@ -1,0 +1,494 @@
+import { useState } from "react";
+
+// ─── DAILY LIMITS / TARGETS (anchors for bar maxes) ───────────────
+const DAILY = {
+  addedSugar: 36,    // AHA limit for men
+  satFat: 13,        // AHA: 5-6% of 2000 cal
+  refinedCarbs: 50,  // No official, "high single meal" threshold
+  sodium: 2300,      // AHA daily max
+  fiber: 28,         // USDA daily target
+  protein: 64,       // 0.8g/kg for 177lb person
+  caffeine: 400,     // FDA "generally safe" daily ceiling
+};
+
+// ─── COLORS ───────────────────────────────────────────────────────
+const C = {
+  fat: "#c44a4a",       // RED for fat
+  carbs: "#e8913a",     // ORANGE for carbs
+  protein: "#4a9c6d",   // GREEN for protein
+  fiber: "#7a5aa6",     // PURPLE for fiber
+  refined: "#e8913a",   // same as carbs
+  sat: "#c44a4a",       // same as fat
+  sugar: "#e8913a",     // same as carbs
+  added: "#c44a4a",     // sub-component texture
+  caffeine: "#6b4a2a",  // brown
+  sodium: "#8a7a6a",    // gray-brown
+  whole: "#2d8a56",     // dark green for whole-food bonus
+};
+
+// ─── INGREDIENTS ──────────────────────────────────────────────────
+// caffeine in mg, wholeFood: 0-1 (1 = single-ingredient whole food)
+const CATEGORIES = [
+  {
+    name: "Base", icon: "🥣", desc: "Pick your foundation",
+    items: [
+      { id: "steel_oats", name: "Steel Cut Oats", brand: "Trader Joe's Organic", unit: "¼ cup", max: 9, cal: 150, fat: 2.5, satFat: 0.5, carbs: 27, fiber: 4, sugar: 0, addedSugar: 0, protein: 5, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 1, processedReason: null, note: "Lowest GI oat (~42). Single ingredient: oats." },
+      { id: "quaker_oats", name: "Old Fashioned Oats", brand: "Quaker (PepsiCo)", unit: "½ cup", max: 9, cal: 150, fat: 3, satFat: 0.5, carbs: 27, fiber: 4, sugar: 1, addedSugar: 0, protein: 5, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 1, processedReason: null, note: "GI ~55. Single ingredient: oats. Clean despite PepsiCo ownership." },
+      { id: "instant_reg", name: "Instant Oatmeal (Regular)", brand: "House Recipe / Sysco", unit: "packet", max: 9, cal: 110, fat: 2, satFat: 0, carbs: 19, fiber: 3, sugar: 0, addedSugar: 0, protein: 4, sodium: 75, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.7, processedReason: "Guar gum, caramel color, ferric orthophosphate", note: "No added sugar. Light processing." },
+      { id: "instant_apple", name: "Instant (Apple Cinnamon)", brand: "House Recipe / Sysco", unit: "packet", max: 9, cal: 130, fat: 1.5, satFat: 0, carbs: 27, fiber: 3, sugar: 12, addedSugar: 9, protein: 3, sodium: 170, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.3, processedReason: "9g added sugar, sodium sulfite-treated apples, natural flavor, caramel color", note: "9g added sugar. Sulfite-treated apples. Caramel color." },
+      { id: "instant_sweet", name: "Instant (Maple/Cinn/Raisin)", brand: "House Recipe / Sysco", unit: "packet", max: 9, cal: 160, fat: 2, satFat: 0, carbs: 32, fiber: 3, sugar: 13, addedSugar: 10, protein: 4, sodium: 230, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.2, processedReason: "10-12g added sugar, caramel color (potential 4-MEI), natural flavor", note: "All three flavors ≈ 160 cal, 10-12g added sugar." },
+      { id: "bagel", name: "Bagel (½)", brand: "Generic", unit: "half", max: 9, cal: 135, fat: 0.8, satFat: 0, carbs: 27, fiber: 1, sugar: 3, addedSugar: 2.5, protein: 5, sodium: 215, refinedCarbs: 26, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.2, processedReason: "Enriched (refined) wheat flour, added sugar, high sodium", note: "GI ~72. 27g refined carbs. High sodium." },
+      { id: "bread", name: "Bread", brand: "Whole wheat loaf", unit: "slice", max: 9, cal: 80, fat: 1, satFat: 0, carbs: 15, fiber: 2, sugar: 2, addedSugar: 1, protein: 4, sodium: 130, refinedCarbs: 8, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.5, processedReason: "Likely refined flour blend, added sugar", note: "If whole wheat #1: GI ~54. If not: ~71." },
+      { id: "banana", name: "Banana", brand: "Fresh", unit: "medium", max: 9, cal: 105, fat: 0.4, satFat: 0.1, carbs: 27, fiber: 3.1, sugar: 14, addedSugar: 0, protein: 1.3, sodium: 1, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 1, processedReason: null, note: "Whole food. Potassium, vitamin B6. GI ~51 (ripe ~62). Resistant starch in firmer fruit." },
+    ]
+  },
+  {
+    name: "Spreads & Toppings", icon: "🥜", desc: "Add flavor (and calories)",
+    items: [
+      { id: "skippy", name: "Skippy Creamy PB", brand: "Hormel Foods", unit: "tbsp", max: 9, cal: 95, fat: 8, satFat: 1.5, carbs: 3, fiber: 1, sugar: 1.5, addedSugar: 1, protein: 3.5, sodium: 75, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: true, transFatRisk: true, animal: false, processed: 2, wholeFood: 0.3, processedReason: "Hydrogenated vegetable oil (cottonseed/soybean/rapeseed), added sugar — trace trans fats possible below labeling threshold", note: "Hydrogenated oils. Trace trans fats possible below 0.5g threshold." },
+      { id: "cream_cheese", name: "Cream Cheese", brand: "Philadelphia / Kraft Heinz", unit: "tbsp", max: 9, cal: 40, fat: 3.5, satFat: 2.3, carbs: 1, fiber: 0, sugar: 0.5, addedSugar: 0, protein: 1, sodium: 63, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 1, wholeFood: 0.6, processedReason: "Guar gum emulsifier", note: "Pasteurized milk, cream, salt, guar gum. High saturated fat density." },
+      { id: "country_crock", name: "Country Crock", brand: "Upfield", unit: "tbsp", max: 9, cal: 50, fat: 5, satFat: 1.5, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 0, sodium: 90, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: true, transFatRisk: true, animal: false, processed: 3, wholeFood: 0, processedReason: "Soybean/palm/palm kernel oils + mono/diglycerides + polysorbate 60 + potassium sorbate + EDTA — trace trans fat risk via emulsifiers", note: "Not butter. 39% vegetable oil spread + emulsifiers." },
+      { id: "jam", name: "Strawberry Spread", brand: "Kirkland Organic", unit: "tbsp", max: 9, cal: 35, fat: 0, satFat: 0, carbs: 9, fiber: 0, sugar: 9, addedSugar: 8, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.4, processedReason: "Organic cane sugar is still sugar", note: "Organic but 8g added sugar per tbsp." },
+      { id: "craisins", name: "Craisins", brand: "Ocean Spray", unit: "tbsp", max: 9, cal: 33, fat: 0, satFat: 0, carbs: 8, fiber: 0.8, sugar: 7, addedSugar: 6, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.2, processedReason: "Added cane sugar, refined sunflower oil processing aid", note: "Candy marketed as fruit. 6g added sugar/tbsp." },
+      { id: "sugar", name: "Sugar", brand: "White granulated", unit: "tsp", max: 9, cal: 16, fat: 0, satFat: 0, carbs: 4, fiber: 0, sugar: 4, addedSugar: 4, protein: 0, sodium: 0, refinedCarbs: 4, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 3, wholeFood: 0, processedReason: "100% refined sucrose — pure empty calories", note: "Pure refined sucrose → glucose + fructose hit." },
+      { id: "stevia", name: "Stevia", brand: "Generic", unit: "packet", max: 9, cal: 0, fat: 0, satFat: 0, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.3, processedReason: null, note: "Zero calorie, zero glycemic response." },
+      { id: "apple", name: "Apple", brand: "Red", unit: "apple", max: 9, cal: 95, fat: 0.3, satFat: 0, carbs: 25, fiber: 4.4, sugar: 19, addedSugar: 0, protein: 0.5, sodium: 2, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 1, processedReason: null, note: "Whole food. GI ~36. Pectin feeds gut." },
+      { id: "orange", name: "Orange", brand: "Fresh", unit: "orange", max: 9, cal: 62, fat: 0.2, satFat: 0, carbs: 15, fiber: 3.1, sugar: 12, addedSugar: 0, protein: 1.2, sodium: 0, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 1, processedReason: null, note: "Whole food. Vit C. GI ~43." },
+    ]
+  },
+  {
+    name: "Drinks", icon: "☕", desc: "What's washing it down",
+    items: [
+      { id: "tea", name: "Tea (plain)", brand: "Various", unit: "cup", max: 9, cal: 2, fat: 0, satFat: 0, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 30, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 0, wholeFood: 0.9, processedReason: null, note: "L-theanine + ~30mg caffeine. Calmer alertness than coffee." },
+      { id: "nescafe", name: "Nescafé Clásico", brand: "Nestlé", unit: "cup", max: 9, cal: 4, fat: 0, satFat: 0, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 65, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.2, processedReason: "Spray-dried instant coffee, acrylamide from high-temp processing", note: "~65mg caffeine. Adenosine block → crash. Half-life 5-6 hrs." },
+      { id: "mate", name: "Yerba Mate", brand: "Generic", unit: "cup", max: 9, cal: 5, fat: 0, satFat: 0, carbs: 1, fiber: 0, sugar: 0, addedSugar: 0, protein: 0, sodium: 0, refinedCarbs: 0, caffeine: 85, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.7, processedReason: null, note: "~85mg caffeine + theobromine. Less crash, still dependency." },
+      { id: "coffeemate", name: "Coffee Mate", brand: "Nestlé", unit: "tbsp", max: 9, cal: 20, fat: 1, satFat: 0.5, carbs: 3, fiber: 0, sugar: 1, addedSugar: 1, protein: 0, sodium: 10, refinedCarbs: 3, caffeine: 0, hydrogenatedOil: true, transFatRisk: true, animal: false, processed: 3, wholeFood: 0, processedReason: "CORN SYRUP SOLIDS + HYDROGENATED VEGETABLE OIL + sodium caseinate + dipotassium phosphate + mono/diglycerides", note: "Industrial whitener, not food. Trace trans fats." },
+      { id: "silk_soy", name: "Silk Soy Original", brand: "Danone", unit: "½ cup", max: 9, cal: 55, fat: 2.3, satFat: 0.3, carbs: 4, fiber: 1, sugar: 2.5, addedSugar: 2, protein: 4, sodium: 58, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.5, processedReason: "Cane sugar, gellan gum, natural flavor", note: "8g protein/full cup. Non-GMO." },
+      { id: "almond_milk", name: "Almond Milk", brand: "Unsweetened", unit: "½ cup", max: 9, cal: 15, fat: 1.3, satFat: 0, carbs: 0.5, fiber: 0, sugar: 0, addedSugar: 0, protein: 0.5, sodium: 85, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 1, wholeFood: 0.5, processedReason: null, note: "Low cal. Zero sugar. Almost no protein." },
+    ]
+  },
+  {
+    name: "Snacks (3pm)", icon: "🍿", desc: "DRBU snack-time options",
+    items: [
+      { id: "cheezits", name: "Cheez-Its", brand: "Kellanova", unit: "27 crackers", max: 9, cal: 150, fat: 8, satFat: 2, carbs: 17, fiber: 0, sugar: 0, addedSugar: 0, protein: 3, sodium: 230, refinedCarbs: 16, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 3, wholeFood: 0, processedReason: "Enriched wheat flour, vegetable oils (palm, soybean), TBHQ preservative, annatto color, milk-derived cheese", note: "Enriched flour + palm/soy oils + TBHQ. Ultra-processed. Animal-derived (cheese)." },
+      { id: "trailmix", name: "Trail Mix", brand: "Kirkland", unit: "¼ cup", max: 9, cal: 160, fat: 10, satFat: 2, carbs: 15, fiber: 2, sugar: 9, addedSugar: 5, protein: 4, sodium: 35, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.5, processedReason: "Yogurt-coated nuts (added sugar), chocolate pieces, sweetened cranberries", note: "Mixed quality: nuts/seeds clean, but typically includes chocolate + sweetened dried fruit." },
+      { id: "pb_pretzels", name: "PB Pretzel Squares", brand: "Kirkland", unit: "11 pcs", max: 9, cal: 150, fat: 7, satFat: 1.5, carbs: 18, fiber: 1, sugar: 3, addedSugar: 3, protein: 4, sodium: 230, refinedCarbs: 17, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 3, wholeFood: 0.1, processedReason: "Enriched wheat flour pretzel, palm oil, mono/diglycerides, soy lecithin, added sugar", note: "Enriched flour pretzel + processed PB filling + palm oil." },
+      { id: "potato_chips", name: "Potato Chips", brand: "Kirkland", unit: "~15 chips", max: 9, cal: 160, fat: 10, satFat: 1.5, carbs: 15, fiber: 1, sugar: 0, addedSugar: 0, protein: 2, sodium: 170, refinedCarbs: 14, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: false, processed: 2, wholeFood: 0.3, processedReason: "Fried in vegetable oil (likely sunflower/safflower), high acrylamide from high-temp frying, refined starch from sliced potato", note: "Acrylamide from frying. Behaves like refined carbs in body." },
+      { id: "belvita", name: "BelVita Crackers", brand: "Mondelez", unit: "4 pack", max: 9, cal: 230, fat: 8, satFat: 1.5, carbs: 35, fiber: 3, sugar: 11, addedSugar: 10, protein: 4, sodium: 170, refinedCarbs: 12, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 3, wholeFood: 0.1, processedReason: "10g added sugar, partially refined flour blend, palm/canola oils, soy lecithin, contains milk/honey", note: "Marketed as 'breakfast biscuits' but 10g added sugar = dessert. Animal: contains milk." },
+      { id: "mm", name: "M&Ms", brand: "Mars", unit: "fun size pack", max: 9, cal: 90, fat: 3.5, satFat: 2, carbs: 13, fiber: 0, sugar: 12, addedSugar: 12, protein: 1, sodium: 10, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 3, wholeFood: 0, processedReason: "12g added sugar, milk chocolate, hydrogenated palm kernel oil possible, artificial colors (Red 40, Yellow 5/6, Blue 1, Blue 2), soy lecithin", note: "Pure candy. Artificial dyes linked to behavioral effects. Animal: milk." },
+      { id: "string_cheese", name: "Mozzarella String Cheese", brand: "Generic", unit: "stick", max: 9, cal: 80, fat: 6, satFat: 3.5, carbs: 1, fiber: 0, sugar: 0, addedSugar: 0, protein: 6, sodium: 200, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 1, wholeFood: 0.7, processedReason: "Cultured pasteurized milk, salt, enzymes", note: "Real cheese, minimal processing. High saturated fat from dairy. 6g protein." },
+      { id: "tillamook", name: "Tillamook Cheddar Square", brand: "Tillamook", unit: "0.75 oz", max: 9, cal: 80, fat: 7, satFat: 4, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 5, sodium: 130, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 1, wholeFood: 0.8, processedReason: "Pasteurized milk, salt, enzymes, annatto color", note: "Real cheese. High saturated fat. Animal product." },
+      { id: "babybel", name: "Mini Babybel (red wax)", brand: "Bel Group", unit: "wheel", max: 9, cal: 70, fat: 6, satFat: 4, carbs: 0, fiber: 0, sugar: 0, addedSugar: 0, protein: 5, sodium: 160, refinedCarbs: 0, caffeine: 0, hydrogenatedOil: false, transFatRisk: false, animal: true, processed: 1, wholeFood: 0.7, processedReason: "Pasteurized milk, salt, enzymes, annatto/paprika color", note: "Real cheese in wax. High saturated fat. Animal product." },
+    ]
+  }
+];
+
+const NUTR_KEYS = ["cal","fat","satFat","carbs","fiber","sugar","addedSugar","protein","sodium","refinedCarbs","caffeine"];
+
+// ─── PORTION DISPLAY HELPER ──────────────────────────────────────
+// "2 × ¼ cup" instead of "2 ¼ cups"
+function formatPortion(qty, unit) {
+  if (qty === 1) return `1 ${unit}`;
+  return `${qty} × ${unit}`;
+}
+
+// ─── MACRO BAR ────────────────────────────────────────────────────
+// Order: Fat → Carbs → Protein
+// Sub-segments use the main color but with diagonal stripe patterns to indicate sub-type
+// Fat: solid = unsaturated (good), striped = saturated (bad)
+// Carbs: solid = complex carbs, striped diagonal-down = natural sugar, striped diagonal-up = added sugar, dots = fiber (subset)
+function MacroBar({ cal, fat, satFat, carbs, fiber, sugar, addedSugar, protein, small }) {
+  if (cal <= 0) return null;
+
+  const fatCal = fat * 9, carbCal = carbs * 4, proteinCal = protein * 4;
+  const total = fatCal + carbCal + proteinCal || 1;
+
+  // Fat: unsaturated + saturated
+  const unsatFat = Math.max(0, fat - satFat);
+  // Carbs: fiber + complex + natural sugar + added sugar
+  const naturalSugar = Math.max(0, sugar - addedSugar);
+  const complexCarbs = Math.max(0, carbs - sugar - fiber);
+
+  const h = small ? 14 : 22;
+
+  // Build segments in order: FAT (unsat, sat), CARBS (complex, fiber, natural sugar, added sugar), PROTEIN
+  const segments = [
+    { mainColor: C.fat, sub: "unsat", grams: unsatFat, cal: unsatFat * 9, label: "Unsat Fat" },
+    { mainColor: C.fat, sub: "sat", grams: satFat, cal: satFat * 9, label: "Sat Fat" },
+    { mainColor: C.carbs, sub: "complex", grams: complexCarbs, cal: complexCarbs * 4, label: "Complex Carbs" },
+    { mainColor: C.fiber, sub: "fiber", grams: fiber, cal: fiber * 2, label: "Fiber" },
+    { mainColor: C.carbs, sub: "natSugar", grams: naturalSugar, cal: naturalSugar * 4, label: "Natural Sugar" },
+    { mainColor: C.carbs, sub: "addedSugar", grams: addedSugar, cal: addedSugar * 4, label: "Added Sugar" },
+    { mainColor: C.protein, sub: "protein", grams: protein, cal: proteinCal, label: "Protein" },
+  ].filter(s => s.grams > 0.05);
+
+  const segTotal = segments.reduce((a, s) => a + s.cal, 0) || 1;
+
+  // Pattern definitions
+  const patterns = {
+    sat: { color: C.fat, pattern: "stripes-dark" },              // saturated = darker stripes
+    unsat: { color: C.fat, pattern: "solid-light" },             // unsaturated = lighter solid
+    complex: { color: C.carbs, pattern: "solid" },               // complex = solid
+    fiber: { color: C.fiber, pattern: "solid" },                 // fiber = purple solid
+    natSugar: { color: C.carbs, pattern: "stripes-light" },      // natural sugar = light stripes
+    addedSugar: { color: C.fat, pattern: "stripes-warning" },    // added sugar = red warning stripes
+    protein: { color: C.protein, pattern: "solid" },             // protein = solid green
+  };
+
+  return (
+    <div>
+      <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none" style={{ borderRadius: h / 2, display: "block" }}>
+        <defs>
+          <pattern id="stripes-dark" patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(45)">
+            <rect width="3" height={h} fill={C.fat} />
+            <rect width="1.5" height={h} fill="#8a2a2a" />
+          </pattern>
+          <pattern id="solid-light" patternUnits="userSpaceOnUse" width="100" height={h}>
+            <rect width="100" height={h} fill={C.fat} opacity="0.6" />
+          </pattern>
+          <pattern id="stripes-light" patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(45)">
+            <rect width="3" height={h} fill={C.carbs} />
+            <rect width="1.5" height={h} fill="#f7b86b" />
+          </pattern>
+          <pattern id="stripes-warning" patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(-45)">
+            <rect width="3" height={h} fill={C.carbs} />
+            <rect width="1.5" height={h} fill={C.added} />
+          </pattern>
+          <clipPath id={`clip-${h}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2} /></clipPath>
+        </defs>
+
+        <g clipPath={`url(#clip-${h})`}>
+          <rect width="100" height={h} fill="#2a2a2a" />
+          {(() => {
+            let x = 0;
+            return segments.map((s, i) => {
+              const w = (s.cal / segTotal) * 100;
+              const p = patterns[s.sub];
+              const fill = p.pattern === "solid"
+                ? p.color
+                : p.pattern === "solid-light"
+                ? "url(#solid-light)"
+                : `url(#${p.pattern})`;
+              const seg = <rect key={i} x={x} y="0" width={w} height={h} fill={fill}>
+                <title>{s.label}: {s.grams.toFixed(1)}g ({Math.round((s.cal / segTotal) * 100)}%)</title>
+              </rect>;
+              x += w;
+              return seg;
+            });
+          })()}
+        </g>
+      </svg>
+
+      {!small && (
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6, justifyContent: "center", fontSize: 9 }}>
+          {segments.map((s, i) => {
+            const p = patterns[s.sub];
+            const pct = Math.round((s.cal / segTotal) * 100);
+            return (
+              <span key={i} style={{ display: "flex", alignItems: "center", gap: 4, color: p.color, fontWeight: 600 }}>
+                <span style={{
+                  display: "inline-block", width: 12, height: 9, borderRadius: 2,
+                  background: p.pattern === "solid" ? p.color
+                    : p.pattern === "solid-light" ? `${p.color}99`
+                    : p.pattern === "stripes-dark" ? `repeating-linear-gradient(45deg, ${p.color} 0 2px, #8a2a2a 2px 4px)`
+                    : p.pattern === "stripes-light" ? `repeating-linear-gradient(45deg, ${C.carbs} 0 2px, #f7b86b 2px 4px)`
+                    : `repeating-linear-gradient(-45deg, ${C.carbs} 0 2px, ${C.added} 2px 4px)`
+                }} />
+                {s.label} {s.grams.toFixed(1)}g <span style={{ color: "#555", fontWeight: 400 }}>({pct}%)</span>
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── REPORT (DENSITY-BASED GRADING) ───────────────────────────────
+function computeReport(quantities, allItems) {
+  const totals = {}; NUTR_KEYS.forEach(k => totals[k] = 0);
+  let hasHyd = false, hasTrans = false, hasAnimal = false;
+  let processedContributors = [];
+  let wholeFoodWeightedCal = 0;
+  const items = [];
+
+  Object.entries(quantities).forEach(([id, qty]) => {
+    const item = allItems.find(i => i.id === id);
+    if (!item) return;
+    items.push({ item, qty });
+    NUTR_KEYS.forEach(k => { totals[k] += (item[k] || 0) * qty; });
+    if (item.hydrogenatedOil) hasHyd = true;
+    if (item.transFatRisk) hasTrans = true;
+    if (item.animal) hasAnimal = true;
+    if (item.processed >= 2 && item.processedReason) processedContributors.push({ name: item.name, qty, score: item.processed, reason: item.processedReason });
+    wholeFoodWeightedCal += (item.cal * qty) * item.wholeFood;
+  });
+  processedContributors.sort((a, b) => b.score - a.score);
+  const wholeFoodPct = totals.cal > 0 ? (wholeFoodWeightedCal / totals.cal) * 100 : 0;
+
+  const dangers = [
+    { key: "addedSugar", label: "Added Sugar", value: totals.addedSugar, max: DAILY.addedSugar, unit: "g", color: C.added,
+      context: totals.addedSugar <= 4 ? "Minimal" : totals.addedSugar <= 12 ? "Notable insulin response" : totals.addedSugar <= 24 ? "Liver fat production active" : "Approaching daily limit", maxLabel: "daily limit (36g)" },
+    { key: "satFat", label: "Saturated Fat", value: totals.satFat, max: DAILY.satFat, unit: "g", color: C.sat,
+      context: totals.satFat <= 3 ? "Low" : totals.satFat <= 6 ? "Moderate" : totals.satFat <= 10 ? "LDL increasing" : "At daily limit", maxLabel: "daily limit (13g)" },
+    { key: "refinedCarbs", label: "Refined Carbs", value: totals.refinedCarbs, max: DAILY.refinedCarbs, unit: "g", color: C.refined,
+      context: totals.refinedCarbs <= 5 ? "Minimal" : totals.refinedCarbs <= 20 ? "Glucose spike likely" : "Behaves like pure sugar", maxLabel: "high-meal threshold (50g)" },
+    { key: "caffeine", label: "Caffeine", value: totals.caffeine, max: DAILY.caffeine, unit: "mg", color: C.caffeine,
+      context: totals.caffeine === 0 ? "None" : totals.caffeine <= 100 ? "Mild" : totals.caffeine <= 200 ? "Moderate — cortisol elevated" : totals.caffeine <= 300 ? "High — sleep impact likely" : "Approaching daily ceiling", maxLabel: "FDA daily ceiling (400mg)" },
+    { key: "sodium", label: "Sodium", value: totals.sodium, max: DAILY.sodium, unit: "mg", color: C.sodium,
+      context: totals.sodium <= 200 ? "Low" : totals.sodium <= 600 ? "Moderate" : totals.sodium <= 1000 ? "High for one meal" : "Very high — retention/BP", maxLabel: "daily max (2300mg)" },
+  ];
+
+  const flags = [];
+  if (hasHyd) flags.push({ key: "hyd", label: "Hydrogenated Oils", color: C.fat, detail: "Industrially hardened fats. Structure foreign to human metabolism.", items: processedContributors.filter(c => c.reason.toLowerCase().includes("hydrogenated")) });
+  if (hasTrans) flags.push({ key: "trans", label: "Trans Fat Risk", color: C.fat, detail: "Hydrogenated oils + mono/diglycerides may contain trans fats below 0.5g labeling threshold. No safe intake level (WHO).", items: processedContributors.filter(c => c.reason.toLowerCase().includes("trans")) });
+  if (processedContributors.length > 0 && processedContributors.some(c => c.score >= 3)) flags.push({ key: "upf", label: "Ultra-Processed", color: "#d47333", detail: "Industrial ingredients detected. Sorted by severity:", items: processedContributors });
+  if (hasAnimal) flags.push({ key: "animal", label: "Animal Products", color: "#a07050", detail: "Contains dairy or other animal-derived ingredients. Relevant for vegan aspirations / asubha framing.", items: items.filter(({item}) => item.animal).map(({item, qty}) => ({ name: item.name, qty, score: 1, reason: "Contains dairy or other animal-derived ingredients" })) });
+
+  const positives = [
+    { key: "fiber", label: "Fiber", value: totals.fiber, target: DAILY.fiber, unit: "g", color: C.fiber,
+      context: totals.fiber >= 8 ? "Strong — buffers glucose, feeds gut" : totals.fiber >= 3 ? "Some — better than none" : "Low — glucose unbuffered", maxLabel: "daily target (28g)" },
+    { key: "protein", label: "Protein", value: totals.protein, target: DAILY.protein, unit: "g", color: C.protein,
+      context: totals.protein >= 15 ? "Strong — satiety, no afternoon crash" : totals.protein >= 8 ? "Moderate" : "Low — hunger returns fast", maxLabel: "daily target (64g)" },
+    { key: "wholeFood", label: "Whole Food", value: wholeFoodPct, target: 100, unit: "%", color: C.whole,
+      context: wholeFoodPct >= 70 ? "Mostly whole foods — your body recognizes this" : wholeFoodPct >= 40 ? "Mixed — some industrial inputs" : "Highly processed meal", maxLabel: "100% whole-food meal" },
+  ];
+
+  // ─── DENSITY-BASED SCORING ───
+  // Grade reflects QUALITY of food, not portion. Use ratios per 100 cal.
+  const per100 = (v) => totals.cal > 0 ? (v / totals.cal) * 100 : 0;
+  const addedSugarDensity = per100(totals.addedSugar);    // g per 100 cal
+  const satFatDensity = per100(totals.satFat);
+  const refinedDensity = per100(totals.refinedCarbs);
+  const fiberDensity = per100(totals.fiber);
+  const proteinDensity = per100(totals.protein);
+
+  let score = 60;
+  // Penalties (per 100 cal — same regardless of portion size)
+  if (addedSugarDensity > 1) score -= Math.min(25, (addedSugarDensity - 1) * 6);
+  if (satFatDensity > 1) score -= Math.min(15, (satFatDensity - 1) * 5);
+  if (refinedDensity > 3) score -= Math.min(20, (refinedDensity - 3) * 2);
+  if (hasTrans) score -= 12;
+  if (hasHyd) score -= 6;
+  if (wholeFoodPct < 30) score -= 8;
+  else if (wholeFoodPct < 60) score -= 3;
+  // Bonuses
+  if (fiberDensity >= 2.5) score += 10;
+  else if (fiberDensity >= 1.5) score += 5;
+  if (proteinDensity >= 4) score += 5;
+  if (wholeFoodPct >= 80) score += 8;
+  if (!hasHyd && !hasTrans && addedSugarDensity < 1) score += 5;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let grade, gradeColor, gradeLabel;
+  if (score >= 80) { grade = "A"; gradeColor = "#2d8a56"; gradeLabel = "Clean fuel"; }
+  else if (score >= 65) { grade = "B"; gradeColor = "#6b9e7a"; gradeLabel = "Decent"; }
+  else if (score >= 50) { grade = "C"; gradeColor = "#c4943a"; gradeLabel = "Mediocre"; }
+  else if (score >= 35) { grade = "D"; gradeColor = "#d47333"; gradeLabel = "Damage mode"; }
+  else { grade = "F"; gradeColor = "#c44a4a"; gradeLabel = "Metabolic hit"; }
+
+  return { totals, dangers, flags, positives, score, grade, gradeColor, gradeLabel, wholeFoodPct };
+}
+
+// ─── BAR COMPONENT (uses daily-limit anchored colors) ────────────
+function MetricBar({ d, isPositive }) {
+  const pct = Math.min(100, (d.value / (isPositive ? d.target : d.max)) * 100);
+  const highWarn = !isPositive && pct > 60;
+  const lowGood = isPositive && pct < 40;
+  const barColor = isPositive
+    ? (pct >= 75 ? d.color : pct >= 40 ? "#888" : "#555")
+    : (pct > 75 ? d.color : pct > 50 ? "#c4943a" : "#4a7a5a");
+  return (
+    <div style={{ marginBottom: 7 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginBottom: 2, alignItems: "baseline" }}>
+        <span style={{ fontWeight: 600, color: (highWarn || (isPositive && pct >= 75)) ? d.color : "#888" }}>{d.label}</span>
+        <span style={{ fontWeight: 700, color: (highWarn || (isPositive && pct >= 75)) ? d.color : "#666", fontSize: 11 }}>{d.value.toFixed(d.unit === "mg" ? 0 : 1)}{d.unit}</span>
+      </div>
+      <div style={{ height: 5, backgroundColor: "#333", borderRadius: 3, overflow: "hidden", position: "relative" }}>
+        <div style={{ height: "100%", width: `${pct}%`, borderRadius: 3, backgroundColor: barColor, transition: "width 0.3s" }} />
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, marginTop: 1 }}>
+        <span style={{ color: (highWarn || (isPositive && pct >= 75)) ? d.color : "#555", fontWeight: 500 }}>{d.context}</span>
+        <span style={{ color: "#444", fontStyle: "italic" }}>{d.maxLabel}</span>
+      </div>
+    </div>
+  );
+}
+
+function QtyStepper({ qty, max, unit, onSet, dark }) {
+  const c = dark ? "#999" : "#555";
+  const bg = dark ? "#333" : "#eae7e2";
+  return (
+    <div style={{ display: "flex", alignItems: "center", borderRadius: 6, overflow: "hidden", backgroundColor: bg, flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+      <button onClick={() => onSet(Math.max(0, qty - 1))} style={{ width: 28, height: 28, border: "none", backgroundColor: "transparent", color: c, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "'Outfit',sans-serif" }}>−</button>
+      <div style={{ minWidth: 38, textAlign: "center", fontSize: 11, fontWeight: 700, color: dark ? "#eee" : "#333", lineHeight: 1.1, padding: "0 2px" }}>
+        <div style={{ fontSize: 14 }}>{qty}</div>
+        <div style={{ fontSize: 8, color: dark ? "#777" : "#aaa", fontWeight: 500 }}>{unit}</div>
+      </div>
+      <button onClick={() => onSet(Math.min(max, qty + 1))} style={{ width: 28, height: 28, border: "none", backgroundColor: "transparent", color: c, fontSize: 16, fontWeight: 700, cursor: "pointer", fontFamily: "'Outfit',sans-serif" }}>+</button>
+    </div>
+  );
+}
+
+// ─── MAIN ─────────────────────────────────────────────────────────
+export default function BreakfastBuilder() {
+  const [quantities, setQuantities] = useState({});
+  const [expandedNote, setExpandedNote] = useState(null);
+  const [showPanel, setShowPanel] = useState(false);
+  const [expandedFlag, setExpandedFlag] = useState(null);
+
+  const setQty = (id, n) => setQuantities(prev => { const next = { ...prev }; if (n <= 0) delete next[id]; else next[id] = n; return next; });
+
+  const allItems = CATEGORIES.flatMap(c => c.items);
+  const activeCount = Object.keys(quantities).length;
+  const report = activeCount > 0 ? computeReport(quantities, allItems) : null;
+
+  return (
+    <div style={{ fontFamily: "'Outfit',sans-serif", maxWidth: 720, margin: "0 auto", padding: "24px 16px 200px", color: "#1e1e1e", backgroundColor: "#f7f5f2", minHeight: "100vh" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "#bbb", fontWeight: 700 }}>FOOD AS MEDICINE</div>
+        <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 26, fontWeight: 700, margin: "4px 0", lineHeight: 1.1 }}>Build Your Meal</h1>
+        <p style={{ fontSize: 12, color: "#999", margin: 0 }}>Quality score grades the food, not the portion. Bars anchored to daily limits.</p>
+        {activeCount > 0 && <button onClick={() => { setQuantities({}); setShowPanel(false); }} style={{ marginTop: 8, border: "none", backgroundColor: "#e8e5e0", borderRadius: 4, padding: "4px 12px", fontSize: 10, color: "#999", cursor: "pointer", fontFamily: "'Outfit',sans-serif", fontWeight: 600 }}>Clear all</button>}
+      </div>
+
+      {CATEGORIES.map((cat, ci) => (
+        <div key={ci} style={{ marginBottom: 22 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, borderBottom: "1px solid #e8e5e0", paddingBottom: 6 }}>
+            <span style={{ fontSize: 20 }}>{cat.icon}</span>
+            <div><div style={{ fontSize: 13, fontWeight: 700 }}>{cat.name}</div><div style={{ fontSize: 10, color: "#aaa" }}>{cat.desc}</div></div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {cat.items.map(item => {
+              const qty = quantities[item.id] || 0;
+              const active = qty > 0;
+              const isNoteOpen = expandedNote === item.id;
+              const itemCal = item.cal * qty;
+              return (
+                <div key={item.id}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, borderRadius: 8, padding: "8px 10px", backgroundColor: active ? "#1e1e1e" : "#fff", boxShadow: active ? "none" : "0 1px 3px rgba(0,0,0,0.04)", transition: "all 0.15s" }}>
+                    <QtyStepper qty={qty} max={item.max} unit={item.unit} onSet={n => setQty(item.id, n)} dark={active} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2, color: active ? "#eee" : "#333", display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" }}>
+                        {item.name}
+                        {item.hydrogenatedOil && <span style={{ fontSize: 7, backgroundColor: `${C.fat}33`, color: C.fat, padding: "1px 4px", borderRadius: 2, fontWeight: 800 }}>HYD</span>}
+                        {item.processed >= 3 && <span style={{ fontSize: 7, backgroundColor: "#d4733333", color: "#d47333", padding: "1px 4px", borderRadius: 2, fontWeight: 800 }}>UPF</span>}
+                        {item.animal && <span style={{ fontSize: 7, backgroundColor: "#a0705033", color: "#a07050", padding: "1px 4px", borderRadius: 2, fontWeight: 800 }}>🐄</span>}
+                      </div>
+                      <div style={{ fontSize: 9, color: active ? "#777" : "#bbb", marginTop: 1 }}>
+                        {item.brand}{active && <span style={{ color: "#aaa" }}> · {formatPortion(qty, item.unit)}</span>}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0, minWidth: 44 }}>
+                      {active
+                        ? <><div style={{ fontSize: 16, fontWeight: 900, color: "#fff" }}>{Math.round(itemCal)}</div><div style={{ fontSize: 8, color: "#666" }}>cal</div></>
+                        : <><div style={{ fontSize: 14, fontWeight: 800, color: "#555" }}>{item.cal}</div><div style={{ fontSize: 8, color: "#bbb" }}>/{item.unit}</div></>
+                      }
+                    </div>
+                    {item.addedSugar >= 8 && <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: C.added, flexShrink: 0 }} />}
+                    {item.addedSugar >= 4 && item.addedSugar < 8 && <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#c4943a", flexShrink: 0 }} />}
+                    <div onClick={() => setExpandedNote(isNoteOpen ? null : item.id)} style={{ width: 22, height: 22, borderRadius: "50%", flexShrink: 0, backgroundColor: active ? "#333" : "#f0ede8", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: active ? "#777" : "#aaa", fontWeight: 700, cursor: "pointer" }}>i</div>
+                  </div>
+                  {isNoteOpen && (
+                    <div style={{ margin: "2px 0 4px 0", padding: "10px 12px", backgroundColor: "#1e1e1e", borderRadius: 6, borderLeft: `3px solid ${item.hydrogenatedOil ? C.fat : item.processed >= 2 ? "#d47333" : "#444"}`, fontSize: 11, lineHeight: 1.6, color: "#aaa" }}>
+                      <div style={{ marginBottom: 8 }}>{item.note}</div>
+                      <div style={{ fontSize: 8, letterSpacing: 1.5, textTransform: "uppercase", color: "#555", fontWeight: 700, marginBottom: 4 }}>MACRO BREAKDOWN (per {item.unit})</div>
+                      <MacroBar cal={item.cal} fat={item.fat} satFat={item.satFat} carbs={item.carbs} fiber={item.fiber} sugar={item.sugar} addedSugar={item.addedSugar} protein={item.protein} small={false} />
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", fontSize: 8, color: "#666", fontWeight: 600, marginTop: 6 }}>
+                        <span>{item.cal} cal</span>
+                        <span>Na {item.sodium}mg</span>
+                        {item.refinedCarbs > 0 && <span style={{ color: C.refined }}>Refined {item.refinedCarbs}g</span>}
+                        {item.caffeine > 0 && <span style={{ color: C.caffeine }}>Caffeine {item.caffeine}mg</span>}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      {/* STICKY BOTTOM */}
+      <div style={{
+        position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "#141414F8", backdropFilter: "blur(12px)",
+        maxWidth: 720, margin: "0 auto", borderTop: "1px solid #2a2a2a", zIndex: 100,
+        maxHeight: showPanel ? "70vh" : 140, transition: "max-height 0.3s", overflow: "auto"
+      }}>
+        {activeCount === 0 ? (
+          <div style={{ textAlign: "center", fontSize: 12, color: "#555", padding: "16px 0" }}>Use +/− to add items</div>
+        ) : (
+          <div style={{ padding: "10px 16px 14px" }}>
+            <div onClick={() => setShowPanel(!showPanel)} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 12, marginBottom: showPanel ? 10 : 0 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 8, backgroundColor: report.gradeColor, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{report.grade}</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span style={{ fontSize: 10, color: report.gradeColor, fontWeight: 700 }}>{report.gradeLabel}</span>
+                  <span style={{ fontSize: 9, color: "#555" }}>{showPanel ? "▼ collapse" : "▲ details"}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                  <span style={{ fontSize: 26, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{Math.round(report.totals.cal)}</span>
+                  <span style={{ fontSize: 10, color: "#555" }}>cal</span>
+                  <span style={{ fontSize: 10, color: "#444", marginLeft: 4 }}>quality {report.score}/100</span>
+                </div>
+              </div>
+            </div>
+
+            {showPanel && (
+              <div style={{ borderTop: "1px solid #2a2a2a", paddingTop: 10 }}>
+                <div style={{ fontSize: 8, letterSpacing: 1.5, textTransform: "uppercase", color: "#555", fontWeight: 700, marginBottom: 6 }}>MACRO DISTRIBUTION</div>
+                <MacroBar cal={report.totals.cal} fat={report.totals.fat} satFat={report.totals.satFat} carbs={report.totals.carbs} fiber={report.totals.fiber} sugar={report.totals.sugar} addedSugar={report.totals.addedSugar} protein={report.totals.protein} small={false} />
+
+                {report.flags.length > 0 && (
+                  <div style={{ marginTop: 12, marginBottom: 8 }}>
+                    <div style={{ fontSize: 8, letterSpacing: 1.5, textTransform: "uppercase", color: "#555", fontWeight: 700, marginBottom: 6 }}>WARNINGS</div>
+                    {report.flags.map((f) => (
+                      <div key={f.key} style={{ marginBottom: 6 }}>
+                        <button onClick={() => setExpandedFlag(expandedFlag === f.key ? null : f.key)} style={{
+                          border: "none", backgroundColor: `${f.color}15`, borderRadius: 4, padding: "5px 10px",
+                          fontSize: 10, fontWeight: 700, color: f.color, cursor: "pointer", fontFamily: "'Outfit',sans-serif",
+                          width: "100%", textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center"
+                        }}>
+                          <span>⚠ {f.label}</span>
+                          <span style={{ fontSize: 8, color: "#555" }}>{expandedFlag === f.key ? "▼" : "▶"} {f.items?.length || 0} item{(f.items?.length || 0) !== 1 ? "s" : ""}</span>
+                        </button>
+                        {expandedFlag === f.key && (
+                          <div style={{ padding: "8px 10px", backgroundColor: "#1a1a1a", borderRadius: "0 0 4px 4px", borderLeft: `3px solid ${f.color}` }}>
+                            <div style={{ fontSize: 10, color: "#888", marginBottom: 6, lineHeight: 1.5 }}>{f.detail}</div>
+                            {f.items && f.items.length > 0 && f.items.map((c, ci) => (
+                              <div key={ci} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 6, paddingBottom: 6, borderBottom: ci < f.items.length - 1 ? "1px solid #222" : "none" }}>
+                                <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: f.color, marginTop: 5, flexShrink: 0, opacity: 0.8 }} />
+                                <div>
+                                  <div style={{ fontSize: 11, fontWeight: 700, color: "#ccc" }}>
+                                    {c.name} <span style={{ fontWeight: 400, color: "#666" }}>×{c.qty}</span>
+                                    {c.score > 1 && <span style={{ marginLeft: 6, fontSize: 8, backgroundColor: `${f.color}25`, color: f.color, padding: "1px 5px", borderRadius: 2, fontWeight: 800 }}>severity {c.score}/3</span>}
+                                  </div>
+                                  <div style={{ fontSize: 9, color: "#777", lineHeight: 1.5, marginTop: 2 }}>{c.reason}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ fontSize: 8, letterSpacing: 1.5, textTransform: "uppercase", color: "#555", fontWeight: 700, marginBottom: 6, marginTop: 10 }}>WATCH THESE</div>
+                {report.dangers.map(d => <MetricBar key={d.key} d={d} />)}
+
+                <div style={{ fontSize: 8, letterSpacing: 1.5, textTransform: "uppercase", color: "#555", fontWeight: 700, marginBottom: 6, marginTop: 10 }}>WANT MORE OF</div>
+                {report.positives.map(p => <MetricBar key={p.key} d={{...p, max: p.target}} isPositive={true} />)}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
