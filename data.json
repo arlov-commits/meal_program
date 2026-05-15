@@ -35,9 +35,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 0,
-          "wholeFood": 1.0,
+          "wholeFood": 1,
           "processedReason": null,
-          "note": "Lowest GI oat (~42). Single ingredient: oats."
+          "note": "Lowest GI oat (~42). Single ingredient: oats.",
+          "gi": 42,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "quaker_oats",
@@ -60,9 +63,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 0,
-          "wholeFood": 1.0,
+          "wholeFood": 1,
           "processedReason": null,
-          "note": "GI ~55. Single ingredient: oats. Clean despite PepsiCo ownership."
+          "note": "GI ~55. Single ingredient: oats. Clean despite PepsiCo ownership.",
+          "gi": 55,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "instant_reg",
@@ -87,7 +93,10 @@
           "processed": 1,
           "wholeFood": 0.7,
           "processedReason": "Guar gum, caramel color, ferric orthophosphate",
-          "note": "No added sugar. Light processing."
+          "note": "No added sugar. Light processing.",
+          "gi": 66,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "instant_apple",
@@ -112,7 +121,10 @@
           "processed": 2,
           "wholeFood": 0.3,
           "processedReason": "9g added sugar, sodium sulfite-treated apples, natural flavor, caramel color",
-          "note": "9g added sugar. Sulfite-treated apples. Caramel color."
+          "note": "9g added sugar. Sulfite-treated apples. Caramel color.",
+          "gi": 72,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "instant_sweet",
@@ -137,7 +149,10 @@
           "processed": 2,
           "wholeFood": 0.2,
           "processedReason": "10-12g added sugar, caramel color (potential 4-MEI), natural flavor",
-          "note": "All three flavors ≈ 160 cal, 10-12g added sugar."
+          "note": "All three flavors ≈ 160 cal, 10-12g added sugar.",
+          "gi": 74,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "bagel",
@@ -162,7 +177,10 @@
           "processed": 2,
           "wholeFood": 0.2,
           "processedReason": "Enriched (refined) wheat flour, added sugar, high sodium",
-          "note": "GI ~72. Nearly all starch is refined. High sodium."
+          "note": "GI ~72. Nearly all starch is refined. High sodium.",
+          "gi": 72,
+          "animalProtein": 0.1,
+          "transFat": 0
         },
         {
           "id": "bread",
@@ -187,7 +205,10 @@
           "processed": 1,
           "wholeFood": 0.5,
           "processedReason": "Likely refined flour blend, added sugar",
-          "note": "If whole wheat #1: GI ~54. If not: ~71."
+          "note": "If whole wheat #1: GI ~54. If not: ~71.",
+          "gi": 60,
+          "animalProtein": 0.1,
+          "transFat": 0
         }
       ]
     },
@@ -217,9 +238,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 0,
-          "wholeFood": 1.0,
+          "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. GI ~36. Pectin feeds gut bacteria. Quercetin antioxidant."
+          "note": "Whole food. GI ~36. Pectin feeds gut bacteria. Quercetin antioxidant.",
+          "gi": 36,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "banana",
@@ -242,9 +266,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 0,
-          "wholeFood": 1.0,
+          "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Potassium, B6. GI ~51 ripe. Resistant starch in firmer fruit."
+          "note": "Whole food. Potassium, B6. GI ~51 ripe. Resistant starch in firmer fruit.",
+          "gi": 51,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "orange",
@@ -267,9 +294,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 0,
-          "wholeFood": 1.0,
+          "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Vit C. GI ~43. Hesperidin supports vascular health."
+          "note": "Whole food. Vit C. GI ~43. Hesperidin supports vascular health.",
+          "gi": 43,
+          "animalProtein": 0,
+          "transFat": 0
         }
       ]
     },
@@ -301,7 +331,10 @@
           "processed": 2,
           "wholeFood": 0.3,
           "processedReason": "Hydrogenated vegetable oil (cottonseed/soybean/rapeseed), added sugar — trace trans fats possible below labeling threshold",
-          "note": "Hydrogenated oils. Trace trans fats possible below 0.5g threshold."
+          "note": "Hydrogenated oils. Trace trans fats possible below 0.5g threshold.",
+          "gi": 14,
+          "animalProtein": 0,
+          "transFat": 0.2
         },
         {
           "id": "cream_cheese",
@@ -326,7 +359,10 @@
           "processed": 1,
           "wholeFood": 0.6,
           "processedReason": "Guar gum emulsifier",
-          "note": "Pasteurized milk, cream, salt, guar gum. High saturated fat density."
+          "note": "Pasteurized milk, cream, salt, guar gum. High saturated fat density.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0
         },
         {
           "id": "country_crock",
@@ -349,9 +385,12 @@
           "transFatRisk": true,
           "animal": false,
           "processed": 3,
-          "wholeFood": 0.0,
+          "wholeFood": 0,
           "processedReason": "Soybean/palm/palm kernel oils + mono/diglycerides + polysorbate 60 + potassium sorbate + EDTA — trace trans fat risk via emulsifiers",
-          "note": "Not butter. 39% vegetable oil spread + emulsifiers."
+          "note": "Not butter. 39% vegetable oil spread + emulsifiers.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0.3
         },
         {
           "id": "jam",
@@ -376,7 +415,10 @@
           "processed": 1,
           "wholeFood": 0.4,
           "processedReason": "Organic cane sugar is still sugar",
-          "note": "Organic but 8g added sugar per tbsp."
+          "note": "Organic but 8g added sugar per tbsp.",
+          "gi": 51,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "craisins",
@@ -401,7 +443,10 @@
           "processed": 2,
           "wholeFood": 0.2,
           "processedReason": "Added cane sugar, refined sunflower oil processing aid",
-          "note": "Candy marketed as fruit. 6g added sugar/tbsp."
+          "note": "Candy marketed as fruit. 6g added sugar/tbsp.",
+          "gi": 62,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "sugar",
@@ -424,9 +469,12 @@
           "transFatRisk": false,
           "animal": false,
           "processed": 3,
-          "wholeFood": 0.0,
+          "wholeFood": 0,
           "processedReason": "100% refined sucrose — pure empty calories",
-          "note": "Pure refined sucrose → glucose + fructose hit. (Tracked entirely as added sugar.)"
+          "note": "Pure refined sucrose → glucose + fructose hit. (Tracked entirely as added sugar.)",
+          "gi": 65,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "stevia",
@@ -451,7 +499,10 @@
           "processed": 1,
           "wholeFood": 0.3,
           "processedReason": null,
-          "note": "Zero calorie, zero glycemic response."
+          "note": "Zero calorie, zero glycemic response.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0
         }
       ]
     },
@@ -483,7 +534,10 @@
           "processed": 0,
           "wholeFood": 0.9,
           "processedReason": null,
-          "note": "L-theanine + ~30mg caffeine. Calmer alertness than coffee."
+          "note": "L-theanine + ~30mg caffeine. Calmer alertness than coffee.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "nescafe",
@@ -508,7 +562,10 @@
           "processed": 2,
           "wholeFood": 0.2,
           "processedReason": "Spray-dried instant coffee, acrylamide from high-temp processing",
-          "note": "~65mg caffeine. Adenosine block → crash. Half-life 5-6 hrs."
+          "note": "~65mg caffeine. Adenosine block → crash. Half-life 5-6 hrs.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "mate",
@@ -533,7 +590,10 @@
           "processed": 1,
           "wholeFood": 0.7,
           "processedReason": null,
-          "note": "~85mg caffeine + theobromine. Less crash, still dependency."
+          "note": "~85mg caffeine + theobromine. Less crash, still dependency.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "coffeemate",
@@ -556,9 +616,12 @@
           "transFatRisk": true,
           "animal": false,
           "processed": 3,
-          "wholeFood": 0.0,
+          "wholeFood": 0,
           "processedReason": "CORN SYRUP SOLIDS + HYDROGENATED VEGETABLE OIL + sodium caseinate + dipotassium phosphate + mono/diglycerides",
-          "note": "Industrial whitener, not food. Trace trans fats."
+          "note": "Industrial whitener, not food. Trace trans fats.",
+          "gi": 52,
+          "animalProtein": 0.3,
+          "transFat": 0.2
         },
         {
           "id": "silk_soy",
@@ -583,7 +646,10 @@
           "processed": 1,
           "wholeFood": 0.5,
           "processedReason": "Cane sugar, gellan gum, natural flavor",
-          "note": "8g protein/full cup. Non-GMO."
+          "note": "8g protein/full cup. Non-GMO.",
+          "gi": 34,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "almond_milk",
@@ -608,7 +674,10 @@
           "processed": 1,
           "wholeFood": 0.5,
           "processedReason": null,
-          "note": "Low cal. Zero sugar. Almost no protein."
+          "note": "Low cal. Zero sugar. Almost no protein.",
+          "gi": 25,
+          "animalProtein": 0,
+          "transFat": 0
         }
       ]
     },
@@ -638,9 +707,12 @@
           "transFatRisk": false,
           "animal": true,
           "processed": 3,
-          "wholeFood": 0.0,
+          "wholeFood": 0,
           "processedReason": "Enriched wheat flour, vegetable oils (palm, soybean), TBHQ preservative, annatto color, milk-derived cheese",
-          "note": "Enriched flour + palm/soy oils + TBHQ. UPF. Animal-derived (cheese)."
+          "note": "Enriched flour + palm/soy oils + TBHQ. UPF. Animal-derived (cheese).",
+          "gi": 70,
+          "animalProtein": 0.5,
+          "transFat": 0
         },
         {
           "id": "mixed_nuts",
@@ -665,7 +737,10 @@
           "processed": 1,
           "wholeFood": 0.9,
           "processedReason": "Peanut oil used in roasting, sea salt",
-          "note": "Cashews, almonds, pecans, Brazil nuts, macadamia nuts, peanut oil, sea salt. No added sugar. 0g trans fat. One of the cleanest snack options available. High in unsaturated fats, 5g protein. Brazil nuts = selenium."
+          "note": "Cashews, almonds, pecans, Brazil nuts, macadamia nuts, peanut oil, sea salt. No added sugar. 0g trans fat. One of the cleanest snack options available. High in unsaturated fats, 5g protein. Brazil nuts = selenium.",
+          "gi": 15,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "mega_omega",
@@ -690,7 +765,10 @@
           "processed": 2,
           "wholeFood": 0.6,
           "processedReason": "Dried cranberries sweetened with cane sugar + sunflower oil, dried mango sweetened with sugar + citric acid",
-          "note": "Cranberries, mango, almonds, walnuts, pumpkin seeds. Walnuts = ALA omega-3. 5g added sugar from sweetened fruit. No sodium, no hydrogenated oils. Better than most trail mixes."
+          "note": "Cranberries, mango, almonds, walnuts, pumpkin seeds. Walnuts = ALA omega-3. 5g added sugar from sweetened fruit. No sodium, no hydrogenated oils. Better than most trail mixes.",
+          "gi": 45,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "pb_pretzels",
@@ -715,7 +793,10 @@
           "processed": 3,
           "wholeFood": 0.1,
           "processedReason": "Enriched wheat flour pretzel, palm oil, mono/diglycerides, soy lecithin, added sugar",
-          "note": "Enriched flour pretzel + processed PB filling + palm oil."
+          "note": "Enriched flour pretzel + processed PB filling + palm oil.",
+          "gi": 67,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "potato_chips",
@@ -740,7 +821,10 @@
           "processed": 2,
           "wholeFood": 0.3,
           "processedReason": "Fried in vegetable oil, high acrylamide from high-temp frying, refined starch",
-          "note": "Acrylamide from frying. Behaves like refined carbs in body."
+          "note": "Acrylamide from frying. Behaves like refined carbs in body.",
+          "gi": 56,
+          "animalProtein": 0,
+          "transFat": 0
         },
         {
           "id": "belvita",
@@ -765,7 +849,10 @@
           "processed": 3,
           "wholeFood": 0.1,
           "processedReason": "10g added sugar, partially refined flour blend, palm/canola oils, soy lecithin, contains milk/honey",
-          "note": "10g added sugar. Contains milk. 'Breakfast biscuit' = dessert."
+          "note": "10g added sugar. Contains milk. 'Breakfast biscuit' = dessert.",
+          "gi": 57,
+          "animalProtein": 0.2,
+          "transFat": 0
         },
         {
           "id": "mm",
@@ -788,9 +875,12 @@
           "transFatRisk": false,
           "animal": true,
           "processed": 3,
-          "wholeFood": 0.0,
+          "wholeFood": 0,
           "processedReason": "13g added sugar, palm oil, corn syrup, dextrin, 6 artificial dye colors (Blue 1, Yellow 6, Red 40, Yellow 5, Blue 2 Lake + Lakes), soy lecithin, carnauba wax, gum acacia. Contains bioengineered ingredients.",
-          "note": "Peanuts buried under milk chocolate, sugar, palm oil, corn syrup, dextrin, and 6 artificial colors. 13g added sugar per oz. Contains bioengineered ingredients (declared on label). Animal: milk + lactose."
+          "note": "Peanuts buried under milk chocolate, sugar, palm oil, corn syrup, dextrin, and 6 artificial colors. 13g added sugar per oz. Contains bioengineered ingredients (declared on label). Animal: milk + lactose.",
+          "gi": 68,
+          "animalProtein": 1,
+          "transFat": 0
         },
         {
           "id": "string_cheese",
@@ -815,7 +905,10 @@
           "processed": 1,
           "wholeFood": 0.7,
           "processedReason": "Cultured pasteurized milk, salt, enzymes",
-          "note": "Real cheese, minimal processing. 6g protein. High sat fat."
+          "note": "Real cheese, minimal processing. 6g protein. High sat fat.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0
         },
         {
           "id": "tillamook",
@@ -840,7 +933,10 @@
           "processed": 1,
           "wholeFood": 0.8,
           "processedReason": "Pasteurized milk, salt, enzymes, annatto color",
-          "note": "Real cheese. High sat fat. Animal product."
+          "note": "Real cheese. High sat fat. Animal product.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0
         },
         {
           "id": "babybel",
@@ -865,7 +961,10 @@
           "processed": 1,
           "wholeFood": 0.7,
           "processedReason": "Pasteurized milk, salt, enzymes, annatto/paprika color",
-          "note": "Real cheese in wax. High sat fat. Animal product."
+          "note": "Real cheese in wax. High sat fat. Animal product.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0
         }
       ]
     }
