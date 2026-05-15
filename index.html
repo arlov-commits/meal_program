@@ -1,448 +1,810 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Food as Medicine — Build Your Meal</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Food as Medicine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body { background: #f7f5f2; font-family: 'Outfit', sans-serif; color: #1e1e1e; }
-  button { font-family: 'Outfit', sans-serif; }
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: #222; }
-  ::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
-  .loading { text-align: center; padding: 60px 20px; font-size: 14px; color: #999; font-family: 'Outfit', sans-serif; }
-  .error   { text-align: center; padding: 60px 20px; font-size: 14px; color: #c44a4a; font-family: 'Outfit', sans-serif; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#f7f5f2;font-family:'Outfit',sans-serif;color:#1e1e1e}
+button{font-family:'Outfit',sans-serif}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#ddd}::-webkit-scrollbar-thumb{background:#bbb;border-radius:2px}
+.loading,.error{text-align:center;padding:60px 20px;font-size:14px;color:#999}
+.error{color:#c43a3a}
+
+/* ── LAYOUT ── */
+.app{max-width:1100px;margin:0 auto;padding:24px 16px 220px}
+.header{margin-bottom:24px}
+.eyebrow{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#bbb;font-weight:700}
+h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin:4px 0;line-height:1.1}
+.subhead{font-size:12px;color:#999}
+.header-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
+.clear-btn{border:none;background:#e8e5e0;border-radius:4px;padding:5px 14px;font-size:10px;color:#888;cursor:pointer;font-weight:600}
+.clear-btn:hover{background:#ddd}
+
+/* Two-column grid on wide screens */
+.categories-grid{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:700px){
+  .categories-grid{grid-template-columns:1fr 1fr;gap:0 24px}
+}
+
+.category{margin-bottom:22px}
+.cat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;border-bottom:1px solid #e8e5e0;padding-bottom:6px}
+.cat-icon{font-size:20px}
+.cat-name{font-size:13px;font-weight:700}
+.cat-desc{font-size:10px;color:#aaa}
+.items-list{display:flex;flex-direction:column;gap:4px}
+
+/* Item row */
+.item-row{display:flex;align-items:center;gap:8px;border-radius:8px;padding:8px 10px;transition:all .15s;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.item-row.active{background:#1e1e1e;box-shadow:none}
+.item-name{font-size:13px;font-weight:600;line-height:1.2;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.item-brand{font-size:9px;margin-top:1px}
+.item-cal{text-align:right;flex-shrink:0;min-width:44px}
+.tag{font-size:7px;padding:1px 4px;border-radius:2px;font-weight:800}
+.sugar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.info-btn{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:none}
+
+/* Expanded info panel */
+.info-panel{margin:2px 0 4px;padding:10px 12px;background:#1e1e1e;border-radius:6px;font-size:11px;line-height:1.6;color:#aaa}
+.info-section-title{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:4px}
+.info-stats{display:flex;gap:8px;flex-wrap:wrap;font-size:8px;color:#666;font-weight:600;margin-top:6px}
+
+/* Qty stepper */
+.stepper{display:flex;align-items:center;border-radius:6px;overflow:hidden;flex-shrink:0}
+.stepper button{width:28px;height:28px;border:none;background:transparent;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.stepper-val{min-width:38px;text-align:center;font-weight:700;line-height:1.1;padding:0 2px}
+.stepper-val .big{font-size:14px}
+.stepper-val .small{font-size:8px;font-weight:500}
+
+/* ── STICKY BOTTOM ── */
+.bottom-panel{position:fixed;bottom:0;left:0;right:0;background:#141414f8;backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;z-index:100;transition:max-height .3s;overflow-y:auto}
+.bottom-inner{max-width:1100px;margin:0 auto;padding:10px 16px 14px}
+.bottom-empty{text-align:center;font-size:12px;color:#555;padding:16px 0}
+.summary-row{cursor:pointer;display:flex;align-items:center;gap:12px}
+.grade-badge{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.grade-letter{font-size:22px;font-weight:900;color:#fff;line-height:1}
+.summary-info{flex:1}
+.summary-top{display:flex;justify-content:space-between;align-items:baseline}
+.summary-cal{display:flex;align-items:baseline;gap:6px}
+.cal-big{font-size:26px;font-weight:900;color:#fff;line-height:1}
+.cal-unit{font-size:10px;color:#555}
+.quality-score{font-size:10px;color:#444;margin-left:4px}
+.collapse-hint{font-size:9px;color:#555}
+
+/* Section headers in panel */
+.panel-section{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:6px;margin-top:10px}
+.panel-section:first-child{margin-top:0}
+
+/* Metric bars */
+.metric-bar-wrap{margin-bottom:7px}
+.metric-bar-row{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;align-items:baseline}
+.metric-bar-track{height:5px;background:#333;border-radius:3px;overflow:hidden}
+.metric-bar-fill{height:100%;border-radius:3px;transition:width .3s}
+.metric-bar-footer{display:flex;justify-content:space-between;font-size:8px;margin-top:1px}
+
+/* Flags */
+.flag-btn{border:none;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.flag-detail{padding:8px 10px;border-radius:0 0 4px 4px}
+.flag-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;padding-bottom:6px}
+.flag-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;opacity:.8}
+
+/* Carb charts */
+.carb-chart-wrap{margin-bottom:14px}
+.carb-chart-title{font-size:9px;font-weight:700;color:#888;margin-bottom:5px;letter-spacing:.5px}
+.gl-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
 </style>
 </head>
 <body>
-<div id="root"><div class="loading">Loading...</div></div>
+<div id="root"><div class="loading">Loading…</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <script type="text/babel">
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
-const C = {
-  fat: "#c44a4a", carbs: "#e8913a", protein: "#4a9c6d",
-  fiber: "#7a5aa6", sat: "#c44a4a", added: "#c44a4a",
-  caffeine: "#6b4a2a", sodium: "#8a7a6a", whole: "#2d8a56",
+// ─── COLOR SYSTEM ─────────────────────────────────────────────────
+// Carbs: blue family   #3a6bc4
+// Fat:   yellow family #c4a83a
+// Protein: red family  #c43a3a
+const BLUE  = '#3a6bc4';
+const YELL  = '#c4a83a';
+const RED   = '#c43a3a';
+
+// ─── SVG PATTERN DEFINITIONS ─────────────────────────────────────
+// Each sub-segment: { fill (references pattern id), legend css, color for text, label }
+// Patterns are defined once in a hidden SVG, referenced by all bars
+function PatternDefs() {
+  return (
+    <svg width="0" height="0" style={{position:'absolute'}}>
+      <defs>
+        {/* ── CARB PATTERNS (blue family) ── */}
+        {/* Whole Starch: solid mid-blue */}
+        <pattern id="p-whole-starch" width="1" height="1"><rect width="1" height="1" fill="#3a6bc4"/></pattern>
+        {/* Refined Starch: lighter blue + diagonal lines NE */}
+        <pattern id="p-refined-starch" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#6a9be4"/>
+          <line x1="0" y1="6" x2="6" y2="0" stroke="#3a6bc4" strokeWidth="1.5"/>
+        </pattern>
+        {/* Fiber: deep blue-indigo + small dots */}
+        <pattern id="p-fiber" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#1e3d7a"/>
+          <circle cx="3" cy="3" r="1.2" fill="#5a8ad4"/>
+        </pattern>
+        {/* Natural Sugar: cyan-blue + horizontal thin lines */}
+        <pattern id="p-nat-sugar" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#3a9bc4"/>
+          <line x1="0" y1="2" x2="6" y2="2" stroke="#1a6a8a" strokeWidth="1"/>
+          <line x1="0" y1="5" x2="6" y2="5" stroke="#1a6a8a" strokeWidth="1"/>
+        </pattern>
+        {/* Added Sugar: blue-purple + crosshatch (danger) */}
+        <pattern id="p-added-sugar" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#7a3ac4"/>
+          <line x1="0" y1="0" x2="6" y2="6" stroke="#4a1a8a" strokeWidth="1.2"/>
+          <line x1="6" y1="0" x2="0" y2="6" stroke="#4a1a8a" strokeWidth="1.2"/>
+        </pattern>
+
+        {/* ── FAT PATTERNS (yellow family) ── */}
+        {/* Unsat Fat: solid amber */}
+        <pattern id="p-unsat-fat" width="1" height="1"><rect width="1" height="1" fill="#c4a83a"/></pattern>
+        {/* Sat Fat: dark gold + diagonal lines SW */}
+        <pattern id="p-sat-fat" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#a47820"/>
+          <line x1="0" y1="0" x2="6" y2="6" stroke="#7a5800" strokeWidth="1.5"/>
+        </pattern>
+        {/* Trans Fat: orange-red + dense zigzag (danger) */}
+        <pattern id="p-trans-fat" patternUnits="userSpaceOnUse" width="8" height="6">
+          <rect width="8" height="6" fill="#c46a3a"/>
+          <polyline points="0,3 2,0 4,3 6,0 8,3" fill="none" stroke="#8a3010" strokeWidth="1.5"/>
+        </pattern>
+
+        {/* ── PROTEIN PATTERNS (red family) ── */}
+        {/* Plant Protein: solid red */}
+        <pattern id="p-plant-protein" width="1" height="1"><rect width="1" height="1" fill="#c43a3a"/></pattern>
+        {/* Animal Protein: dark crimson + horizontal lines */}
+        <pattern id="p-animal-protein" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#8a2020"/>
+          <line x1="0" y1="2" x2="6" y2="2" stroke="#5a0a0a" strokeWidth="1.2"/>
+          <line x1="0" y1="5" x2="6" y2="5" stroke="#5a0a0a" strokeWidth="1.2"/>
+        </pattern>
+      </defs>
+    </svg>
+  );
+}
+
+// Pattern metadata for legend rendering
+const PATTERNS = {
+  'whole-starch':   { id:'p-whole-starch',   color:'#3a6bc4', legendBg:'#3a6bc4',                                                                            textColor:'#6a9be4' },
+  'refined-starch': { id:'p-refined-starch', color:'#6a9be4', legendBg:`repeating-linear-gradient(135deg,#6a9be4 0 3px,#3a6bc4 3px 6px)`,                   textColor:'#8abbe4' },
+  'fiber':          { id:'p-fiber',          color:'#1e3d7a', legendBg:`radial-gradient(circle, #5a8ad4 30%, #1e3d7a 30%)`,                                   textColor:'#5a8ad4' },
+  'nat-sugar':      { id:'p-nat-sugar',      color:'#3a9bc4', legendBg:`repeating-linear-gradient(180deg,#3a9bc4 0 2px,#1a6a8a 2px 4px)`,                   textColor:'#6acce4' },
+  'added-sugar':    { id:'p-added-sugar',    color:'#7a3ac4', legendBg:`repeating-linear-gradient(135deg,#7a3ac4 0 3px,#4a1a8a 3px 6px)`,                   textColor:'#aa6af4' },
+  'unsat-fat':      { id:'p-unsat-fat',      color:'#c4a83a', legendBg:'#c4a83a',                                                                            textColor:'#e4c85a' },
+  'sat-fat':        { id:'p-sat-fat',        color:'#a47820', legendBg:`repeating-linear-gradient(135deg,#a47820 0 3px,#7a5800 3px 6px)`,                   textColor:'#c49840' },
+  'trans-fat':      { id:'p-trans-fat',      color:'#c46a3a', legendBg:`repeating-linear-gradient(90deg,#c46a3a 0 3px,#8a3010 3px 6px)`,                   textColor:'#e48a5a' },
+  'plant-protein':  { id:'p-plant-protein',  color:'#c43a3a', legendBg:'#c43a3a',                                                                            textColor:'#e46a6a' },
+  'animal-protein': { id:'p-animal-protein', color:'#8a2020', legendBg:`repeating-linear-gradient(180deg,#8a2020 0 2px,#5a0a0a 2px 4px)`,                   textColor:'#c45050' },
 };
 
-function formatPortion(qty, unit) {
-  return qty === 1 ? `1 ${unit}` : `${qty} × ${unit}`;
+function LegendSwatch({ patKey, size=12 }) {
+  const p = PATTERNS[patKey];
+  return <span style={{display:'inline-block',width:size,height:size*0.75,borderRadius:2,background:p.legendBg,flexShrink:0}}/>;
 }
 
 // ─── MACRO BAR ────────────────────────────────────────────────────
-function MacroBar({ cal, fat, satFat, carbs, fiber, sugar, addedSugar, protein, refinedCarbs: rawRefined, small }) {
-  if (cal <= 0) return null;
-  const unsatFat   = Math.max(0, fat - satFat);
-  const naturalSug = Math.max(0, sugar - addedSugar);
-  const complexC   = Math.max(0, carbs - sugar - fiber);
-  const refinedC   = Math.min(complexC, rawRefined || 0);
-  const wholeC     = Math.max(0, complexC - refinedC);
-  const h = small ? 12 : 20;
-  const uid = `mb${Math.random().toString(36).slice(2,6)}`;
+function MacroBar({ item, totals, small }) {
+  const src = totals || item; // use totals when rendering meal total, item for per-item
+  if (!src || src.cal <= 0) return null;
 
-  const segments = [
-    { sub: "unsat",   g: unsatFat,   kcal: unsatFat*9,   label: "Unsat Fat"      },
-    { sub: "sat",     g: satFat,     kcal: satFat*9,     label: "Sat Fat"        },
-    { sub: "whole",   g: wholeC,     kcal: wholeC*4,     label: "Whole Starch"   },
-    { sub: "refined", g: refinedC,   kcal: refinedC*4,   label: "Refined Starch" },
-    { sub: "fiber",   g: fiber,      kcal: fiber*2,      label: "Fiber"          },
-    { sub: "natSug",  g: naturalSug, kcal: naturalSug*4, label: "Natural Sugar"  },
-    { sub: "addSug",  g: addedSugar, kcal: addedSugar*4, label: "Added Sugar"    },
-    { sub: "protein", g: protein,    kcal: protein*4,    label: "Protein"        },
-  ].filter(s => s.g > 0.05);
+  const {fat=0, satFat=0, transFat=0, carbs=0, fiber=0, sugar=0, addedSugar=0,
+         protein=0, refinedCarbs:rawRefine=0, animalProtein=0} = src;
 
-  const total = segments.reduce((a,s) => a + s.kcal, 0) || 1;
+  const complexC  = Math.max(0, carbs - sugar - fiber);
+  const refinedC  = Math.min(complexC, rawRefine || 0);
+  const wholeC    = Math.max(0, complexC - refinedC);
+  const natSugar  = Math.max(0, sugar - addedSugar);
+  const unsatFat  = Math.max(0, fat - satFat - transFat);
+  const plantProt = Math.max(0, protein * (1 - (animalProtein||0)));
+  const animProt  = protein * (animalProtein||0);
+  const transFatG = transFat || 0;
 
-  const FILLS = {
-    unsat:   { fill: C.fat+"99",       legend: C.fat+"99",                                                                   color: C.fat     },
-    sat:     { fill:`url(#sat${uid})`, legend:`repeating-linear-gradient(45deg,${C.fat} 0 2px,#8a2a2a 2px 4px)`,            color: C.fat     },
-    whole:   { fill: C.carbs,          legend: C.carbs,                                                                      color: C.carbs   },
-    refined: { fill:`url(#ref${uid})`, legend:`repeating-linear-gradient(45deg,${C.carbs} 0 2px,#b05a10 2px 4px)`,          color: C.carbs   },
-    fiber:   { fill: C.fiber,          legend: C.fiber,                                                                      color: C.fiber   },
-    natSug:  { fill:`url(#nat${uid})`, legend:`repeating-linear-gradient(45deg,${C.carbs} 0 2px,#f7d06b 2px 4px)`,          color: C.carbs   },
-    addSug:  { fill:`url(#add${uid})`, legend:`repeating-linear-gradient(-45deg,${C.carbs} 0 2px,${C.added} 2px 4px)`,      color: C.added   },
-    protein: { fill: C.protein,        legend: C.protein,                                                                    color: C.protein },
-  };
+  // [group, patKey, grams, kcal_per_gram]
+  const segs = [
+    ['carb', 'whole-starch',   wholeC,    4],
+    ['carb', 'refined-starch', refinedC,  4],
+    ['carb', 'fiber',          fiber,     2],
+    ['carb', 'nat-sugar',      natSugar,  4],
+    ['carb', 'added-sugar',    addedSugar,4],
+    ['fat',  'unsat-fat',      unsatFat,  9],
+    ['fat',  'sat-fat',        satFat,    9],
+    ['fat',  'trans-fat',      transFatG, 9],
+    ['prot', 'plant-protein',  plantProt, 4],
+    ['prot', 'animal-protein', animProt,  4],
+  ].filter(s => s[2] > 0.05).map(([group, key, g, kcalPg]) => ({
+    group, key, g, kcal: g * kcalPg, label: {
+      'whole-starch':'Whole Starch','refined-starch':'Refined Starch',
+      'fiber':'Fiber','nat-sugar':'Natural Sugar','added-sugar':'Added Sugar',
+      'unsat-fat':'Unsat Fat','sat-fat':'Sat Fat','trans-fat':'Trans Fat',
+      'plant-protein':'Plant Protein','animal-protein':'Animal Protein'
+    }[key]
+  }));
+
+  const total = segs.reduce((a,s) => a+s.kcal, 0) || 1;
+  const h = small ? 14 : 22;
+  const uid = `bar${Math.random().toString(36).slice(2,7)}`;
 
   let x = 0;
-  const rects = segments.map((s, i) => {
+  const rects = segs.map((s,i) => {
     const w = (s.kcal / total) * 100;
     const rx = x; x += w;
-    return <rect key={i} x={rx} y="0" width={Math.max(w,0)} height={h} fill={FILLS[s.sub].fill}>
-      <title>{s.label}: {s.g.toFixed(1)}g ({Math.round((s.kcal/total)*100)}% cal)</title>
-    </rect>;
+    return (
+      <rect key={i} x={rx} y={0} width={Math.max(w,0)} height={h}
+            fill={`url(#${PATTERNS[s.key].id})`}>
+        <title>{s.label}: {s.g.toFixed(1)}g ({Math.round((s.kcal/total)*100)}% cal)</title>
+      </rect>
+    );
+  });
+
+  // group separators
+  const groupBoundaries = [];
+  let gx = 0, lastGroup = null;
+  segs.forEach(s => {
+    const w = (s.kcal / total) * 100;
+    if (lastGroup && s.group !== lastGroup) groupBoundaries.push(gx);
+    lastGroup = s.group; gx += w;
   });
 
   return (
     <div>
       <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none"
-           style={{borderRadius: h/2, display:"block"}}>
-        <defs>
-          <pattern id={`sat${uid}`} patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(45)">
-            <rect width="3" height={h} fill={C.fat}/><rect width="1.5" height={h} fill="#8a2a2a"/>
-          </pattern>
-          <pattern id={`ref${uid}`} patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(45)">
-            <rect width="3" height={h} fill={C.carbs}/><rect width="1.5" height={h} fill="#b05a10"/>
-          </pattern>
-          <pattern id={`nat${uid}`} patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(45)">
-            <rect width="3" height={h} fill={C.carbs}/><rect width="1.5" height={h} fill="#f7d06b"/>
-          </pattern>
-          <pattern id={`add${uid}`} patternUnits="userSpaceOnUse" width="3" height={h} patternTransform="rotate(-45)">
-            <rect width="3" height={h} fill={C.carbs}/><rect width="1.5" height={h} fill={C.added}/>
-          </pattern>
-          <clipPath id={`cl${uid}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2}/></clipPath>
-        </defs>
+           style={{borderRadius:h/2, display:'block'}}>
+        <clipPath id={`cl${uid}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2}/></clipPath>
         <g clipPath={`url(#cl${uid})`}>
           <rect width="100" height={h} fill="#2a2a2a"/>
           {rects}
+          {groupBoundaries.map((bx,i) => (
+            <line key={i} x1={bx} y1={0} x2={bx} y2={h} stroke="#141414" strokeWidth="1.5"/>
+          ))}
         </g>
       </svg>
+
       {!small && (
-        <div style={{display:"flex",gap:8,flexWrap:"wrap",marginTop:6,justifyContent:"center",fontSize:9}}>
-          {segments.map((s,i) => {
-            const f = FILLS[s.sub];
-            return (
-              <span key={i} style={{display:"flex",alignItems:"center",gap:4,color:f.color,fontWeight:600}}>
-                <span style={{display:"inline-block",width:12,height:9,borderRadius:2,background:f.legend}}/>
-                {s.label} {s.g.toFixed(1)}g <span style={{color:"#666",fontWeight:400}}>({Math.round((s.kcal/total)*100)}%)</span>
-              </span>
-            );
-          })}
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:6,fontSize:9}}>
+          {segs.map((s,i) => (
+            <span key={i} style={{display:'flex',alignItems:'center',gap:4,color:PATTERNS[s.key].textColor,fontWeight:600}}>
+              <LegendSwatch patKey={s.key} size={14}/>
+              {s.label} {s.g.toFixed(1)}g <span style={{color:'#666',fontWeight:400}}>({Math.round((s.kcal/total)*100)}%)</span>
+            </span>
+          ))}
         </div>
       )}
     </div>
   );
 }
 
+// ─── CARB SUB-CHARTS ─────────────────────────────────────────────
+// Weighted-average GI and Glycemic Load helpers
+function computeGIGL(quantities, allItems) {
+  // GL = sum(GI_i * availCarbs_i * qty_i) / 100
+  // Weighted avg GI = sum(GI_i * availCarbs_i * qty_i) / sum(availCarbs_i * qty_i)
+  let wGI = 0, totalAvailCarbs = 0, totalGL = 0;
+  Object.entries(quantities).forEach(([id, qty]) => {
+    const item = allItems.find(i => i.id === id);
+    if (!item) return;
+    const availCarbs = Math.max(0, item.carbs - item.fiber) * qty;
+    wGI += (item.gi || 0) * availCarbs;
+    totalAvailCarbs += availCarbs;
+    totalGL += ((item.gi || 0) * availCarbs) / 100;
+  });
+  return {
+    gi: totalAvailCarbs > 0 ? Math.round(wGI / totalAvailCarbs) : 0,
+    gl: Math.round(totalGL * 10) / 10,
+  };
+}
+
+function GlBadge({ gl }) {
+  const color = gl < 10 ? '#2d8a56' : gl < 20 ? '#c4943a' : '#c43a3a';
+  const label = gl < 10 ? 'Low GL' : gl < 20 ? 'Med GL' : 'High GL';
+  return <span className="gl-badge" style={{background:`${color}22`,color}}>{label} {gl}</span>;
+}
+
+function GiBadge({ gi }) {
+  if (!gi) return null;
+  const color = gi < 55 ? '#2d8a56' : gi < 70 ? '#c4943a' : '#c43a3a';
+  return <span className="gl-badge" style={{background:`${color}22`,color}}>GI {gi}</span>;
+}
+
+// A single segmented bar using the same pattern system but a subset of segments
+function SimpleSegBar({ segments, h=16 }) {
+  // segments: [{patKey, g, label}]
+  const total = segments.reduce((a,s) => a + s.g, 0) || 1;
+  const uid = `ss${Math.random().toString(36).slice(2,7)}`;
+  let x = 0;
+  const rects = segments.filter(s => s.g > 0.05).map((s,i) => {
+    const w = (s.g / total) * 100;
+    const rx = x; x += w;
+    return <rect key={i} x={rx} y={0} width={Math.max(w,0)} height={h} fill={`url(#${PATTERNS[s.patKey].id})`}>
+      <title>{s.label}: {s.g.toFixed(1)}g ({Math.round((s.g/total)*100)}%)</title>
+    </rect>;
+  });
+  return (
+    <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none"
+         style={{borderRadius:h/2,display:'block'}}>
+      <clipPath id={`cl${uid}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2}/></clipPath>
+      <g clipPath={`url(#cl${uid})`}>
+        <rect width="100" height={h} fill="#2a2a2a"/>
+        {rects}
+      </g>
+    </svg>
+  );
+}
+
+function CarbSubCharts({ totals, gigl }) {
+  if (!totals || totals.carbs <= 0) return null;
+  const { carbs=0, fiber=0, sugar=0, addedSugar=0, refinedCarbs:rawRef=0 } = totals;
+  const complex = Math.max(0, carbs - sugar - fiber);
+  const refined = Math.min(complex, rawRef || 0);
+  const whole   = Math.max(0, complex - refined);
+  const natSug  = Math.max(0, sugar - addedSugar);
+  const addSug  = addedSugar;
+
+  const charts = [
+    {
+      title: 'Whole-food vs Processed Carbs',
+      segs: [
+        { patKey:'whole-starch',   g:whole,   label:'Whole Starch'   },
+        { patKey:'fiber',          g:fiber,   label:'Fiber'          },
+        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar'  },
+        { patKey:'refined-starch', g:refined, label:'Refined Starch' },
+        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar'    },
+      ],
+      groups: [
+        { label:'Whole-food carbs', keys:['whole-starch','fiber','nat-sugar'],   color:'#3a6bc4' },
+        { label:'Processed carbs',  keys:['refined-starch','added-sugar'],       color:'#7a3ac4' },
+      ]
+    },
+    {
+      title: 'Slow vs Fast Carbs',
+      gi: gigl.gi, gl: gigl.gl,
+      segs: [
+        { patKey:'whole-starch',   g:whole,   label:'Whole Starch (slow)'   },
+        { patKey:'fiber',          g:fiber,   label:'Fiber (slows all)'     },
+        { patKey:'refined-starch', g:refined, label:'Refined Starch (fast)' },
+        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar (fast)'  },
+        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar (fast)'    },
+      ],
+      groups: [
+        { label:'Slow carbs', keys:['whole-starch','fiber'],                       color:'#2d8a56' },
+        { label:'Fast carbs', keys:['refined-starch','nat-sugar','added-sugar'],   color:'#c43a3a' },
+      ]
+    },
+    {
+      title: 'Carbs by Source',
+      segs: [
+        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar (fruit)' },
+        { patKey:'fiber',          g:fiber,   label:'Fiber (fruit/grains)'  },
+        { patKey:'whole-starch',   g:whole,   label:'Whole Starch (grains)' },
+        { patKey:'refined-starch', g:refined, label:'Refined Starch'        },
+        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar (processed)'},
+      ],
+      groups: [
+        { label:'Fruit', keys:['nat-sugar','fiber'],                         color:'#3a9bc4' },
+        { label:'Grains', keys:['whole-starch','refined-starch'],            color:'#3a6bc4' },
+        { label:'Processed', keys:['added-sugar'],                           color:'#7a3ac4' },
+      ]
+    },
+  ];
+
+  return (
+    <div>
+      {charts.map((chart, ci) => {
+        const validSegs = chart.segs.filter(s => s.g > 0.05);
+        if (validSegs.length === 0) return null;
+        return (
+          <div key={ci} className="carb-chart-wrap">
+            <div className="carb-chart-title">
+              {chart.title}
+              {chart.gi > 0 && <GiBadge gi={chart.gi}/>}
+              {chart.gl > 0 && <GlBadge gl={chart.gl}/>}
+            </div>
+            <SimpleSegBar segments={validSegs} h={16}/>
+            {/* Group labels */}
+            {chart.groups && (
+              <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:4,fontSize:8}}>
+                {chart.groups.map((g,gi) => {
+                  const total = validSegs.reduce((a,s) => a+s.g, 0) || 1;
+                  const groupTotal = validSegs.filter(s => g.keys.includes(s.patKey)).reduce((a,s) => a+s.g, 0);
+                  if (groupTotal < 0.05) return null;
+                  return (
+                    <span key={gi} style={{color:g.color,fontWeight:600}}>
+                      {g.label} {groupTotal.toFixed(1)}g ({Math.round((groupTotal/total)*100)}%)
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+            {/* Per-segment legend */}
+            <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:3,fontSize:8}}>
+              {validSegs.map((s,i) => (
+                <span key={i} style={{display:'flex',alignItems:'center',gap:3,color:PATTERNS[s.patKey].textColor,fontWeight:500}}>
+                  <LegendSwatch patKey={s.patKey} size={10}/>
+                  {s.label} {s.g.toFixed(1)}g
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── REPORT ───────────────────────────────────────────────────────
 function computeReport(quantities, allItems, daily) {
-  const KEYS = ["cal","fat","satFat","carbs","fiber","sugar","addedSugar","protein","sodium","refinedCarbs","caffeine"];
+  const KEYS = ['cal','fat','satFat','transFat','carbs','fiber','sugar','addedSugar','protein','sodium','refinedCarbs','caffeine'];
   const totals = {}; KEYS.forEach(k => totals[k] = 0);
+  totals.animalProtein = 0;
   let hasHyd=false, hasTrans=false, hasAnimal=false;
   const processedC=[], activeItems=[];
-  let wholeCal=0;
+  let wholeCal=0, wGI=0, availCarbsTotal=0;
 
   Object.entries(quantities).forEach(([id,qty]) => {
     const item = allItems.find(i => i.id===id);
     if (!item) return;
     activeItems.push({item,qty});
     KEYS.forEach(k => { totals[k] += (item[k]||0)*qty; });
+    totals.animalProtein += (item.animalProtein||0) * item.protein * qty;
     if (item.hydrogenatedOil) hasHyd=true;
-    if (item.transFatRisk)    hasTrans=true;
-    if (item.animal)          hasAnimal=true;
-    if (item.processed>=2 && item.processedReason) processedC.push({name:item.name,qty,score:item.processed,reason:item.processedReason});
+    if (item.transFatRisk||item.transFat>0) hasTrans=true;
+    if (item.animal) hasAnimal=true;
+    if (item.processed>=2&&item.processedReason) processedC.push({name:item.name,qty,score:item.processed,reason:item.processedReason});
     wholeCal += (item.cal*qty)*item.wholeFood;
+    const avail = Math.max(0,item.carbs-item.fiber)*qty;
+    wGI += (item.gi||0)*avail;
+    availCarbsTotal += avail;
   });
   processedC.sort((a,b) => b.score-a.score);
   const wholePct = totals.cal>0 ? (wholeCal/totals.cal)*100 : 0;
+  const gi = availCarbsTotal>0 ? Math.round(wGI/availCarbsTotal) : 0;
+  const gl = Math.round((wGI/100)*10)/10;
+  totals.animalProtein = totals.protein>0 ? totals.animalProtein/totals.protein : 0;
 
   const dangers = [
-    { key:"addedSugar", label:"Added Sugar",   value:totals.addedSugar,   max:daily.addedSugar,   unit:"g",  color:C.added,    maxLabel:"daily limit (36g)",          context: totals.addedSugar<=4?"Minimal":totals.addedSugar<=12?"Notable insulin response":totals.addedSugar<=24?"Liver fat production active":"Approaching daily limit" },
-    { key:"satFat",     label:"Saturated Fat", value:totals.satFat,       max:daily.satFat,       unit:"g",  color:C.sat,      maxLabel:"daily limit (13g)",          context: totals.satFat<=3?"Low":totals.satFat<=6?"Moderate":totals.satFat<=10?"LDL increasing":"At daily limit" },
-    { key:"refined",    label:"Refined Carbs", value:totals.refinedCarbs, max:daily.refinedCarbs, unit:"g",  color:C.carbs,    maxLabel:"high-meal threshold (50g)",   context: totals.refinedCarbs<=5?"Minimal":totals.refinedCarbs<=20?"Glucose spike likely":"Behaves like pure sugar" },
-    { key:"caffeine",   label:"Caffeine",      value:totals.caffeine,     max:daily.caffeine,     unit:"mg", color:C.caffeine, maxLabel:"FDA ceiling (400mg)",         context: totals.caffeine===0?"None":totals.caffeine<=100?"Mild":totals.caffeine<=200?"Moderate — cortisol elevated":totals.caffeine<=300?"High — sleep impact likely":"Near daily ceiling" },
-    { key:"sodium",     label:"Sodium",        value:totals.sodium,       max:daily.sodium,       unit:"mg", color:C.sodium,   maxLabel:"daily max (2300mg)",         context: totals.sodium<=200?"Low":totals.sodium<=600?"Moderate":totals.sodium<=1000?"High for one meal":"Very high — BP/retention" },
+    {key:'addedSugar',label:'Added Sugar',   value:totals.addedSugar,  max:daily.addedSugar,  unit:'g', color:'#7a3ac4', maxLabel:'daily limit (36g)',         context:totals.addedSugar<=4?'Minimal':totals.addedSugar<=12?'Notable insulin response':totals.addedSugar<=24?'Liver fat production active':'Approaching daily limit'},
+    {key:'satFat',    label:'Sat Fat',        value:totals.satFat,      max:daily.satFat,      unit:'g', color:'#a47820', maxLabel:'daily limit (13g)',         context:totals.satFat<=3?'Low':totals.satFat<=6?'Moderate':totals.satFat<=10?'LDL increasing':'At daily limit'},
+    {key:'refined',   label:'Refined Carbs',  value:totals.refinedCarbs,max:daily.refinedCarbs,unit:'g', color:'#6a9be4', maxLabel:'high-meal threshold (50g)', context:totals.refinedCarbs<=5?'Minimal':totals.refinedCarbs<=20?'Glucose spike likely':'Behaves like pure sugar'},
+    {key:'caffeine',  label:'Caffeine',        value:totals.caffeine,   max:daily.caffeine,    unit:'mg',color:'#6b4a2a', maxLabel:'FDA ceiling (400mg)',       context:totals.caffeine===0?'None':totals.caffeine<=100?'Mild':totals.caffeine<=200?'Moderate — cortisol elevated':totals.caffeine<=300?'High — sleep impact likely':'Near daily ceiling'},
+    {key:'sodium',    label:'Sodium',          value:totals.sodium,     max:daily.sodium,      unit:'mg',color:'#8a7a6a', maxLabel:'daily max (2300mg)',        context:totals.sodium<=200?'Low':totals.sodium<=600?'Moderate':totals.sodium<=1000?'High for one meal':'Very high — BP/retention'},
   ];
 
   const flags = [];
-  if (hasHyd)   flags.push({ key:"hyd",    label:"Hydrogenated Oils", color:C.fat,    detail:"Industrially hardened fats. Structure foreign to human metabolism.",                                                              items:processedC.filter(c=>c.reason.toLowerCase().includes("hydrogenated")) });
-  if (hasTrans) flags.push({ key:"trans",  label:"Trans Fat Risk",    color:C.fat,    detail:"Hydrogenated oils + mono/diglycerides may contain trans fats below 0.5g labeling threshold. No safe intake level (WHO).",         items:processedC.filter(c=>c.reason.toLowerCase().includes("trans")) });
-  if (processedC.some(c=>c.score>=3)) flags.push({ key:"upf", label:"Ultra-Processed", color:"#d47333", detail:"Industrial ingredients detected. Sorted by severity:",                                                           items:processedC });
-  if (hasAnimal) flags.push({ key:"animal", label:"Animal Products",  color:"#a07050", detail:"Contains dairy or other animal-derived ingredients.",                                                                             items:activeItems.filter(({item})=>item.animal).map(({item,qty})=>({name:item.name,qty,score:1,reason:"Contains dairy or other animal-derived ingredients"})) });
+  if (hasHyd)   flags.push({key:'hyd',    label:'Hydrogenated Oils', color:'#c43a3a', detail:'Industrially hardened fats.',                                                                                            items:processedC.filter(c=>c.reason.toLowerCase().includes('hydrogenated'))});
+  if (hasTrans) flags.push({key:'trans',  label:'Trans Fat Risk',    color:'#c43a3a', detail:'Trace trans fats below 0.5g labeling threshold possible. No safe intake level (WHO).',                                  items:processedC.filter(c=>c.reason.toLowerCase().includes('trans')||c.reason.toLowerCase().includes('hydrogenated'))});
+  if (processedC.some(c=>c.score>=3)) flags.push({key:'upf',label:'Ultra-Processed',color:'#c46a3a',detail:'Industrial ingredients detected. Sorted by severity:',                                                    items:processedC});
+  if (hasAnimal) flags.push({key:'animal',label:'Animal Products',   color:'#a07050', detail:'Contains dairy or other animal-derived ingredients.',                                                                    items:activeItems.filter(({item})=>item.animal).map(({item,qty})=>({name:item.name,qty,score:1,reason:'Dairy or animal-derived'}))});
 
   const positives = [
-    { key:"fiber",   label:"Fiber",        value:totals.fiber,  target:daily.fiber,   unit:"g", color:C.fiber,   maxLabel:"daily target (28g)",  context: totals.fiber>=8?"Strong — buffers glucose, feeds gut":totals.fiber>=3?"Some":"Low — glucose unbuffered" },
-    { key:"protein", label:"Protein",      value:totals.protein,target:daily.protein, unit:"g", color:C.protein, maxLabel:"daily target (64g)",  context: totals.protein>=15?"Strong — satiety":totals.protein>=8?"Moderate":"Low — hunger returns fast" },
-    { key:"whole",   label:"Whole Food %", value:wholePct,      target:100,           unit:"%", color:C.whole,   maxLabel:"100% whole-food",     context: wholePct>=70?"Mostly whole foods — recognized by your body":wholePct>=40?"Mixed":"Highly processed meal" },
+    {key:'fiber',  label:'Fiber',       value:totals.fiber,  target:daily.fiber,  unit:'g', color:'#1e3d7a', maxLabel:'daily target (28g)', context:totals.fiber>=8?'Strong — buffers glucose':totals.fiber>=3?'Some':'Low — glucose unbuffered'},
+    {key:'protein',label:'Protein',     value:totals.protein,target:daily.protein,unit:'g', color:'#c43a3a', maxLabel:'daily target (64g)', context:totals.protein>=15?'Strong — satiety':totals.protein>=8?'Moderate':'Low — hunger returns fast'},
+    {key:'whole',  label:'Whole Food %',value:wholePct,      target:100,          unit:'%', color:'#2d8a56', maxLabel:'100% whole-food',    context:wholePct>=70?'Mostly whole foods':wholePct>=40?'Mixed':'Highly processed meal'},
   ];
 
-  // Density-based scoring (quality of food, not quantity)
-  const p = v => totals.cal>0 ? (v/totals.cal)*100 : 0;
-  let score = 60;
-  const asd=p(totals.addedSugar), sfd=p(totals.satFat), rcd=p(totals.refinedCarbs), fbd=p(totals.fiber), prd=p(totals.protein);
-  if (asd>1)        score -= Math.min(25,(asd-1)*6);
-  if (sfd>1)        score -= Math.min(15,(sfd-1)*5);
-  if (rcd>3)        score -= Math.min(20,(rcd-3)*2);
-  if (hasTrans)     score -= 12;
-  if (hasHyd)       score -= 6;
-  if (wholePct<30)  score -= 8; else if (wholePct<60) score -= 3;
-  if (fbd>=2.5)     score += 10; else if (fbd>=1.5) score += 5;
-  if (prd>=4)       score += 5;
-  if (wholePct>=80) score += 8;
-  if (!hasHyd && !hasTrans && asd<1) score += 5;
-  score = Math.max(0, Math.min(100, Math.round(score)));
+  const p = v => totals.cal>0?(v/totals.cal)*100:0;
+  let score=60;
+  const asd=p(totals.addedSugar),sfd=p(totals.satFat),rcd=p(totals.refinedCarbs),fbd=p(totals.fiber),prd=p(totals.protein);
+  if(asd>1) score-=Math.min(25,(asd-1)*6);
+  if(sfd>1) score-=Math.min(15,(sfd-1)*5);
+  if(rcd>3) score-=Math.min(20,(rcd-3)*2);
+  if(hasTrans) score-=12; if(hasHyd) score-=6;
+  if(wholePct<30) score-=8; else if(wholePct<60) score-=3;
+  if(fbd>=2.5) score+=10; else if(fbd>=1.5) score+=5;
+  if(prd>=4) score+=5;
+  if(wholePct>=80) score+=8;
+  if(!hasHyd&&!hasTrans&&asd<1) score+=5;
+  score=Math.max(0,Math.min(100,Math.round(score)));
 
-  let grade, gColor, gLabel;
-  if      (score>=80) { grade="A"; gColor="#2d8a56"; gLabel="Clean fuel";    }
-  else if (score>=65) { grade="B"; gColor="#6b9e7a"; gLabel="Decent";        }
-  else if (score>=50) { grade="C"; gColor="#c4943a"; gLabel="Mediocre";      }
-  else if (score>=35) { grade="D"; gColor="#d47333"; gLabel="Damage mode";   }
-  else                { grade="F"; gColor="#c44a4a"; gLabel="Metabolic hit"; }
+  let grade,gColor,gLabel;
+  if(score>=80){grade='A';gColor='#2d8a56';gLabel='Clean fuel';}
+  else if(score>=65){grade='B';gColor='#6b9e7a';gLabel='Decent';}
+  else if(score>=50){grade='C';gColor='#c4943a';gLabel='Mediocre';}
+  else if(score>=35){grade='D';gColor='#d47333';gLabel='Damage mode';}
+  else{grade='F';gColor='#c43a3a';gLabel='Metabolic hit';}
 
-  return { totals, dangers, flags, positives, score, grade, gradeColor:gColor, gradeLabel:gLabel };
+  return {totals,dangers,flags,positives,score,grade,gradeColor:gColor,gradeLabel:gLabel,gi,gl};
 }
 
-// ─── COMPONENTS ───────────────────────────────────────────────────
-function MetricBar({ d, isPositive }) {
-  const pct = Math.min(100, (d.value / (isPositive ? d.target : d.max)) * 100);
-  const warn = !isPositive && pct > 60;
-  const barC = isPositive
-    ? (pct>=75 ? d.color : pct>=40 ? "#888" : "#555")
-    : (pct>75  ? d.color : pct>50  ? "#c4943a" : "#4a7a5a");
-  const highlight = warn || (isPositive && pct>=75);
+// ─── METRIC BAR ───────────────────────────────────────────────────
+function MetricBar({d, isPositive}) {
+  const pct = Math.min(100,(d.value/(isPositive?d.target:d.max))*100);
+  const warn = !isPositive && pct>60;
+  const barC = isPositive?(pct>=75?d.color:pct>=40?'#888':'#555'):(pct>75?d.color:pct>50?'#c4943a':'#4a7a5a');
+  const hi = warn||(isPositive&&pct>=75);
   return (
-    <div style={{marginBottom:7}}>
-      <div style={{display:"flex",justifyContent:"space-between",fontSize:10,marginBottom:2,alignItems:"baseline"}}>
-        <span style={{fontWeight:600, color: highlight ? d.color : "#888"}}>{d.label}</span>
-        <span style={{fontWeight:700, color: highlight ? d.color : "#666", fontSize:11}}>{d.value.toFixed(d.unit==="mg"?0:1)}{d.unit}</span>
+    <div className="metric-bar-wrap">
+      <div className="metric-bar-row">
+        <span style={{fontWeight:600,color:hi?d.color:'#888'}}>{d.label}</span>
+        <span style={{fontWeight:700,color:hi?d.color:'#666',fontSize:11}}>{d.value.toFixed(d.unit==='mg'?0:1)}{d.unit}</span>
       </div>
-      <div style={{height:5,backgroundColor:"#333",borderRadius:3,overflow:"hidden"}}>
-        <div style={{height:"100%",width:`${pct}%`,borderRadius:3,backgroundColor:barC,transition:"width 0.3s"}}/>
+      <div className="metric-bar-track">
+        <div className="metric-bar-fill" style={{width:`${pct}%`,backgroundColor:barC}}/>
       </div>
-      <div style={{display:"flex",justifyContent:"space-between",fontSize:8,marginTop:1}}>
-        <span style={{color: highlight ? d.color : "#555", fontWeight:500}}>{d.context}</span>
-        <span style={{color:"#444",fontStyle:"italic"}}>{d.maxLabel}</span>
+      <div className="metric-bar-footer">
+        <span style={{color:hi?d.color:'#555',fontWeight:500}}>{d.context}</span>
+        <span style={{color:'#444',fontStyle:'italic'}}>{d.maxLabel}</span>
       </div>
     </div>
   );
 }
 
-function QtyStepper({ qty, max, unit, onSet, dark }) {
-  const c  = dark ? "#999" : "#555";
-  const bg = dark ? "#333" : "#eae7e2";
+// ─── QTY STEPPER ──────────────────────────────────────────────────
+function QtyStepper({qty,max,unit,onSet,dark}) {
+  const c=dark?'#999':'#555', bg=dark?'#333':'#eae7e2';
   return (
-    <div style={{display:"flex",alignItems:"center",borderRadius:6,overflow:"hidden",backgroundColor:bg,flexShrink:0}}
-         onClick={e => e.stopPropagation()}>
-      <button onClick={() => onSet(Math.max(0, qty-1))}
-              style={{width:28,height:28,border:"none",backgroundColor:"transparent",color:c,fontSize:18,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
-      <div style={{minWidth:38,textAlign:"center",fontWeight:700,color:dark?"#eee":"#333",lineHeight:1.1,padding:"0 2px"}}>
-        <div style={{fontSize:14}}>{qty}</div>
-        <div style={{fontSize:8,color:dark?"#777":"#aaa",fontWeight:500}}>{unit}</div>
+    <div className="stepper" style={{background:bg}} onClick={e=>e.stopPropagation()}>
+      <button onClick={()=>onSet(Math.max(0,qty-1))} style={{color:c}}>−</button>
+      <div className="stepper-val" style={{color:dark?'#eee':'#333'}}>
+        <div className="big">{qty}</div>
+        <div className="small" style={{color:dark?'#777':'#aaa'}}>{unit}</div>
       </div>
-      <button onClick={() => onSet(Math.min(max, qty+1))}
-              style={{width:28,height:28,border:"none",backgroundColor:"transparent",color:c,fontSize:18,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
+      <button onClick={()=>onSet(Math.min(max,qty+1))} style={{color:c}}>+</button>
     </div>
   );
+}
+
+function formatPortion(qty,unit){return qty===1?`1 ${unit}`:`${qty} × ${unit}`;}
+
+// ─── STATE PERSISTENCE ────────────────────────────────────────────
+const STORAGE_KEY = 'fam_v1';
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function saveState(quantities, showPanel, scrollY) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({quantities,showPanel,scrollY,ts:Date.now()}));
+  } catch {}
 }
 
 // ─── APP ──────────────────────────────────────────────────────────
 function App() {
-  const [quantities,    setQuantities]    = useState({});
-  const [expandedNote,  setExpandedNote]  = useState(null);
-  const [showPanel,     setShowPanel]     = useState(false);
-  const [expandedFlag,  setExpandedFlag]  = useState(null);
-  const [appData,       setAppData]       = useState(null);
-  const [loadError,     setLoadError]     = useState(null);
+  const saved = loadState();
+  const [quantities,   setQuantities]   = useState(saved?.quantities || {});
+  const [expandedNote, setExpandedNote] = useState(null);
+  const [showPanel,    setShowPanel]    = useState(saved?.showPanel || false);
+  const [expandedFlag, setExpandedFlag] = useState(null);
+  const [appData,      setAppData]      = useState(null);
+  const [loadError,    setLoadError]    = useState(null);
+  const saveTimer = useRef(null);
+
+  // Persist state on changes
+  useEffect(() => {
+    clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      saveState(quantities, showPanel, window.scrollY);
+    }, 300);
+  }, [quantities, showPanel]);
+
+  // Persist scroll position continuously
+  useEffect(() => {
+    const onScroll = () => {
+      clearTimeout(saveTimer.current);
+      saveTimer.current = setTimeout(() => saveState(quantities, showPanel, window.scrollY), 200);
+    };
+    window.addEventListener('scroll', onScroll, {passive:true});
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [quantities, showPanel]);
+
+  // Restore scroll after data loads
+  useEffect(() => {
+    if (appData && saved?.scrollY) {
+      setTimeout(() => window.scrollTo({top:saved.scrollY, behavior:'instant'}), 50);
+    }
+  }, [appData]);
 
   useEffect(() => {
     fetch('data.json')
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-      .then(d  => setAppData(d))
-      .catch(e => setLoadError(e.message));
+      .then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
+      .then(d=>setAppData(d))
+      .catch(e=>setLoadError(e.message));
   }, []);
 
-  if (loadError) return <div className="error">Could not load data.json: {loadError}<br/><small>Run via a local server: python -m http.server 8000</small></div>;
+  if (loadError) return <div className="error">Could not load data.json: {loadError}<br/><small>Run: python -m http.server 8000</small></div>;
   if (!appData)  return <div className="loading">Loading…</div>;
 
-  const setQty = (id, n) => setQuantities(prev => {
-    const next = {...prev};
-    if (n <= 0) delete next[id]; else next[id] = n;
-    return next;
-  });
+  const setQty = (id,n) => setQuantities(prev=>{const next={...prev};if(n<=0)delete next[id];else next[id]=n;return next;});
+  const clearAll = () => { setQuantities({}); setShowPanel(false); setExpandedNote(null); window.scrollTo({top:0,behavior:'smooth'}); };
 
-  const allItems   = appData.CATEGORIES.flatMap(c => c.items);
+  const allItems    = appData.CATEGORIES.flatMap(c=>c.items);
   const activeCount = Object.keys(quantities).length;
-  const report     = activeCount > 0 ? computeReport(quantities, allItems, appData.DAILY) : null;
+  const report      = activeCount>0 ? computeReport(quantities,allItems,appData.DAILY) : null;
+  const gigl        = activeCount>0 ? computeGIGL(quantities,allItems) : null;
+
+  const panelH = showPanel ? '80vh' : '130px';
 
   return (
-    <div style={{fontFamily:"'Outfit',sans-serif",maxWidth:720,margin:"0 auto",padding:"24px 16px 200px",backgroundColor:"#f7f5f2",minHeight:"100vh"}}>
-
-      {/* HEADER */}
-      <div style={{marginBottom:24}}>
-        <div style={{fontSize:9,letterSpacing:2.5,textTransform:"uppercase",color:"#bbb",fontWeight:700}}>FOOD AS MEDICINE</div>
-        <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:26,fontWeight:700,margin:"4px 0",lineHeight:1.1,color:"#1e1e1e"}}>Build Your Meal</h1>
-        <p style={{fontSize:12,color:"#999",margin:0}}>Quality score grades the food, not the portion. Bars anchored to daily limits.</p>
-        {activeCount > 0 && (
-          <button onClick={() => { setQuantities({}); setShowPanel(false); }}
-                  style={{marginTop:8,border:"none",backgroundColor:"#e8e5e0",borderRadius:4,padding:"4px 12px",fontSize:10,color:"#999",cursor:"pointer",fontWeight:600}}>
-            Clear all
-          </button>
-        )}
-      </div>
-
-      {/* CATEGORIES */}
-      {appData.CATEGORIES.map((cat, ci) => (
-        <div key={ci} style={{marginBottom:22}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10,borderBottom:"1px solid #e8e5e0",paddingBottom:6}}>
-            <span style={{fontSize:20}}>{cat.icon}</span>
-            <div>
-              <div style={{fontSize:13,fontWeight:700,color:"#1e1e1e"}}>{cat.name}</div>
-              <div style={{fontSize:10,color:"#aaa"}}>{cat.desc}</div>
-            </div>
-          </div>
-          <div style={{display:"flex",flexDirection:"column",gap:4}}>
-            {cat.items.map(item => {
-              const qty    = quantities[item.id] || 0;
-              const active = qty > 0;
-              const isOpen = expandedNote === item.id;
-              return (
-                <div key={item.id}>
-                  {/* ROW */}
-                  <div style={{display:"flex",alignItems:"center",gap:8,borderRadius:8,padding:"8px 10px",
-                               backgroundColor:active?"#1e1e1e":"#fff",
-                               boxShadow:active?"none":"0 1px 3px rgba(0,0,0,0.04)",transition:"all 0.15s"}}>
-                    <QtyStepper qty={qty} max={item.max} unit={item.unit} onSet={n => setQty(item.id, n)} dark={active}/>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:13,fontWeight:600,lineHeight:1.2,color:active?"#eee":"#333",display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}>
-                        {item.name}
-                        {item.hydrogenatedOil && <span style={{fontSize:7,backgroundColor:C.fat+"33",color:C.fat,padding:"1px 4px",borderRadius:2,fontWeight:800}}>HYD</span>}
-                        {item.processed>=3     && <span style={{fontSize:7,backgroundColor:"#d4733333",color:"#d47333",padding:"1px 4px",borderRadius:2,fontWeight:800}}>UPF</span>}
-                        {item.animal           && <span style={{fontSize:7,backgroundColor:"#a0705033",color:"#a07050",padding:"1px 4px",borderRadius:2,fontWeight:800}}>🐄</span>}
-                      </div>
-                      <div style={{fontSize:9,color:active?"#777":"#bbb",marginTop:1}}>
-                        {item.brand}{active && <span style={{color:"#aaa"}}> · {formatPortion(qty, item.unit)}</span>}
-                      </div>
-                    </div>
-                    <div style={{textAlign:"right",flexShrink:0,minWidth:44}}>
-                      {active
-                        ? <><div style={{fontSize:16,fontWeight:900,color:"#fff"}}>{Math.round(item.cal*qty)}</div><div style={{fontSize:8,color:"#666"}}>cal</div></>
-                        : <><div style={{fontSize:14,fontWeight:800,color:"#555"}}>{item.cal}</div><div style={{fontSize:8,color:"#bbb"}}>/{item.unit}</div></>
-                      }
-                    </div>
-                    {item.addedSugar>=8 && <div style={{width:8,height:8,borderRadius:"50%",backgroundColor:C.added,flexShrink:0}}/>}
-                    {item.addedSugar>=4 && item.addedSugar<8 && <div style={{width:8,height:8,borderRadius:"50%",backgroundColor:"#c4943a",flexShrink:0}}/>}
-                    <div onClick={() => setExpandedNote(isOpen ? null : item.id)}
-                         style={{width:22,height:22,borderRadius:"50%",flexShrink:0,
-                                 backgroundColor:active?"#333":"#f0ede8",
-                                 display:"flex",alignItems:"center",justifyContent:"center",
-                                 fontSize:11,color:active?"#777":"#aaa",fontWeight:700,cursor:"pointer"}}>i</div>
-                  </div>
-
-                  {/* EXPANDED NOTE */}
-                  {isOpen && (
-                    <div style={{margin:"2px 0 4px 0",padding:"10px 12px",backgroundColor:"#1e1e1e",borderRadius:6,
-                                 borderLeft:`3px solid ${item.hydrogenatedOil ? C.fat : item.processed>=2 ? "#d47333" : "#444"}`,
-                                 fontSize:11,lineHeight:1.6,color:"#aaa"}}>
-                      <div style={{marginBottom:8}}>{item.note}</div>
-                      <div style={{fontSize:8,letterSpacing:1.5,textTransform:"uppercase",color:"#555",fontWeight:700,marginBottom:4}}>
-                        MACRO BREAKDOWN (per {item.unit})
-                      </div>
-                      <MacroBar cal={item.cal} fat={item.fat} satFat={item.satFat} carbs={item.carbs}
-                                fiber={item.fiber} sugar={item.sugar} addedSugar={item.addedSugar}
-                                protein={item.protein} refinedCarbs={item.refinedCarbs} small={false}/>
-                      <div style={{display:"flex",gap:8,flexWrap:"wrap",fontSize:8,color:"#666",fontWeight:600,marginTop:6}}>
-                        <span>{item.cal} cal</span>
-                        <span>Na {item.sodium}mg</span>
-                        {item.refinedCarbs>0 && <span style={{color:C.carbs}}>Refined starch {item.refinedCarbs}g</span>}
-                        {item.caffeine>0      && <span style={{color:C.caffeine}}>Caffeine {item.caffeine}mg</span>}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+    <div>
+      <PatternDefs/>
+      <div className="app">
+        {/* HEADER */}
+        <div className="header">
+          <div className="eyebrow">FOOD AS MEDICINE</div>
+          <h1>Build Your Meal</h1>
+          <p className="subhead">Quality score grades the food, not the portion. Bars anchored to daily limits.</p>
+          <div className="header-actions">
+            <button className="clear-btn" onClick={clearAll}>⌫ Clear all</button>
+            {activeCount>0 && <span style={{fontSize:11,color:'#aaa'}}>{activeCount} item{activeCount>1?'s':''} selected</span>}
           </div>
         </div>
-      ))}
 
-      {/* STICKY BOTTOM PANEL */}
-      <div style={{position:"fixed",bottom:0,left:0,right:0,backgroundColor:"#141414F8",backdropFilter:"blur(12px)",
-                   maxWidth:720,margin:"0 auto",borderTop:"1px solid #2a2a2a",zIndex:100,
-                   maxHeight:showPanel?"70vh":130,transition:"max-height 0.3s",overflowY:"auto"}}>
-        {activeCount === 0 ? (
-          <div style={{textAlign:"center",fontSize:12,color:"#555",padding:"16px 0"}}>Use +/− to add items</div>
-        ) : (
-          <div style={{padding:"10px 16px 14px"}}>
-
-            {/* Summary — always visible */}
-            <div onClick={() => setShowPanel(!showPanel)}
-                 style={{cursor:"pointer",display:"flex",alignItems:"center",gap:12,marginBottom:showPanel?10:0}}>
-              <div style={{width:42,height:42,borderRadius:8,backgroundColor:report.gradeColor,
-                           display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <div style={{fontSize:22,fontWeight:900,color:"#fff",lineHeight:1}}>{report.grade}</div>
+        {/* CATEGORIES GRID */}
+        <div className="categories-grid">
+          {appData.CATEGORIES.map((cat,ci) => (
+            <div key={ci} className="category">
+              <div className="cat-header">
+                <span className="cat-icon">{cat.icon}</span>
+                <div><div className="cat-name">{cat.name}</div><div className="cat-desc">{cat.desc}</div></div>
               </div>
-              <div style={{flex:1}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline"}}>
-                  <span style={{fontSize:10,color:report.gradeColor,fontWeight:700}}>{report.gradeLabel}</span>
-                  <span style={{fontSize:9,color:"#555"}}>{showPanel ? "▼ collapse" : "▲ details"}</span>
-                </div>
-                <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-                  <span style={{fontSize:26,fontWeight:900,color:"#fff",lineHeight:1}}>{Math.round(report.totals.cal)}</span>
-                  <span style={{fontSize:10,color:"#555"}}>cal</span>
-                  <span style={{fontSize:10,color:"#444",marginLeft:4}}>quality {report.score}/100</span>
-                </div>
+              <div className="items-list">
+                {cat.items.map(item => {
+                  const qty=quantities[item.id]||0, active=qty>0, isOpen=expandedNote===item.id;
+                  return (
+                    <div key={item.id}>
+                      <div className={`item-row${active?' active':''}`}>
+                        <QtyStepper qty={qty} max={item.max} unit={item.unit} onSet={n=>setQty(item.id,n)} dark={active}/>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div className="item-name" style={{color:active?'#eee':'#333'}}>
+                            {item.name}
+                            {item.hydrogenatedOil && <span className="tag" style={{background:'#c43a3a33',color:'#c43a3a'}}>HYD</span>}
+                            {item.processed>=3    && <span className="tag" style={{background:'#d4733333',color:'#d47333'}}>UPF</span>}
+                            {item.animal          && <span className="tag" style={{background:'#a0705033',color:'#a07050'}}>🐄</span>}
+                            {item.gi>0            && <span className="tag" style={{background:'#33333333',color:'#888'}}>GI {item.gi}</span>}
+                          </div>
+                          <div className="item-brand" style={{color:active?'#777':'#bbb'}}>
+                            {item.brand}{active&&<span style={{color:'#aaa'}}> · {formatPortion(qty,item.unit)}</span>}
+                          </div>
+                        </div>
+                        <div className="item-cal">
+                          {active
+                            ?<><div style={{fontSize:16,fontWeight:900,color:'#fff'}}>{Math.round(item.cal*qty)}</div><div style={{fontSize:8,color:'#666'}}>cal</div></>
+                            :<><div style={{fontSize:14,fontWeight:800,color:'#555'}}>{item.cal}</div><div style={{fontSize:8,color:'#bbb'}}>/{item.unit}</div></>
+                          }
+                        </div>
+                        {item.addedSugar>=8   && <div className="sugar-dot" style={{background:'#7a3ac4'}}/>}
+                        {item.addedSugar>=4&&item.addedSugar<8 && <div className="sugar-dot" style={{background:'#c4943a'}}/>}
+                        <button className="info-btn" style={{background:active?'#333':'#f0ede8',color:active?'#777':'#aaa',border:'none'}}
+                                onClick={()=>setExpandedNote(isOpen?null:item.id)}>i</button>
+                      </div>
+
+                      {isOpen && (
+                        <div className="info-panel" style={{borderLeft:`3px solid ${item.hydrogenatedOil?'#c43a3a':item.processed>=2?'#d47333':'#444'}`}}>
+                          <div style={{marginBottom:8}}>{item.note}</div>
+                          <div className="info-section-title">MACRO BREAKDOWN (per {item.unit})</div>
+                          <MacroBar item={item} small={false}/>
+                          {item.gi > 0 && (
+                            <div style={{marginTop:8,marginBottom:4}}>
+                              <GiBadge gi={item.gi}/>
+                              <span style={{fontSize:9,color:'#666',marginLeft:8}}>
+                                GL per {item.unit}: {(item.gi * Math.max(0,item.carbs-item.fiber) / 100).toFixed(1)}
+                              </span>
+                            </div>
+                          )}
+                          <div className="info-stats">
+                            <span>{item.cal} cal</span>
+                            <span>Na {item.sodium}mg</span>
+                            {item.refinedCarbs>0 && <span style={{color:'#6a9be4'}}>Refined {item.refinedCarbs}g</span>}
+                            {item.caffeine>0     && <span style={{color:'#6b4a2a'}}>Caffeine {item.caffeine}mg</span>}
+                            {item.transFat>0     && <span style={{color:'#c46a3a'}}>Trans fat ~{item.transFat}g (trace)</span>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
+          ))}
+        </div>
+      </div>{/* end .app */}
 
-            {/* Expanded detail */}
-            {showPanel && (
-              <div style={{borderTop:"1px solid #2a2a2a",paddingTop:10}}>
-
-                <div style={{fontSize:8,letterSpacing:1.5,textTransform:"uppercase",color:"#555",fontWeight:700,marginBottom:6}}>MACRO DISTRIBUTION</div>
-                <MacroBar cal={report.totals.cal} fat={report.totals.fat} satFat={report.totals.satFat}
-                          carbs={report.totals.carbs} fiber={report.totals.fiber} sugar={report.totals.sugar}
-                          addedSugar={report.totals.addedSugar} protein={report.totals.protein}
-                          refinedCarbs={report.totals.refinedCarbs} small={false}/>
-
-                {report.flags.length > 0 && (
-                  <div style={{marginTop:12,marginBottom:8}}>
-                    <div style={{fontSize:8,letterSpacing:1.5,textTransform:"uppercase",color:"#555",fontWeight:700,marginBottom:6}}>WARNINGS</div>
-                    {report.flags.map(f => (
-                      <div key={f.key} style={{marginBottom:6}}>
-                        <button onClick={() => setExpandedFlag(expandedFlag===f.key ? null : f.key)}
-                                style={{border:"none",backgroundColor:`${f.color}15`,borderRadius:4,padding:"5px 10px",
-                                        fontSize:10,fontWeight:700,color:f.color,cursor:"pointer",
-                                        width:"100%",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                          <span>⚠ {f.label}</span>
-                          <span style={{fontSize:8,color:"#555"}}>{expandedFlag===f.key?"▼":"▶"} {f.items?.length||0} item{(f.items?.length||0)!==1?"s":""}</span>
-                        </button>
-                        {expandedFlag === f.key && (
-                          <div style={{padding:"8px 10px",backgroundColor:"#1a1a1a",borderRadius:"0 0 4px 4px",borderLeft:`3px solid ${f.color}`}}>
-                            <div style={{fontSize:10,color:"#888",marginBottom:6,lineHeight:1.5}}>{f.detail}</div>
-                            {f.items && f.items.map((c, ci) => (
-                              <div key={ci} style={{display:"flex",alignItems:"flex-start",gap:8,marginBottom:6,paddingBottom:6,
-                                                    borderBottom:ci<f.items.length-1?"1px solid #222":"none"}}>
-                                <div style={{width:6,height:6,borderRadius:"50%",backgroundColor:f.color,marginTop:5,flexShrink:0,opacity:0.8}}/>
-                                <div>
-                                  <div style={{fontSize:11,fontWeight:700,color:"#ccc"}}>
-                                    {c.name} <span style={{fontWeight:400,color:"#666"}}>×{c.qty}</span>
-                                    {c.score>1 && <span style={{marginLeft:6,fontSize:8,backgroundColor:`${f.color}25`,color:f.color,padding:"1px 5px",borderRadius:2,fontWeight:800}}>severity {c.score}/3</span>}
-                                  </div>
-                                  <div style={{fontSize:9,color:"#777",lineHeight:1.5,marginTop:2}}>{c.reason}</div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+      {/* ── STICKY BOTTOM PANEL ── */}
+      <div className="bottom-panel" style={{maxHeight:panelH}}>
+        <div className="bottom-inner">
+          {activeCount===0 ? (
+            <div className="bottom-empty">Use +/− to add items · <button className="clear-btn" onClick={clearAll} style={{display:'inline'}}>Clear</button></div>
+          ) : (
+            <>
+              {/* Always-visible summary row */}
+              <div className="summary-row" onClick={()=>setShowPanel(!showPanel)}>
+                <div className="grade-badge" style={{background:report.gradeColor}}>
+                  <span className="grade-letter">{report.grade}</span>
+                </div>
+                <div className="summary-info">
+                  <div className="summary-top">
+                    <span style={{fontSize:10,color:report.gradeColor,fontWeight:700}}>{report.gradeLabel}</span>
+                    <span className="collapse-hint">{showPanel?'▼ collapse':'▲ details'}</span>
                   </div>
-                )}
-
-                <div style={{fontSize:8,letterSpacing:1.5,textTransform:"uppercase",color:"#555",fontWeight:700,marginBottom:6,marginTop:10}}>WATCH THESE</div>
-                {report.dangers.map(d => <MetricBar key={d.key} d={d}/>)}
-
-                <div style={{fontSize:8,letterSpacing:1.5,textTransform:"uppercase",color:"#555",fontWeight:700,marginBottom:6,marginTop:10}}>WANT MORE OF</div>
-                {report.positives.map(p => <MetricBar key={p.key} d={{...p, max:p.target}} isPositive={true}/>)}
-
+                  <div className="summary-cal">
+                    <span className="cal-big">{Math.round(report.totals.cal)}</span>
+                    <span className="cal-unit">cal</span>
+                    <span className="quality-score">quality {report.score}/100</span>
+                    {gigl&&gigl.gi>0 && <GiBadge gi={gigl.gi}/>}
+                    {gigl&&gigl.gl>0 && <GlBadge gl={gigl.gl}/>}
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-        )}
+
+              {showPanel && (
+                <div style={{borderTop:'1px solid #2a2a2a',paddingTop:10,marginTop:8}}>
+
+                  {/* Main macro bar */}
+                  <div className="panel-section" style={{marginTop:0}}>MACRO DISTRIBUTION</div>
+                  <MacroBar totals={{...report.totals}} small={false}/>
+
+                  {/* Flags */}
+                  {report.flags.length>0 && (
+                    <>
+                      <div className="panel-section">WARNINGS</div>
+                      {report.flags.map(f=>(
+                        <div key={f.key}>
+                          <button className="flag-btn" onClick={()=>setExpandedFlag(expandedFlag===f.key?null:f.key)}
+                                  style={{background:`${f.color}15`,color:f.color}}>
+                            <span>⚠ {f.label}</span>
+                            <span style={{fontSize:8,color:'#555'}}>{expandedFlag===f.key?'▼':'▶'} {f.items?.length||0} item{(f.items?.length||0)!==1?'s':''}</span>
+                          </button>
+                          {expandedFlag===f.key && (
+                            <div className="flag-detail" style={{background:'#1a1a1a',borderLeft:`3px solid ${f.color}`,marginBottom:8}}>
+                              <div style={{fontSize:10,color:'#888',marginBottom:6,lineHeight:1.5}}>{f.detail}</div>
+                              {f.items&&f.items.map((c,ci)=>(
+                                <div key={ci} className="flag-item" style={{borderBottom:ci<f.items.length-1?'1px solid #222':'none'}}>
+                                  <div className="flag-dot" style={{background:f.color}}/>
+                                  <div>
+                                    <div style={{fontSize:11,fontWeight:700,color:'#ccc'}}>
+                                      {c.name} <span style={{fontWeight:400,color:'#666'}}>×{c.qty}</span>
+                                      {c.score>1&&<span style={{marginLeft:6,fontSize:8,background:`${f.color}25`,color:f.color,padding:'1px 5px',borderRadius:2,fontWeight:800}}>severity {c.score}/3</span>}
+                                    </div>
+                                    <div style={{fontSize:9,color:'#777',lineHeight:1.5,marginTop:2}}>{c.reason}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Danger bars */}
+                  <div className="panel-section">WATCH THESE</div>
+                  {report.dangers.map(d=><MetricBar key={d.key} d={d}/>)}
+
+                  {/* Positive bars */}
+                  <div className="panel-section">WANT MORE OF</div>
+                  {report.positives.map(p=><MetricBar key={p.key} d={{...p,max:p.target}} isPositive/>)}
+
+                  {/* Carb sub-charts */}
+                  {report.totals.carbs > 0 && (
+                    <>
+                      <div className="panel-section">CARB BREAKDOWN</div>
+                      <CarbSubCharts totals={report.totals} gigl={gigl||{gi:0,gl:0}}/>
+                    </>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
