@@ -1,0 +1,752 @@
+[
+  {
+    "Category": "CEREALS",
+    "Food": "All Bran Average",
+    "GI": 44
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Rolled Oats",
+    "GI": 50
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Oatmeal Average",
+    "GI": 55
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Muesli Average",
+    "GI": 56
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Mini Wheats",
+    "GI": 58
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Raisin Bran",
+    "GI": 61
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Cream of Wheat",
+    "GI": 66
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Special K",
+    "GI": 69
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Cream of Wheat",
+    "GI": 74
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Cheerios",
+    "GI": 74
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Grape Nuts",
+    "GI": 75
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Coco Pops",
+    "GI": 77
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Instant Oatmeal",
+    "GI": 79
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Puffed Wheat Cereal",
+    "GI": 80
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Cornflake",
+    "GI": 81
+  },
+  {
+    "Category": "CEREALS",
+    "Food": "Rice Krispies",
+    "GI": 82
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Wheat Tortilla",
+    "GI": 30
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Coarse Barley Bread 80% Kernels",
+    "GI": 34
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Vanilla Cake Made from Packet Mix with Vanilla Frosting (Betty Crocker)",
+    "GI": 42
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Apple Muffin Made with Rolled Oats and Sugar",
+    "GI": 44
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Sponge Cake Plain",
+    "GI": 46
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Banana Cake Made with Sugar",
+    "GI": 47
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Apple Muffin Made with Rolled Oats and Without Sugar",
+    "GI": 48
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "100% Whole Grain Bread",
+    "GI": 51
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Corn Tortilla",
+    "GI": 52
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Banana Cake Made Without Sugar",
+    "GI": 55
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Pumpernickel Bread",
+    "GI": 56
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "50% Cracked Wheat Kernel Bread",
+    "GI": 58
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Hamburger Bun",
+    "GI": 61
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Pita Bread White",
+    "GI": 68
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Whole Wheat Bread",
+    "GI": 69
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Bagel White Frozen",
+    "GI": 72
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Wonder Bread",
+    "GI": 73
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Kaiser Roll",
+    "GI": 73
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "White Wheat Flour Bread",
+    "GI": 75
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Waffles Aunt Jemima",
+    "GI": 76
+  },
+  {
+    "Category": "BAKERY & BREAD",
+    "Food": "Baguette White Plain",
+    "GI": 95
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Whole Milk",
+    "GI": 31
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Skim Milk",
+    "GI": 31
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Sweetened Yogurt",
+    "GI": 33
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Low Fat Yogurt",
+    "GI": 33
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Chocolate Milk",
+    "GI": 40
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Soy Milk",
+    "GI": 44
+  },
+  {
+    "Category": "DAIRY PRODUCTS",
+    "Food": "Plain Ice Cream",
+    "GI": 61
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Red Wine",
+    "GI": 15
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Beer",
+    "GI": 15
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Tomato Juice",
+    "GI": 38
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Apple Juice Unsweetened",
+    "GI": 41
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Orange Juice Unsweetened",
+    "GI": 50
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Coca Cola",
+    "GI": 63
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Fanta Orange Soft Drink",
+    "GI": 68
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Cranberry Juice Cocktail",
+    "GI": 68
+  },
+  {
+    "Category": "BEVERAGES",
+    "Food": "Gatorade",
+    "GI": 89
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Chickpeas",
+    "GI": 10
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Peanuts",
+    "GI": 13
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Soy Beans",
+    "GI": 15
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Cashews",
+    "GI": 22
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Lentils",
+    "GI": 28
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Black Beans",
+    "GI": 30
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Kidney Beans",
+    "GI": 34
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Navy Beans",
+    "GI": 39
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Baked Beans",
+    "GI": 40
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Chickpeas Canned in Brine",
+    "GI": 42
+  },
+  {
+    "Category": "BEANS & NUTS",
+    "Food": "Black-Eyed Peas",
+    "GI": 50
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Kale",
+    "GI": 5
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Brussels Sprouts",
+    "GI": 6
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Spinach",
+    "GI": 6
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Broccoli",
+    "GI": 10
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Cabbage",
+    "GI": 10
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Cauliflower",
+    "GI": 12
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Tomato",
+    "GI": 15
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Carrots",
+    "GI": 39
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Parsnips",
+    "GI": 52
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Green Peas",
+    "GI": 54
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Yams",
+    "GI": 54
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Corn on the Cob",
+    "GI": 54
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Sweet Potato",
+    "GI": 70
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "French Fries",
+    "GI": 75
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Boiled White Potato",
+    "GI": 82
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Instant Mashed Potato",
+    "GI": 87
+  },
+  {
+    "Category": "VEGETABLES",
+    "Food": "Baked Russet Potato",
+    "GI": 111
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Cherries",
+    "GI": 22
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Grapefruit",
+    "GI": 25
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Prunes Pitted",
+    "GI": 29
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Raspberries",
+    "GI": 30
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Apple",
+    "GI": 36
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Pears",
+    "GI": 38
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Blueberries",
+    "GI": 40
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Strawberries",
+    "GI": 40
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Dates",
+    "GI": 42
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Peach",
+    "GI": 42
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Oranges",
+    "GI": 45
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Grapes",
+    "GI": 46
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Kiwi",
+    "GI": 47
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Banana",
+    "GI": 48
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Pineapple",
+    "GI": 59
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Raisins",
+    "GI": 64
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Cantaloupe",
+    "GI": 65
+  },
+  {
+    "Category": "FRUITS",
+    "Food": "Watermelon",
+    "GI": 72
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Nutella",
+    "GI": 33
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "M&M’s Peanut",
+    "GI": 33
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Corn Chips",
+    "GI": 42
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Snickers Bar High Fat",
+    "GI": 50
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Potato Chips Average",
+    "GI": 56
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Blueberry Muffin",
+    "GI": 59
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Shortbread Cookies",
+    "GI": 64
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Rye Crisps",
+    "GI": 64
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Popcorn",
+    "GI": 65
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Graham Crackers",
+    "GI": 74
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Soda Crackers",
+    "GI": 74
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Donuts",
+    "GI": 76
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Vanilla Wafers",
+    "GI": 77
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Rice Cakes",
+    "GI": 82
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Pretzels",
+    "GI": 83
+  },
+  {
+    "Category": "SNACK FOODS",
+    "Food": "Fruit Roll-Ups",
+    "GI": 99
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Stevia Natural",
+    "GI": 0
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Fructose",
+    "GI": 15
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Agave Syrup",
+    "GI": 15
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Coconut Palm Sugar",
+    "GI": 35
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Maple Syrup",
+    "GI": 54
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Caramel",
+    "GI": 60
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Honey",
+    "GI": 61
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Sucrose",
+    "GI": 65
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Splenda Artificial",
+    "GI": 80
+  },
+  {
+    "Category": "SWEETENERS",
+    "Food": "Glucose",
+    "GI": 100
+  },
+  {
+    "Category": "PASTA & NOODLES",
+    "Food": "Fettuccine",
+    "GI": 32
+  },
+  {
+    "Category": "PASTA & NOODLES",
+    "Food": "Spaghetti Whole Grain Boiled",
+    "GI": 42
+  },
+  {
+    "Category": "PASTA & NOODLES",
+    "Food": "Spaghetti White Boiled",
+    "GI": 46
+  },
+  {
+    "Category": "PASTA & NOODLES",
+    "Food": "Macaroni",
+    "GI": 50
+  },
+  {
+    "Category": "PASTA & NOODLES",
+    "Food": "Macaroni & Cheese",
+    "GI": 64
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Pearled Barley",
+    "GI": 25
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Wheat Tortilla",
+    "GI": 30
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Wheat Pasta",
+    "GI": 30
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Parboiled Converted White Rice",
+    "GI": 38
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Whole Wheat Kernels",
+    "GI": 45
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Bulgur",
+    "GI": 47
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Brown Rice Steamed",
+    "GI": 50
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Corn Tortilla",
+    "GI": 52
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Quinoa",
+    "GI": 53
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Pumpernickel Bread",
+    "GI": 56
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Wheat Bread",
+    "GI": 60
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Quick Cooking White Basmati",
+    "GI": 63
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Couscous",
+    "GI": 65
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Pita Bread",
+    "GI": 68
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Taco Shells",
+    "GI": 68
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Slice of White Bread",
+    "GI": 70
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Plain Bagel",
+    "GI": 72
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Waffles",
+    "GI": 76
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "White Rice",
+    "GI": 85
+  },
+  {
+    "Category": "GRAINS & STARCHES",
+    "Food": "Baguette White",
+    "GI": 95
+  }
+]
