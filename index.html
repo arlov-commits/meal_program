@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Food as Medicine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -10,335 +10,505 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#f7f5f2;font-family:'Outfit',sans-serif;color:#1e1e1e}
-button{font-family:'Outfit',sans-serif}
+button{font-family:'Outfit',sans-serif;cursor:pointer}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#ddd}::-webkit-scrollbar-thumb{background:#bbb;border-radius:2px}
-.loading,.error{text-align:center;padding:60px 20px;font-size:14px;color:#999}
-.error{color:#c43a3a}
+.loading,.error-msg{text-align:center;padding:60px 20px;font-size:14px;color:#999}
+.error-msg{color:#c43a3a}
 
-/* ── LAYOUT ── */
-.app{max-width:1100px;margin:0 auto;padding:24px 16px 220px}
-.header{margin-bottom:24px}
-.eyebrow{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#bbb;font-weight:700}
+.app{max-width:1100px;margin:0 auto;padding:24px 16px 230px}
 h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin:4px 0;line-height:1.1}
+.eyebrow{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#bbb;font-weight:700}
 .subhead{font-size:12px;color:#999}
 .header-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.clear-btn{border:none;background:#e8e5e0;border-radius:4px;padding:5px 14px;font-size:10px;color:#888;cursor:pointer;font-weight:600}
+.clear-btn{border:none;background:#e8e5e0;border-radius:4px;padding:5px 14px;font-size:10px;color:#888;font-weight:600}
 .clear-btn:hover{background:#ddd}
 
-/* Two-column grid on wide screens */
 .categories-grid{display:grid;grid-template-columns:1fr;gap:0}
-@media(min-width:700px){
-  .categories-grid{grid-template-columns:1fr 1fr;gap:0 24px}
-}
+@media(min-width:700px){.categories-grid{grid-template-columns:1fr 1fr;gap:0 24px}}
 
 .category{margin-bottom:22px}
 .cat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;border-bottom:1px solid #e8e5e0;padding-bottom:6px}
-.cat-icon{font-size:20px}
-.cat-name{font-size:13px;font-weight:700}
-.cat-desc{font-size:10px;color:#aaa}
+.cat-name{font-size:13px;font-weight:700}.cat-desc{font-size:10px;color:#aaa}
 .items-list{display:flex;flex-direction:column;gap:4px}
 
-/* Item row */
 .item-row{display:flex;align-items:center;gap:8px;border-radius:8px;padding:8px 10px;transition:all .15s;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .item-row.active{background:#1e1e1e;box-shadow:none}
-.item-name{font-size:13px;font-weight:600;line-height:1.2;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.item-name-line{font-size:13px;font-weight:600;line-height:1.2;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
 .item-brand{font-size:9px;margin-top:1px}
 .item-cal{text-align:right;flex-shrink:0;min-width:44px}
 .tag{font-size:7px;padding:1px 4px;border-radius:2px;font-weight:800}
 .sugar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.info-btn{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:none}
+.info-btn{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none}
 
-/* Expanded info panel */
 .info-panel{margin:2px 0 4px;padding:10px 12px;background:#1e1e1e;border-radius:6px;font-size:11px;line-height:1.6;color:#aaa}
-.info-section-title{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:4px}
+.info-section-title{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:4px;margin-top:8px}
+.info-section-title:first-child{margin-top:0}
 .info-stats{display:flex;gap:8px;flex-wrap:wrap;font-size:8px;color:#666;font-weight:600;margin-top:6px}
 
-/* Qty stepper */
 .stepper{display:flex;align-items:center;border-radius:6px;overflow:hidden;flex-shrink:0}
-.stepper button{width:28px;height:28px;border:none;background:transparent;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.stepper button{width:28px;height:28px;border:none;background:transparent;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
 .stepper-val{min-width:38px;text-align:center;font-weight:700;line-height:1.1;padding:0 2px}
-.stepper-val .big{font-size:14px}
-.stepper-val .small{font-size:8px;font-weight:500}
 
-/* ── STICKY BOTTOM ── */
-.bottom-panel{position:fixed;bottom:0;left:0;right:0;background:#141414f8;backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;z-index:100;transition:max-height .3s;overflow-y:auto}
-.bottom-inner{max-width:1100px;margin:0 auto;padding:10px 16px 14px}
+/* Bottom panel */
+.bottom-panel{position:fixed;bottom:0;left:0;right:0;background:#141414f8;backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;z-index:100;overflow-y:auto;transition:max-height .3s ease}
+.bottom-inner{max-width:1100px;margin:0 auto;padding:10px 16px 16px}
 .bottom-empty{text-align:center;font-size:12px;color:#555;padding:16px 0}
 .summary-row{cursor:pointer;display:flex;align-items:center;gap:12px}
 .grade-badge{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.grade-letter{font-size:22px;font-weight:900;color:#fff;line-height:1}
-.summary-info{flex:1}
-.summary-top{display:flex;justify-content:space-between;align-items:baseline}
-.summary-cal{display:flex;align-items:baseline;gap:6px}
-.cal-big{font-size:26px;font-weight:900;color:#fff;line-height:1}
-.cal-unit{font-size:10px;color:#555}
-.quality-score{font-size:10px;color:#444;margin-left:4px}
-.collapse-hint{font-size:9px;color:#555}
+.collapse-toggle{position:sticky;top:0;display:flex;justify-content:flex-end;padding:2px 0 6px;z-index:10}
+.collapse-toggle button{background:#2a2a2a;border:none;color:#888;font-size:11px;padding:3px 10px;border-radius:12px}
+.collapse-toggle button:hover{background:#3a3a3a;color:#ccc}
 
-/* Section headers in panel */
-.panel-section{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:6px;margin-top:10px}
-.panel-section:first-child{margin-top:0}
+.panel-section{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin-bottom:6px;margin-top:12px}
+.panel-section:first-of-type{margin-top:0}
 
 /* Metric bars */
-.metric-bar-wrap{margin-bottom:7px}
-.metric-bar-row{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;align-items:baseline}
-.metric-bar-track{height:5px;background:#333;border-radius:3px;overflow:hidden}
-.metric-bar-fill{height:100%;border-radius:3px;transition:width .3s}
-.metric-bar-footer{display:flex;justify-content:space-between;font-size:8px;margin-top:1px}
+.mbar{margin-bottom:8px}
+.mbar-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;align-items:baseline}
+.mbar-track{height:5px;background:#333;border-radius:0;overflow:hidden}
+.mbar-fill{height:100%;transition:width .3s}
+.mbar-foot{display:flex;justify-content:space-between;font-size:8px;margin-top:1px}
 
 /* Flags */
-.flag-btn{border:none;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.flag-detail{padding:8px 10px;border-radius:0 0 4px 4px}
+.flag-btn{border:none;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.flag-detail{padding:8px 10px;border-radius:0 0 4px 4px;margin-bottom:8px}
 .flag-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;padding-bottom:6px}
-.flag-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;opacity:.8}
+.flag-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
 
-/* Carb charts */
-.carb-chart-wrap{margin-bottom:14px}
-.carb-chart-title{font-size:9px;font-weight:700;color:#888;margin-bottom:5px;letter-spacing:.5px}
-.gl-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
+/* GI/GL badges */
+.gi-badge,.gl-badge{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;cursor:pointer}
+.gi-badge:hover,.gl-badge:hover{opacity:.8}
+
+/* GI Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:#1a1a1a;border:1px solid #333;border-radius:10px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;color:#ccc}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #2a2a2a;position:sticky;top:0;background:#1a1a1a;z-index:1}
+.modal-close{background:none;border:none;color:#888;font-size:18px;line-height:1}
+.modal-section{padding:14px 16px;border-bottom:1px solid #1e1e1e}
+.modal-section:last-child{border-bottom:none}
+.gi-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+.gi-table th,.gi-table td{padding:4px 8px;text-align:left;border-bottom:1px solid #222}
+.gi-table th{color:#888;font-weight:600;font-size:9px;letter-spacing:1px;text-transform:uppercase}
+
+/* Legend */
+.legend-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;font-size:9px}
+.legend-item{display:flex;align-items:center;gap:4px;font-weight:600}
+.legend-swatch{display:inline-block;width:18px;height:11px;border-radius:0;flex-shrink:0}
+
+/* Carb sub charts */
+.carb-chart{margin-bottom:12px}
+.carb-chart-title{font-size:9px;font-weight:700;color:#888;margin-bottom:4px;letter-spacing:.5px}
+
+/* Tooltip */
+.seg-tooltip{position:fixed;background:#111;border:1px solid #333;border-radius:4px;padding:5px 9px;font-size:10px;color:#ddd;pointer-events:none;z-index:300;white-space:nowrap;transform:translate(-50%,-100%);margin-top:-6px}
 </style>
 </head>
 <body>
 <div id="root"><div class="loading">Loading…</div></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
 
-// ─── COLOR SYSTEM ─────────────────────────────────────────────────
-// Carbs: blue family   #3a6bc4
-// Fat:   yellow family #c4a83a
-// Protein: red family  #c43a3a
-const BLUE  = '#3a6bc4';
-const YELL  = '#c4a83a';
-const RED   = '#c43a3a';
+// ─── COLOUR + PATTERN SYSTEM ──────────────────────────────────────
+// Blue family (carbs), Yellow family (fat), Red family (protein)
+// Each segment: patId (SVG pattern), fill (CSS for legend swatch), textColor
+const SEG = {
+  // CARBS – blue, ordered healthiest → least healthy
+  fiber:          { patId:'p-fiber',     fill:'#1e3d7a',                                                                              textColor:'#7aaae0', label:'Fiber',          group:'carb', kcalPg:2 },
+  wholeStarch:    { patId:'p-ws',        fill:'#3a6bc4',                                                                              textColor:'#6a9be4', label:'Whole Starch',   group:'carb', kcalPg:4 },
+  natSugar:       { patId:'p-ns',        fill:`repeating-linear-gradient(90deg,#3a9bc4 0 3px,#1a6a8a 3px 6px)`,                       textColor:'#6acce4', label:'Natural Sugar',  group:'carb', kcalPg:4 },
+  refinedStarch:  { patId:'p-rs',        fill:`repeating-linear-gradient(135deg,#5a8ad4 0 3px,#2a50a0 3px 6px)`,                      textColor:'#8abbe4', label:'Refined Starch', group:'carb', kcalPg:4 },
+  addedSugar:     { patId:'p-as',        fill:`repeating-linear-gradient(135deg,#2a3a8a 0 3px,#1a2060 3px 6px)`,                      textColor:'#5a6ad4', label:'Added Sugar',    group:'carb', kcalPg:4 },
+  // FATS – yellow, ordered healthiest → least healthy
+  unsatFat:       { patId:'p-uf',        fill:'#c4a83a',                                                                              textColor:'#e4c85a', label:'Unsat Fat',      group:'fat',  kcalPg:9 },
+  satFat:         { patId:'p-sf',        fill:`repeating-linear-gradient(135deg,#a47820 0 3px,#7a5800 3px 6px)`,                      textColor:'#c49840', label:'Sat Fat',        group:'fat',  kcalPg:9 },
+  transFat:       { patId:'p-tf',        fill:`repeating-linear-gradient(45deg,#c47820 0 2px,#c43a10 2px 5px,#c47820 5px 7px)`,      textColor:'#e48a40', label:'Trans Fat',      group:'fat',  kcalPg:9 },
+  // PROTEIN – red, ordered healthiest → least healthy
+  plantProtein:   { patId:'p-pp',        fill:'#c43a3a',                                                                              textColor:'#e46a6a', label:'Plant Protein',  group:'prot', kcalPg:4 },
+  animalProtein:  { patId:'p-ap',        fill:`repeating-linear-gradient(180deg,#8a2020 0 2px,#5a0a0a 2px 5px)`,                      textColor:'#c45a5a', label:'Animal Protein', group:'prot', kcalPg:4 },
+};
 
-// ─── SVG PATTERN DEFINITIONS ─────────────────────────────────────
-// Each sub-segment: { fill (references pattern id), legend css, color for text, label }
-// Patterns are defined once in a hidden SVG, referenced by all bars
+const GROUP_COLORS = { carb:'#3a6bc4', fat:'#c4a83a', prot:'#c43a3a' };
+
+// Legend order per group (healthiest first)
+const LEGEND_ORDER = {
+  carb: ['fiber','wholeStarch','natSugar','refinedStarch','addedSugar'],
+  fat:  ['unsatFat','satFat','transFat'],
+  prot: ['plantProtein','animalProtein'],
+};
+
+// ─── SVG PATTERN DEFS (defined once, shared by all bars) ──────────
 function PatternDefs() {
+  const H = 8; // pattern cell height – enough for texture at bar scale
   return (
-    <svg width="0" height="0" style={{position:'absolute'}}>
+    <svg width="0" height="0" style={{position:'absolute',overflow:'hidden'}}>
       <defs>
-        {/* ── CARB PATTERNS (blue family) ── */}
-        {/* Whole Starch: solid mid-blue */}
-        <pattern id="p-whole-starch" width="1" height="1"><rect width="1" height="1" fill="#3a6bc4"/></pattern>
-        {/* Refined Starch: lighter blue + diagonal lines NE */}
-        <pattern id="p-refined-starch" patternUnits="userSpaceOnUse" width="6" height="6">
-          <rect width="6" height="6" fill="#6a9be4"/>
-          <line x1="0" y1="6" x2="6" y2="0" stroke="#3a6bc4" strokeWidth="1.5"/>
+        {/* Fiber – dense dots, deep blue */}
+        <pattern id="p-fiber" patternUnits="userSpaceOnUse" width="8" height="8">
+          <rect width="8" height="8" fill="#1e3d7a"/>
+          <circle cx="2" cy="2" r="1.2" fill="#5a8ad4"/><circle cx="6" cy="6" r="1.2" fill="#5a8ad4"/>
         </pattern>
-        {/* Fiber: deep blue-indigo + small dots */}
-        <pattern id="p-fiber" patternUnits="userSpaceOnUse" width="6" height="6">
-          <rect width="6" height="6" fill="#1e3d7a"/>
-          <circle cx="3" cy="3" r="1.2" fill="#5a8ad4"/>
+        {/* Whole Starch – solid mid-blue */}
+        <pattern id="p-ws" patternUnits="userSpaceOnUse" width="1" height="1">
+          <rect width="1" height="1" fill="#3a6bc4"/>
         </pattern>
-        {/* Natural Sugar: cyan-blue + horizontal thin lines */}
-        <pattern id="p-nat-sugar" patternUnits="userSpaceOnUse" width="6" height="6">
+        {/* Natural Sugar – horizontal lines, cyan-blue */}
+        <pattern id="p-ns" patternUnits="userSpaceOnUse" width="6" height="6">
           <rect width="6" height="6" fill="#3a9bc4"/>
-          <line x1="0" y1="2" x2="6" y2="2" stroke="#1a6a8a" strokeWidth="1"/>
-          <line x1="0" y1="5" x2="6" y2="5" stroke="#1a6a8a" strokeWidth="1"/>
+          <line x1="0" y1="2" x2="6" y2="2" stroke="#1a6a8a" strokeWidth="1.2"/>
+          <line x1="0" y1="5" x2="6" y2="5" stroke="#1a6a8a" strokeWidth="1.2"/>
         </pattern>
-        {/* Added Sugar: blue-purple + crosshatch (danger) */}
-        <pattern id="p-added-sugar" patternUnits="userSpaceOnUse" width="6" height="6">
-          <rect width="6" height="6" fill="#7a3ac4"/>
-          <line x1="0" y1="0" x2="6" y2="6" stroke="#4a1a8a" strokeWidth="1.2"/>
-          <line x1="6" y1="0" x2="0" y2="6" stroke="#4a1a8a" strokeWidth="1.2"/>
+        {/* Refined Starch – diagonal lines NE, mid-blue lighter */}
+        <pattern id="p-rs" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#5a8ad4"/>
+          <line x1="0" y1="6" x2="6" y2="0" stroke="#2a50a0" strokeWidth="1.5"/>
         </pattern>
-
-        {/* ── FAT PATTERNS (yellow family) ── */}
-        {/* Unsat Fat: solid amber */}
-        <pattern id="p-unsat-fat" width="1" height="1"><rect width="1" height="1" fill="#c4a83a"/></pattern>
-        {/* Sat Fat: dark gold + diagonal lines SW */}
-        <pattern id="p-sat-fat" patternUnits="userSpaceOnUse" width="6" height="6">
+        {/* Added Sugar – crosshatch, dark blue (danger, still blue family) */}
+        <pattern id="p-as" patternUnits="userSpaceOnUse" width="6" height="6">
+          <rect width="6" height="6" fill="#2a3a8a"/>
+          <line x1="0" y1="0" x2="6" y2="6" stroke="#1a2060" strokeWidth="1.2"/>
+          <line x1="6" y1="0" x2="0" y2="6" stroke="#1a2060" strokeWidth="1.2"/>
+        </pattern>
+        {/* Unsat Fat – solid amber */}
+        <pattern id="p-uf" patternUnits="userSpaceOnUse" width="1" height="1">
+          <rect width="1" height="1" fill="#c4a83a"/>
+        </pattern>
+        {/* Sat Fat – diagonal lines SW, dark gold */}
+        <pattern id="p-sf" patternUnits="userSpaceOnUse" width="6" height="6">
           <rect width="6" height="6" fill="#a47820"/>
           <line x1="0" y1="0" x2="6" y2="6" stroke="#7a5800" strokeWidth="1.5"/>
         </pattern>
-        {/* Trans Fat: orange-red + dense zigzag (danger) */}
-        <pattern id="p-trans-fat" patternUnits="userSpaceOnUse" width="8" height="6">
-          <rect width="8" height="6" fill="#c46a3a"/>
-          <polyline points="0,3 2,0 4,3 6,0 8,3" fill="none" stroke="#8a3010" strokeWidth="1.5"/>
+        {/* Trans Fat – zigzag, orange-gold (danger, stays yellow family) */}
+        <pattern id="p-tf" patternUnits="userSpaceOnUse" width="8" height="6">
+          <rect width="8" height="6" fill="#c47820"/>
+          <polyline points="0,5 2,1 4,5 6,1 8,5" fill="none" stroke="#8a4000" strokeWidth="1.5"/>
         </pattern>
-
-        {/* ── PROTEIN PATTERNS (red family) ── */}
-        {/* Plant Protein: solid red */}
-        <pattern id="p-plant-protein" width="1" height="1"><rect width="1" height="1" fill="#c43a3a"/></pattern>
-        {/* Animal Protein: dark crimson + horizontal lines */}
-        <pattern id="p-animal-protein" patternUnits="userSpaceOnUse" width="6" height="6">
+        {/* Plant Protein – solid red */}
+        <pattern id="p-pp" patternUnits="userSpaceOnUse" width="1" height="1">
+          <rect width="1" height="1" fill="#c43a3a"/>
+        </pattern>
+        {/* Animal Protein – horizontal lines, dark crimson */}
+        <pattern id="p-ap" patternUnits="userSpaceOnUse" width="6" height="6">
           <rect width="6" height="6" fill="#8a2020"/>
           <line x1="0" y1="2" x2="6" y2="2" stroke="#5a0a0a" strokeWidth="1.2"/>
           <line x1="0" y1="5" x2="6" y2="5" stroke="#5a0a0a" strokeWidth="1.2"/>
+        </pattern>
+        {/* Checkerboard for carb charts */}
+        <pattern id="p-checker" patternUnits="userSpaceOnUse" width="8" height="8">
+          <rect width="8" height="8" fill="#2a4a8a"/>
+          <rect width="4" height="4" fill="#3a6bc4"/><rect x="4" y="4" width="4" height="4" fill="#3a6bc4"/>
         </pattern>
       </defs>
     </svg>
   );
 }
 
-// Pattern metadata for legend rendering
-const PATTERNS = {
-  'whole-starch':   { id:'p-whole-starch',   color:'#3a6bc4', legendBg:'#3a6bc4',                                                                            textColor:'#6a9be4' },
-  'refined-starch': { id:'p-refined-starch', color:'#6a9be4', legendBg:`repeating-linear-gradient(135deg,#6a9be4 0 3px,#3a6bc4 3px 6px)`,                   textColor:'#8abbe4' },
-  'fiber':          { id:'p-fiber',          color:'#1e3d7a', legendBg:`radial-gradient(circle, #5a8ad4 30%, #1e3d7a 30%)`,                                   textColor:'#5a8ad4' },
-  'nat-sugar':      { id:'p-nat-sugar',      color:'#3a9bc4', legendBg:`repeating-linear-gradient(180deg,#3a9bc4 0 2px,#1a6a8a 2px 4px)`,                   textColor:'#6acce4' },
-  'added-sugar':    { id:'p-added-sugar',    color:'#7a3ac4', legendBg:`repeating-linear-gradient(135deg,#7a3ac4 0 3px,#4a1a8a 3px 6px)`,                   textColor:'#aa6af4' },
-  'unsat-fat':      { id:'p-unsat-fat',      color:'#c4a83a', legendBg:'#c4a83a',                                                                            textColor:'#e4c85a' },
-  'sat-fat':        { id:'p-sat-fat',        color:'#a47820', legendBg:`repeating-linear-gradient(135deg,#a47820 0 3px,#7a5800 3px 6px)`,                   textColor:'#c49840' },
-  'trans-fat':      { id:'p-trans-fat',      color:'#c46a3a', legendBg:`repeating-linear-gradient(90deg,#c46a3a 0 3px,#8a3010 3px 6px)`,                   textColor:'#e48a5a' },
-  'plant-protein':  { id:'p-plant-protein',  color:'#c43a3a', legendBg:'#c43a3a',                                                                            textColor:'#e46a6a' },
-  'animal-protein': { id:'p-animal-protein', color:'#8a2020', legendBg:`repeating-linear-gradient(180deg,#8a2020 0 2px,#5a0a0a 2px 4px)`,                   textColor:'#c45050' },
-};
+// ─── SEGMENT TOOLTIP ─────────────────────────────────────────────
+function SegTooltip({ tooltip }) {
+  if (!tooltip) return null;
+  return (
+    <div className="seg-tooltip" style={{left:tooltip.x, top:tooltip.y}}>
+      {tooltip.text}
+    </div>
+  );
+}
 
-function LegendSwatch({ patKey, size=12 }) {
-  const p = PATTERNS[patKey];
-  return <span style={{display:'inline-block',width:size,height:size*0.75,borderRadius:2,background:p.legendBg,flexShrink:0}}/>;
+// ─── BUILD SEGMENTS from nutrition values ─────────────────────────
+function buildSegments(fat, satFat, transFat, carbs, fiber, sugar, addedSugar, protein, refinedCarbs, animalProteinFrac) {
+  const tFat = transFat || 0;
+  const complexC = Math.max(0, carbs - sugar - fiber);
+  const refC  = Math.min(complexC, refinedCarbs || 0);
+  const whlC  = Math.max(0, complexC - refC);
+  const natSug= Math.max(0, sugar - addedSugar);
+  const unsat = Math.max(0, fat - satFat - tFat);
+  const plantP = protein * Math.max(0, 1 - (animalProteinFrac || 0));
+  const animP  = protein * (animalProteinFrac || 0);
+
+  return [
+    // Carbs (healthiest → least)
+    { key:'fiber',         g:fiber,    s:SEG.fiber        },
+    { key:'wholeStarch',   g:whlC,     s:SEG.wholeStarch  },
+    { key:'natSugar',      g:natSug,   s:SEG.natSugar     },
+    { key:'refinedStarch', g:refC,     s:SEG.refinedStarch},
+    { key:'addedSugar',    g:addedSugar,s:SEG.addedSugar  },
+    // Fat (healthiest → least)
+    { key:'unsatFat',      g:unsat,    s:SEG.unsatFat     },
+    { key:'satFat',        g:satFat,   s:SEG.satFat       },
+    { key:'transFat',      g:tFat,     s:SEG.transFat     },
+    // Protein (healthiest → least)
+    { key:'plantProtein',  g:plantP,   s:SEG.plantProtein },
+    { key:'animalProtein', g:animP,    s:SEG.animalProtein},
+  ].filter(seg => seg.g > 0.05).map(seg => ({
+    ...seg,
+    kcal: seg.g * seg.s.kcalPg,
+  }));
 }
 
 // ─── MACRO BAR ────────────────────────────────────────────────────
-function MacroBar({ item, totals, small }) {
-  const src = totals || item; // use totals when rendering meal total, item for per-item
-  if (!src || src.cal <= 0) return null;
+function MacroBar({ fat=0, satFat=0, transFat=0, carbs=0, fiber=0, sugar=0, addedSugar=0, protein=0, refinedCarbs=0, animalProteinFrac=0, cal=0, small=false }) {
+  const [tooltip, setTooltip] = useState(null);
+  if (cal <= 0) return null;
 
-  const {fat=0, satFat=0, transFat=0, carbs=0, fiber=0, sugar=0, addedSugar=0,
-         protein=0, refinedCarbs:rawRefine=0, animalProtein=0} = src;
-
-  const complexC  = Math.max(0, carbs - sugar - fiber);
-  const refinedC  = Math.min(complexC, rawRefine || 0);
-  const wholeC    = Math.max(0, complexC - refinedC);
-  const natSugar  = Math.max(0, sugar - addedSugar);
-  const unsatFat  = Math.max(0, fat - satFat - transFat);
-  const plantProt = Math.max(0, protein * (1 - (animalProtein||0)));
-  const animProt  = protein * (animalProtein||0);
-  const transFatG = transFat || 0;
-
-  // [group, patKey, grams, kcal_per_gram]
-  const segs = [
-    ['carb', 'whole-starch',   wholeC,    4],
-    ['carb', 'refined-starch', refinedC,  4],
-    ['carb', 'fiber',          fiber,     2],
-    ['carb', 'nat-sugar',      natSugar,  4],
-    ['carb', 'added-sugar',    addedSugar,4],
-    ['fat',  'unsat-fat',      unsatFat,  9],
-    ['fat',  'sat-fat',        satFat,    9],
-    ['fat',  'trans-fat',      transFatG, 9],
-    ['prot', 'plant-protein',  plantProt, 4],
-    ['prot', 'animal-protein', animProt,  4],
-  ].filter(s => s[2] > 0.05).map(([group, key, g, kcalPg]) => ({
-    group, key, g, kcal: g * kcalPg, label: {
-      'whole-starch':'Whole Starch','refined-starch':'Refined Starch',
-      'fiber':'Fiber','nat-sugar':'Natural Sugar','added-sugar':'Added Sugar',
-      'unsat-fat':'Unsat Fat','sat-fat':'Sat Fat','trans-fat':'Trans Fat',
-      'plant-protein':'Plant Protein','animal-protein':'Animal Protein'
-    }[key]
-  }));
-
-  const total = segs.reduce((a,s) => a+s.kcal, 0) || 1;
+  const segs = buildSegments(fat, satFat, transFat, carbs, fiber, sugar, addedSugar, protein, refinedCarbs, animalProteinFrac);
+  const total = segs.reduce((a,s) => a + s.kcal, 0) || 1;
   const h = small ? 14 : 22;
-  const uid = `bar${Math.random().toString(36).slice(2,7)}`;
 
+  // Build group separator positions
   let x = 0;
-  const rects = segs.map((s,i) => {
-    const w = (s.kcal / total) * 100;
-    const rx = x; x += w;
-    return (
-      <rect key={i} x={rx} y={0} width={Math.max(w,0)} height={h}
-            fill={`url(#${PATTERNS[s.key].id})`}>
-        <title>{s.label}: {s.g.toFixed(1)}g ({Math.round((s.kcal/total)*100)}% cal)</title>
-      </rect>
-    );
+  const groups = [];
+  let curGroup = null;
+  let groupStart = 0;
+  segs.forEach((seg, i) => {
+    const w = (seg.kcal / total) * 100;
+    if (seg.s.group !== curGroup) {
+      if (curGroup) groups.push({ at: x, group: curGroup });
+      curGroup = seg.s.group;
+      groupStart = x;
+    }
+    x += w;
   });
 
-  // group separators
-  const groupBoundaries = [];
-  let gx = 0, lastGroup = null;
-  segs.forEach(s => {
-    const w = (s.kcal / total) * 100;
-    if (lastGroup && s.group !== lastGroup) groupBoundaries.push(gx);
-    lastGroup = s.group; gx += w;
+  const handleMouseMove = (e, seg) => {
+    const pct = Math.round((seg.kcal / total) * 100);
+    setTooltip({ x: e.clientX, y: e.clientY - 6, text: `${seg.s.label}: ${seg.g.toFixed(1)}g (${pct}% of cal)` });
+  };
+  const handleTouch = (e, seg) => {
+    const t = e.touches[0];
+    const pct = Math.round((seg.kcal / total) * 100);
+    setTooltip({ x: t.clientX, y: t.clientY - 6, text: `${seg.s.label}: ${seg.g.toFixed(1)}g (${pct}% of cal)` });
+    setTimeout(() => setTooltip(null), 2000);
+  };
+
+  let xCursor = 0;
+  const rects = segs.map((seg, i) => {
+    const w = Math.max((seg.kcal / total) * 100, 0);
+    const rx = xCursor; xCursor += w;
+    return (
+      <rect key={i} x={rx} y={0} width={w} height={h}
+            fill={`url(#${seg.s.patId})`}
+            onMouseMove={e => handleMouseMove(e, seg)}
+            onMouseLeave={() => setTooltip(null)}
+            onTouchStart={e => handleTouch(e, seg)}
+            style={{cursor:'crosshair'}}/>
+    );
   });
 
   return (
     <div>
+      {tooltip && <SegTooltip tooltip={tooltip}/>}
       <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none"
-           style={{borderRadius:h/2, display:'block'}}>
-        <clipPath id={`cl${uid}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2}/></clipPath>
-        <g clipPath={`url(#cl${uid})`}>
-          <rect width="100" height={h} fill="#2a2a2a"/>
-          {rects}
-          {groupBoundaries.map((bx,i) => (
-            <line key={i} x1={bx} y1={0} x2={bx} y2={h} stroke="#141414" strokeWidth="1.5"/>
-          ))}
-        </g>
+           style={{display:'block', borderRadius:0}}>
+        <rect width="100" height={h} fill="#2a2a2a"/>
+        {rects}
+        {groups.map((g,i) => (
+          <line key={i} x1={g.at} y1={0} x2={g.at} y2={h} stroke="#0e0e0e" strokeWidth="2"/>
+        ))}
       </svg>
 
       {!small && (
-        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:6,fontSize:9}}>
-          {segs.map((s,i) => (
-            <span key={i} style={{display:'flex',alignItems:'center',gap:4,color:PATTERNS[s.key].textColor,fontWeight:600}}>
-              <LegendSwatch patKey={s.key} size={14}/>
-              {s.label} {s.g.toFixed(1)}g <span style={{color:'#666',fontWeight:400}}>({Math.round((s.kcal/total)*100)}%)</span>
-            </span>
-          ))}
+        <div style={{marginTop:6}}>
+          {['carb','fat','prot'].map(grp => {
+            const grpSegs = segs.filter(s => s.s.group === grp);
+            if (!grpSegs.length) return null;
+            return (
+              <div key={grp} className="legend-row" style={{marginBottom:3}}>
+                <span style={{fontSize:8,color:GROUP_COLORS[grp],fontWeight:800,minWidth:38,textTransform:'uppercase'}}>{grp}</span>
+                {LEGEND_ORDER[grp].map(key => {
+                  const seg = grpSegs.find(s => s.key === key);
+                  if (!seg) return null;
+                  const pct = Math.round((seg.kcal/total)*100);
+                  return (
+                    <span key={key} className="legend-item" style={{color: SEG[key].textColor}}>
+                      <span className="legend-swatch" style={{background: SEG[key].fill}}/>
+                      {SEG[key].label} {seg.g.toFixed(1)}g <span style={{color:'#555',fontWeight:400}}>({pct}%)</span>
+                    </span>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
 
-// ─── CARB SUB-CHARTS ─────────────────────────────────────────────
-// Weighted-average GI and Glycemic Load helpers
+// ─── GI / GL CALCULATIONS ─────────────────────────────────────────
+// GL per item = GI × carbs / 100 (using total carbs of the serving)
+// Meal total GL = sum of (GI_i × carbs_i × qty_i) / 100
+// Weighted avg GI for display = totalGL / totalCarbs × 100 (to give a representative single number)
 function computeGIGL(quantities, allItems) {
-  // GL = sum(GI_i * availCarbs_i * qty_i) / 100
-  // Weighted avg GI = sum(GI_i * availCarbs_i * qty_i) / sum(availCarbs_i * qty_i)
-  let wGI = 0, totalAvailCarbs = 0, totalGL = 0;
+  let totalGL = 0, totalCarbs = 0;
+  const breakdown = [];
   Object.entries(quantities).forEach(([id, qty]) => {
     const item = allItems.find(i => i.id === id);
-    if (!item) return;
-    const availCarbs = Math.max(0, item.carbs - item.fiber) * qty;
-    wGI += (item.gi || 0) * availCarbs;
-    totalAvailCarbs += availCarbs;
-    totalGL += ((item.gi || 0) * availCarbs) / 100;
+    if (!item || !item.carbs) return;
+    const itemGL = (item.gi || 0) * item.carbs * qty / 100;
+    totalGL += itemGL;
+    totalCarbs += item.carbs * qty;
+    if (item.gi > 0 || item.carbs > 0) {
+      breakdown.push({ name: item.name, gi: item.gi || 0, carbs: item.carbs * qty, gl: parseFloat(itemGL.toFixed(2)), giSource: item.giSource, giNote: item.giNote, qty });
+    }
   });
-  return {
-    gi: totalAvailCarbs > 0 ? Math.round(wGI / totalAvailCarbs) : 0,
-    gl: Math.round(totalGL * 10) / 10,
-  };
+  const avgGI = totalCarbs > 0 ? Math.round((totalGL / totalCarbs) * 100) : 0;
+  return { avgGI, totalGL: parseFloat(totalGL.toFixed(1)), totalCarbs: parseFloat(totalCarbs.toFixed(1)), breakdown };
 }
 
-function GlBadge({ gl }) {
-  const color = gl < 10 ? '#2d8a56' : gl < 20 ? '#c4943a' : '#c43a3a';
-  const label = gl < 10 ? 'Low GL' : gl < 20 ? 'Med GL' : 'High GL';
-  return <span className="gl-badge" style={{background:`${color}22`,color}}>{label} {gl}</span>;
-}
-
-function GiBadge({ gi }) {
-  if (!gi) return null;
-  const color = gi < 55 ? '#2d8a56' : gi < 70 ? '#c4943a' : '#c43a3a';
-  return <span className="gl-badge" style={{background:`${color}22`,color}}>GI {gi}</span>;
-}
-
-// A single segmented bar using the same pattern system but a subset of segments
-function SimpleSegBar({ segments, h=16 }) {
-  // segments: [{patKey, g, label}]
-  const total = segments.reduce((a,s) => a + s.g, 0) || 1;
-  const uid = `ss${Math.random().toString(36).slice(2,7)}`;
-  let x = 0;
-  const rects = segments.filter(s => s.g > 0.05).map((s,i) => {
-    const w = (s.g / total) * 100;
-    const rx = x; x += w;
-    return <rect key={i} x={rx} y={0} width={Math.max(w,0)} height={h} fill={`url(#${PATTERNS[s.patKey].id})`}>
-      <title>{s.label}: {s.g.toFixed(1)}g ({Math.round((s.g/total)*100)}%)</title>
-    </rect>;
-  });
+// ─── GI/GL INFO MODAL ────────────────────────────────────────────
+function GiGlModal({ gigl, onClose }) {
+  const { avgGI, totalGL, totalCarbs, breakdown } = gigl;
+  const giColor = avgGI < 55 ? '#2d8a56' : avgGI < 70 ? '#c4943a' : '#c43a3a';
+  const glColor = totalGL < 10 ? '#2d8a56' : totalGL < 20 ? '#c4943a' : '#c43a3a';
   return (
-    <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none"
-         style={{borderRadius:h/2,display:'block'}}>
-      <clipPath id={`cl${uid}`}><rect x="0" y="0" width="100" height={h} rx={h/2} ry={h/2}/></clipPath>
-      <g clipPath={`url(#cl${uid})`}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <span style={{fontSize:13,fontWeight:700,color:'#eee'}}>GI & GL — Your Current Selection</span>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        {/* CURRENT SELECTION */}
+        <div className="modal-section">
+          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:10}}>THIS MEAL</div>
+          <div style={{display:'flex',gap:16,marginBottom:12}}>
+            <div style={{flex:1,background:'#111',borderRadius:6,padding:'10px 14px'}}>
+              <div style={{fontSize:9,color:'#666',marginBottom:2}}>Avg Glycemic Index</div>
+              <div style={{fontSize:28,fontWeight:900,color:giColor,lineHeight:1}}>{avgGI}</div>
+              <div style={{fontSize:8,color:giColor,marginTop:2}}>{avgGI<55?'Low GI':avgGI<70?'Medium GI':'High GI'}</div>
+            </div>
+            <div style={{flex:1,background:'#111',borderRadius:6,padding:'10px 14px'}}>
+              <div style={{fontSize:9,color:'#666',marginBottom:2}}>Total Glycemic Load</div>
+              <div style={{fontSize:28,fontWeight:900,color:glColor,lineHeight:1}}>{totalGL}</div>
+              <div style={{fontSize:8,color:glColor,marginTop:2}}>{totalGL<10?'Low GL':totalGL<20?'Medium GL':'High GL'}</div>
+            </div>
+            <div style={{flex:1,background:'#111',borderRadius:6,padding:'10px 14px'}}>
+              <div style={{fontSize:9,color:'#666',marginBottom:2}}>Total Carbs</div>
+              <div style={{fontSize:28,fontWeight:900,color:'#888',lineHeight:1}}>{totalCarbs.toFixed(0)}g</div>
+              <div style={{fontSize:8,color:'#555',marginTop:2}}>in this meal</div>
+            </div>
+          </div>
+
+          <div style={{fontSize:9,color:'#666',marginBottom:6}}>How the GL is calculated: <span style={{color:'#aaa'}}>GL = GI × carbs ÷ 100 per item, then summed</span></div>
+          <table className="gi-table">
+            <thead><tr><th>Item</th><th>Qty</th><th>GI</th><th>Carbs (g)</th><th>GL</th><th>Source</th></tr></thead>
+            <tbody>
+              {breakdown.map((row, i) => (
+                <tr key={i}>
+                  <td style={{color:'#ccc'}}>{row.name}</td>
+                  <td style={{color:'#888'}}>×{row.qty}</td>
+                  <td style={{color: row.gi<55?'#2d8a56':row.gi<70?'#c4943a':'#c43a3a', fontWeight:700}}>{row.gi || '—'}</td>
+                  <td style={{color:'#aaa'}}>{row.carbs.toFixed(1)}</td>
+                  <td style={{color:glColor, fontWeight:700}}>{row.gl}</td>
+                  <td style={{color:'#555',fontSize:8}}>{row.giSource}</td>
+                </tr>
+              ))}
+              <tr style={{borderTop:'2px solid #333'}}>
+                <td colSpan={3} style={{color:'#888',fontWeight:700}}>TOTAL</td>
+                <td style={{color:'#aaa',fontWeight:700}}>{totalCarbs.toFixed(1)}</td>
+                <td style={{color:glColor,fontWeight:700}}>{totalGL}</td>
+                <td/>
+              </tr>
+            </tbody>
+          </table>
+          <div style={{fontSize:8,color:'#555',marginTop:8,lineHeight:1.6}}>
+            Avg GI shown = (total GL ÷ total carbs) × 100 — a carb-weighted average representing the effective glycemic quality of the meal.
+          </div>
+        </div>
+
+        {/* GENERAL PRINCIPLES */}
+        <div className="modal-section">
+          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:8}}>WHAT IS GI?</div>
+          <p style={{fontSize:11,lineHeight:1.7,color:'#aaa',marginBottom:8}}>
+            <strong style={{color:'#ccc'}}>Glycemic Index (GI)</strong> measures how fast a food raises blood glucose relative to pure glucose (GI=100). It's a property of the food itself — the same carb amount, but different speed of absorption.
+          </p>
+          <table className="gi-table">
+            <thead><tr><th>GI Range</th><th>Category</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td style={{color:'#2d8a56',fontWeight:700}}>0–54</td><td style={{color:'#ccc'}}>Low GI</td><td style={{color:'#888'}}>Slow glucose rise, sustained energy</td></tr>
+              <tr><td style={{color:'#c4943a',fontWeight:700}}>55–69</td><td style={{color:'#ccc'}}>Medium GI</td><td style={{color:'#888'}}>Moderate spike, watch portions</td></tr>
+              <tr><td style={{color:'#c43a3a',fontWeight:700}}>70+</td><td style={{color:'#ccc'}}>High GI</td><td style={{color:'#888'}}>Rapid spike → insulin surge → crash</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="modal-section">
+          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:8}}>WHAT IS GL?</div>
+          <p style={{fontSize:11,lineHeight:1.7,color:'#aaa',marginBottom:8}}>
+            <strong style={{color:'#ccc'}}>Glycemic Load (GL)</strong> accounts for both the GI and the actual amount of carbohydrates consumed. A food can have a high GI but a low GL if you eat a small amount. Formula: <strong style={{color:'#ccc'}}>GL = GI × carbs ÷ 100</strong>.
+          </p>
+          <p style={{fontSize:11,lineHeight:1.7,color:'#aaa',marginBottom:8}}>
+            Example: skim milk has GI=31, 12g carbs → GL = 31 × 12 ÷ 100 = <strong style={{color:'#ccc'}}>3.72</strong> (very low).
+          </p>
+          <table className="gi-table">
+            <thead><tr><th>GL Range</th><th>Category</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td style={{color:'#2d8a56',fontWeight:700}}>0–9</td><td style={{color:'#ccc'}}>Low GL</td><td style={{color:'#888'}}>Minimal blood sugar impact</td></tr>
+              <tr><td style={{color:'#c4943a',fontWeight:700}}>10–19</td><td style={{color:'#ccc'}}>Medium GL</td><td style={{color:'#888'}}>Moderate; manageable with context</td></tr>
+              <tr><td style={{color:'#c43a3a',fontWeight:700}}>20+</td><td style={{color:'#ccc'}}>High GL</td><td style={{color:'#888'}}>Significant insulin demand</td></tr>
+            </tbody>
+          </table>
+          <p style={{fontSize:10,color:'#555',marginTop:8,lineHeight:1.6}}>
+            GI values sourced from the gi-data.json dataset (Australian GI Research). Items not in the dataset use literature approximations noted in the source column above.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── CARB SUB-CHARTS ─────────────────────────────────────────────
+function CarbChart({ title, segs, groups, gigl }) {
+  const [tooltip, setTooltip] = useState(null);
+  const total = segs.reduce((a,s) => a+s.g, 0) || 1;
+  const h = 14;
+  let xCursor = 0;
+
+  const rects = segs.filter(s=>s.g>0.05).map((s,i) => {
+    const w = Math.max((s.g/total)*100, 0);
+    const rx = xCursor; xCursor += w;
+    const p = SEG[s.key];
+    return (
+      <rect key={i} x={rx} y={0} width={w} height={h} fill={`url(#${p.patId})`}
+            onMouseMove={e => setTooltip({x:e.clientX,y:e.clientY-6,text:`${p.label}: ${s.g.toFixed(1)}g (${Math.round((s.g/total)*100)}%)`})}
+            onMouseLeave={()=>setTooltip(null)}
+            onTouchStart={e=>{const t=e.touches[0];setTooltip({x:t.clientX,y:t.clientY-6,text:`${p.label}: ${s.g.toFixed(1)}g`});setTimeout(()=>setTooltip(null),2000);}}
+            style={{cursor:'crosshair'}}/>
+    );
+  });
+
+  return (
+    <div className="carb-chart">
+      {tooltip && <SegTooltip tooltip={tooltip}/>}
+      <div className="carb-chart-title">{title}
+        {gigl?.avgGI > 0 && <span style={{marginLeft:6,fontSize:8,fontWeight:700,padding:'1px 6px',borderRadius:3,background: gigl.avgGI<55?'#2d8a5622':gigl.avgGI<70?'#c4943a22':'#c43a3a22',color:gigl.avgGI<55?'#2d8a56':gigl.avgGI<70?'#c4943a':'#c43a3a'}}>GI {gigl.avgGI}</span>}
+        {gigl?.totalGL > 0 && <span style={{marginLeft:4,fontSize:8,fontWeight:700,padding:'1px 6px',borderRadius:3,background:gigl.totalGL<10?'#2d8a5622':gigl.totalGL<20?'#c4943a22':'#c43a3a22',color:gigl.totalGL<10?'#2d8a56':gigl.totalGL<20?'#c4943a':'#c43a3a',cursor:'pointer'}}>GL {gigl.totalGL}</span>}
+      </div>
+      <svg width="100%" height={h} viewBox="0 0 100 14" preserveAspectRatio="none" style={{display:'block'}}>
         <rect width="100" height={h} fill="#2a2a2a"/>
         {rects}
-      </g>
-    </svg>
+      </svg>
+      {groups && (
+        <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:3,fontSize:8}}>
+          {groups.map((g,i) => {
+            const gTotal = segs.filter(s=>g.keys.includes(s.key)).reduce((a,s)=>a+s.g,0);
+            if (gTotal < 0.05) return null;
+            return <span key={i} style={{color:g.color,fontWeight:600}}>{g.label} {gTotal.toFixed(1)}g ({Math.round((gTotal/total)*100)}%)</span>;
+          })}
+        </div>
+      )}
+      <div className="legend-row" style={{marginTop:3}}>
+        {segs.filter(s=>s.g>0.05).map((s,i) => (
+          <span key={i} className="legend-item" style={{color:SEG[s.key].textColor}}>
+            <span className="legend-swatch" style={{background:SEG[s.key].fill}}/>
+            {SEG[s.key].label} {s.g.toFixed(1)}g
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -346,150 +516,81 @@ function CarbSubCharts({ totals, gigl }) {
   if (!totals || totals.carbs <= 0) return null;
   const { carbs=0, fiber=0, sugar=0, addedSugar=0, refinedCarbs:rawRef=0 } = totals;
   const complex = Math.max(0, carbs - sugar - fiber);
-  const refined = Math.min(complex, rawRef || 0);
+  const refined = Math.min(complex, rawRef||0);
   const whole   = Math.max(0, complex - refined);
   const natSug  = Math.max(0, sugar - addedSugar);
-  const addSug  = addedSugar;
-
-  const charts = [
-    {
-      title: 'Whole-food vs Processed Carbs',
-      segs: [
-        { patKey:'whole-starch',   g:whole,   label:'Whole Starch'   },
-        { patKey:'fiber',          g:fiber,   label:'Fiber'          },
-        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar'  },
-        { patKey:'refined-starch', g:refined, label:'Refined Starch' },
-        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar'    },
-      ],
-      groups: [
-        { label:'Whole-food carbs', keys:['whole-starch','fiber','nat-sugar'],   color:'#3a6bc4' },
-        { label:'Processed carbs',  keys:['refined-starch','added-sugar'],       color:'#7a3ac4' },
-      ]
-    },
-    {
-      title: 'Slow vs Fast Carbs',
-      gi: gigl.gi, gl: gigl.gl,
-      segs: [
-        { patKey:'whole-starch',   g:whole,   label:'Whole Starch (slow)'   },
-        { patKey:'fiber',          g:fiber,   label:'Fiber (slows all)'     },
-        { patKey:'refined-starch', g:refined, label:'Refined Starch (fast)' },
-        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar (fast)'  },
-        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar (fast)'    },
-      ],
-      groups: [
-        { label:'Slow carbs', keys:['whole-starch','fiber'],                       color:'#2d8a56' },
-        { label:'Fast carbs', keys:['refined-starch','nat-sugar','added-sugar'],   color:'#c43a3a' },
-      ]
-    },
-    {
-      title: 'Carbs by Source',
-      segs: [
-        { patKey:'nat-sugar',      g:natSug,  label:'Natural Sugar (fruit)' },
-        { patKey:'fiber',          g:fiber,   label:'Fiber (fruit/grains)'  },
-        { patKey:'whole-starch',   g:whole,   label:'Whole Starch (grains)' },
-        { patKey:'refined-starch', g:refined, label:'Refined Starch'        },
-        { patKey:'added-sugar',    g:addSug,  label:'Added Sugar (processed)'},
-      ],
-      groups: [
-        { label:'Fruit', keys:['nat-sugar','fiber'],                         color:'#3a9bc4' },
-        { label:'Grains', keys:['whole-starch','refined-starch'],            color:'#3a6bc4' },
-        { label:'Processed', keys:['added-sugar'],                           color:'#7a3ac4' },
-      ]
-    },
-  ];
 
   return (
     <div>
-      {charts.map((chart, ci) => {
-        const validSegs = chart.segs.filter(s => s.g > 0.05);
-        if (validSegs.length === 0) return null;
-        return (
-          <div key={ci} className="carb-chart-wrap">
-            <div className="carb-chart-title">
-              {chart.title}
-              {chart.gi > 0 && <GiBadge gi={chart.gi}/>}
-              {chart.gl > 0 && <GlBadge gl={chart.gl}/>}
-            </div>
-            <SimpleSegBar segments={validSegs} h={16}/>
-            {/* Group labels */}
-            {chart.groups && (
-              <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:4,fontSize:8}}>
-                {chart.groups.map((g,gi) => {
-                  const total = validSegs.reduce((a,s) => a+s.g, 0) || 1;
-                  const groupTotal = validSegs.filter(s => g.keys.includes(s.patKey)).reduce((a,s) => a+s.g, 0);
-                  if (groupTotal < 0.05) return null;
-                  return (
-                    <span key={gi} style={{color:g.color,fontWeight:600}}>
-                      {g.label} {groupTotal.toFixed(1)}g ({Math.round((groupTotal/total)*100)}%)
-                    </span>
-                  );
-                })}
-              </div>
-            )}
-            {/* Per-segment legend */}
-            <div style={{display:'flex',gap:8,flexWrap:'wrap',marginTop:3,fontSize:8}}>
-              {validSegs.map((s,i) => (
-                <span key={i} style={{display:'flex',alignItems:'center',gap:3,color:PATTERNS[s.patKey].textColor,fontWeight:500}}>
-                  <LegendSwatch patKey={s.patKey} size={10}/>
-                  {s.label} {s.g.toFixed(1)}g
-                </span>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      <CarbChart title="Whole-food vs Processed Carbs"
+        segs={[{key:'wholeStarch',g:whole},{key:'fiber',g:fiber},{key:'natSugar',g:natSug},{key:'refinedStarch',g:refined},{key:'addedSugar',g:addedSugar}]}
+        groups={[{label:'Whole-food',keys:['wholeStarch','fiber','natSugar'],color:'#3a6bc4'},{label:'Processed',keys:['refinedStarch','addedSugar'],color:'#2a3a8a'}]}
+        gigl={gigl}/>
+      <CarbChart title="Slow vs Fast Carbs"
+        segs={[{key:'wholeStarch',g:whole},{key:'fiber',g:fiber},{key:'refinedStarch',g:refined},{key:'natSugar',g:natSug},{key:'addedSugar',g:addedSugar}]}
+        groups={[{label:'Slow',keys:['wholeStarch','fiber'],color:'#2d8a56'},{label:'Fast',keys:['refinedStarch','natSugar','addedSugar'],color:'#c43a3a'}]}
+        gigl={gigl}/>
+      <CarbChart title="Carbs by Source"
+        segs={[{key:'natSugar',g:natSug},{key:'fiber',g:fiber},{key:'wholeStarch',g:whole},{key:'refinedStarch',g:refined},{key:'addedSugar',g:addedSugar}]}
+        groups={[{label:'Fruit',keys:['natSugar','fiber'],color:'#3a9bc4'},{label:'Grains',keys:['wholeStarch','refinedStarch'],color:'#3a6bc4'},{label:'Processed',keys:['addedSugar'],color:'#2a3a8a'}]}/>
     </div>
   );
 }
 
-// ─── REPORT ───────────────────────────────────────────────────────
+// ─── REPORT ──────────────────────────────────────────────────────
 function computeReport(quantities, allItems, daily) {
   const KEYS = ['cal','fat','satFat','transFat','carbs','fiber','sugar','addedSugar','protein','sodium','refinedCarbs','caffeine'];
   const totals = {}; KEYS.forEach(k => totals[k] = 0);
-  totals.animalProtein = 0;
+  totals.animalProteinFrac = 0; totals.animalProteinG = 0;
   let hasHyd=false, hasTrans=false, hasAnimal=false;
   const processedC=[], activeItems=[];
-  let wholeCal=0, wGI=0, availCarbsTotal=0;
+  let wholeCal=0;
 
   Object.entries(quantities).forEach(([id,qty]) => {
-    const item = allItems.find(i => i.id===id);
+    const item = allItems.find(i=>i.id===id);
     if (!item) return;
     activeItems.push({item,qty});
     KEYS.forEach(k => { totals[k] += (item[k]||0)*qty; });
-    totals.animalProtein += (item.animalProtein||0) * item.protein * qty;
+    totals.animalProteinG += (item.animalProtein||0)*item.protein*qty;
     if (item.hydrogenatedOil) hasHyd=true;
     if (item.transFatRisk||item.transFat>0) hasTrans=true;
     if (item.animal) hasAnimal=true;
     if (item.processed>=2&&item.processedReason) processedC.push({name:item.name,qty,score:item.processed,reason:item.processedReason});
     wholeCal += (item.cal*qty)*item.wholeFood;
-    const avail = Math.max(0,item.carbs-item.fiber)*qty;
-    wGI += (item.gi||0)*avail;
-    availCarbsTotal += avail;
   });
   processedC.sort((a,b) => b.score-a.score);
   const wholePct = totals.cal>0 ? (wholeCal/totals.cal)*100 : 0;
-  const gi = availCarbsTotal>0 ? Math.round(wGI/availCarbsTotal) : 0;
-  const gl = Math.round((wGI/100)*10)/10;
-  totals.animalProtein = totals.protein>0 ? totals.animalProtein/totals.protein : 0;
+  totals.animalProteinFrac = totals.protein>0 ? totals.animalProteinG/totals.protein : 0;
+
+  // Map metric keys to segment colors
+  const MC = {
+    addedSugar:   SEG.addedSugar.textColor,
+    satFat:       SEG.satFat.textColor,
+    refined:      SEG.refinedStarch.textColor,
+    caffeine:     '#c4943a',
+    sodium:       '#8a7a6a',
+    fiber:        SEG.fiber.textColor,
+    protein:      SEG.plantProtein.textColor,
+    whole:        '#2d8a56',
+  };
 
   const dangers = [
-    {key:'addedSugar',label:'Added Sugar',   value:totals.addedSugar,  max:daily.addedSugar,  unit:'g', color:'#7a3ac4', maxLabel:'daily limit (36g)',         context:totals.addedSugar<=4?'Minimal':totals.addedSugar<=12?'Notable insulin response':totals.addedSugar<=24?'Liver fat production active':'Approaching daily limit'},
-    {key:'satFat',    label:'Sat Fat',        value:totals.satFat,      max:daily.satFat,      unit:'g', color:'#a47820', maxLabel:'daily limit (13g)',         context:totals.satFat<=3?'Low':totals.satFat<=6?'Moderate':totals.satFat<=10?'LDL increasing':'At daily limit'},
-    {key:'refined',   label:'Refined Carbs',  value:totals.refinedCarbs,max:daily.refinedCarbs,unit:'g', color:'#6a9be4', maxLabel:'high-meal threshold (50g)', context:totals.refinedCarbs<=5?'Minimal':totals.refinedCarbs<=20?'Glucose spike likely':'Behaves like pure sugar'},
-    {key:'caffeine',  label:'Caffeine',        value:totals.caffeine,   max:daily.caffeine,    unit:'mg',color:'#6b4a2a', maxLabel:'FDA ceiling (400mg)',       context:totals.caffeine===0?'None':totals.caffeine<=100?'Mild':totals.caffeine<=200?'Moderate — cortisol elevated':totals.caffeine<=300?'High — sleep impact likely':'Near daily ceiling'},
-    {key:'sodium',    label:'Sodium',          value:totals.sodium,     max:daily.sodium,      unit:'mg',color:'#8a7a6a', maxLabel:'daily max (2300mg)',        context:totals.sodium<=200?'Low':totals.sodium<=600?'Moderate':totals.sodium<=1000?'High for one meal':'Very high — BP/retention'},
+    {key:'addedSugar',label:'Added Sugar',   value:totals.addedSugar,  max:daily.addedSugar,  unit:'g', color:MC.addedSugar, maxLabel:'daily limit (36g)',         context:totals.addedSugar<=4?'Minimal':totals.addedSugar<=12?'Notable insulin response':totals.addedSugar<=24?'Liver fat production active':'Approaching daily limit'},
+    {key:'satFat',    label:'Sat Fat',        value:totals.satFat,      max:daily.satFat,      unit:'g', color:MC.satFat,    maxLabel:'daily limit (13g)',          context:totals.satFat<=3?'Low':totals.satFat<=6?'Moderate':totals.satFat<=10?'LDL increasing':'At daily limit'},
+    {key:'refined',   label:'Refined Carbs',  value:totals.refinedCarbs,max:daily.refinedCarbs,unit:'g', color:MC.refined,   maxLabel:'high-meal threshold (50g)', context:totals.refinedCarbs<=5?'Minimal':totals.refinedCarbs<=20?'Glucose spike likely':'Behaves like pure sugar'},
+    {key:'caffeine',  label:'Caffeine',        value:totals.caffeine,   max:daily.caffeine,    unit:'mg',color:MC.caffeine,  maxLabel:'FDA ceiling (400mg)',       context:totals.caffeine===0?'None':totals.caffeine<=100?'Mild':totals.caffeine<=200?'Moderate — cortisol elevated':totals.caffeine<=300?'High — sleep impact likely':'Near ceiling'},
+    {key:'sodium',    label:'Sodium',          value:totals.sodium,     max:daily.sodium,      unit:'mg',color:MC.sodium,    maxLabel:'daily max (2300mg)',        context:totals.sodium<=200?'Low':totals.sodium<=600?'Moderate':totals.sodium<=1000?'High for one meal':'Very high'},
   ];
-
   const flags = [];
-  if (hasHyd)   flags.push({key:'hyd',    label:'Hydrogenated Oils', color:'#c43a3a', detail:'Industrially hardened fats.',                                                                                            items:processedC.filter(c=>c.reason.toLowerCase().includes('hydrogenated'))});
-  if (hasTrans) flags.push({key:'trans',  label:'Trans Fat Risk',    color:'#c43a3a', detail:'Trace trans fats below 0.5g labeling threshold possible. No safe intake level (WHO).',                                  items:processedC.filter(c=>c.reason.toLowerCase().includes('trans')||c.reason.toLowerCase().includes('hydrogenated'))});
-  if (processedC.some(c=>c.score>=3)) flags.push({key:'upf',label:'Ultra-Processed',color:'#c46a3a',detail:'Industrial ingredients detected. Sorted by severity:',                                                    items:processedC});
-  if (hasAnimal) flags.push({key:'animal',label:'Animal Products',   color:'#a07050', detail:'Contains dairy or other animal-derived ingredients.',                                                                    items:activeItems.filter(({item})=>item.animal).map(({item,qty})=>({name:item.name,qty,score:1,reason:'Dairy or animal-derived'}))});
+  if (hasHyd)   flags.push({key:'hyd',    label:'Hydrogenated Oils', color:'#c43a3a', detail:'Industrially hardened fats.', items:processedC.filter(c=>c.reason.toLowerCase().includes('hydrogenated'))});
+  if (hasTrans) flags.push({key:'trans',  label:'Trans Fat Risk',    color:'#c43a3a', detail:'Trace trans fats possible below 0.5g threshold. No safe intake (WHO).', items:processedC.filter(c=>c.reason.toLowerCase().includes('trans')||c.reason.toLowerCase().includes('hydrogenated'))});
+  if (processedC.some(c=>c.score>=3)) flags.push({key:'upf',label:'Ultra-Processed',color:'#c46a3a',detail:'Industrial ingredients. Sorted by severity:',items:processedC});
+  if (hasAnimal) flags.push({key:'animal',label:'Animal Products',color:'#a07050',detail:'Contains dairy or other animal-derived ingredients.',items:activeItems.filter(({item})=>item.animal).map(({item,qty})=>({name:item.name,qty,score:1,reason:'Dairy or animal-derived'}))});
 
   const positives = [
-    {key:'fiber',  label:'Fiber',       value:totals.fiber,  target:daily.fiber,  unit:'g', color:'#1e3d7a', maxLabel:'daily target (28g)', context:totals.fiber>=8?'Strong — buffers glucose':totals.fiber>=3?'Some':'Low — glucose unbuffered'},
-    {key:'protein',label:'Protein',     value:totals.protein,target:daily.protein,unit:'g', color:'#c43a3a', maxLabel:'daily target (64g)', context:totals.protein>=15?'Strong — satiety':totals.protein>=8?'Moderate':'Low — hunger returns fast'},
-    {key:'whole',  label:'Whole Food %',value:wholePct,      target:100,          unit:'%', color:'#2d8a56', maxLabel:'100% whole-food',    context:wholePct>=70?'Mostly whole foods':wholePct>=40?'Mixed':'Highly processed meal'},
+    {key:'fiber',  label:'Fiber',        value:totals.fiber,  target:daily.fiber,  unit:'g', color:MC.fiber,   maxLabel:'daily target (28g)',context:totals.fiber>=8?'Strong — buffers glucose':totals.fiber>=3?'Some':'Low — glucose unbuffered'},
+    {key:'protein',label:'Protein',      value:totals.protein,target:daily.protein,unit:'g', color:MC.protein, maxLabel:'daily target (64g)',context:totals.protein>=15?'Strong — satiety':totals.protein>=8?'Moderate':'Low — hunger returns fast'},
+    {key:'whole',  label:'Whole Food %', value:wholePct,      target:100,          unit:'%', color:MC.whole,   maxLabel:'100% whole-food',  context:wholePct>=70?'Mostly whole foods':wholePct>=40?'Mixed':'Highly processed'},
   ];
 
   const p = v => totals.cal>0?(v/totals.cal)*100:0;
@@ -513,25 +614,26 @@ function computeReport(quantities, allItems, daily) {
   else if(score>=35){grade='D';gColor='#d47333';gLabel='Damage mode';}
   else{grade='F';gColor='#c43a3a';gLabel='Metabolic hit';}
 
-  return {totals,dangers,flags,positives,score,grade,gradeColor:gColor,gradeLabel:gLabel,gi,gl};
+  return {totals,dangers,flags,positives,score,grade,gradeColor:gColor,gradeLabel:gLabel,wholePct};
 }
 
-// ─── METRIC BAR ───────────────────────────────────────────────────
+// ─── METRIC BAR ──────────────────────────────────────────────────
 function MetricBar({d, isPositive}) {
   const pct = Math.min(100,(d.value/(isPositive?d.target:d.max))*100);
   const warn = !isPositive && pct>60;
-  const barC = isPositive?(pct>=75?d.color:pct>=40?'#888':'#555'):(pct>75?d.color:pct>50?'#c4943a':'#4a7a5a');
+  const barC = isPositive?(pct>=75?d.color:pct>=40?'#444':'#333'):(pct>75?d.color:pct>50?'#c4943a':'#3a5a3a');
   const hi = warn||(isPositive&&pct>=75);
+  const valStr = d.value.toFixed(d.unit==='mg'?0:1);
   return (
-    <div className="metric-bar-wrap">
-      <div className="metric-bar-row">
+    <div className="mbar">
+      <div className="mbar-top">
         <span style={{fontWeight:600,color:hi?d.color:'#888'}}>{d.label}</span>
-        <span style={{fontWeight:700,color:hi?d.color:'#666',fontSize:11}}>{d.value.toFixed(d.unit==='mg'?0:1)}{d.unit}</span>
+        <span style={{fontWeight:700,color:hi?d.color:'#666',fontSize:11}}>{valStr}{d.unit}</span>
       </div>
-      <div className="metric-bar-track">
-        <div className="metric-bar-fill" style={{width:`${pct}%`,backgroundColor:barC}}/>
+      <div className="mbar-track">
+        <div className="mbar-fill" style={{width:`${pct}%`,backgroundColor:barC}}/>
       </div>
-      <div className="metric-bar-footer">
+      <div className="mbar-foot">
         <span style={{color:hi?d.color:'#555',fontWeight:500}}>{d.context}</span>
         <span style={{color:'#444',fontStyle:'italic'}}>{d.maxLabel}</span>
       </div>
@@ -539,15 +641,15 @@ function MetricBar({d, isPositive}) {
   );
 }
 
-// ─── QTY STEPPER ──────────────────────────────────────────────────
+// ─── QTY STEPPER ─────────────────────────────────────────────────
 function QtyStepper({qty,max,unit,onSet,dark}) {
   const c=dark?'#999':'#555', bg=dark?'#333':'#eae7e2';
   return (
     <div className="stepper" style={{background:bg}} onClick={e=>e.stopPropagation()}>
       <button onClick={()=>onSet(Math.max(0,qty-1))} style={{color:c}}>−</button>
       <div className="stepper-val" style={{color:dark?'#eee':'#333'}}>
-        <div className="big">{qty}</div>
-        <div className="small" style={{color:dark?'#777':'#aaa'}}>{unit}</div>
+        <div style={{fontSize:14}}>{qty}</div>
+        <div style={{fontSize:8,color:dark?'#777':'#aaa'}}>{unit}</div>
       </div>
       <button onClick={()=>onSet(Math.min(max,qty+1))} style={{color:c}}>+</button>
     </div>
@@ -556,83 +658,61 @@ function QtyStepper({qty,max,unit,onSet,dark}) {
 
 function formatPortion(qty,unit){return qty===1?`1 ${unit}`:`${qty} × ${unit}`;}
 
-// ─── STATE PERSISTENCE ────────────────────────────────────────────
-const STORAGE_KEY = 'fam_v1';
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch { return null; }
-}
-function saveState(quantities, showPanel, scrollY) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({quantities,showPanel,scrollY,ts:Date.now()}));
-  } catch {}
-}
+// ─── STATE PERSISTENCE ───────────────────────────────────────────
+const SK = 'fam_v2';
+function loadState(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):null;}catch{return null;}}
+function saveState(quantities,showPanel,scrollY){try{localStorage.setItem(SK,JSON.stringify({quantities,showPanel,scrollY,ts:Date.now()}));}catch{}}
 
-// ─── APP ──────────────────────────────────────────────────────────
+// ─── APP ─────────────────────────────────────────────────────────
 function App() {
   const saved = loadState();
-  const [quantities,   setQuantities]   = useState(saved?.quantities || {});
+  const [quantities,   setQuantities]   = useState(saved?.quantities||{});
   const [expandedNote, setExpandedNote] = useState(null);
-  const [showPanel,    setShowPanel]    = useState(saved?.showPanel || false);
+  const [showPanel,    setShowPanel]    = useState(saved?.showPanel||false);
   const [expandedFlag, setExpandedFlag] = useState(null);
   const [appData,      setAppData]      = useState(null);
   const [loadError,    setLoadError]    = useState(null);
+  const [showGiModal,  setShowGiModal]  = useState(false);
   const saveTimer = useRef(null);
 
-  // Persist state on changes
   useEffect(() => {
     clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => {
-      saveState(quantities, showPanel, window.scrollY);
-    }, 300);
-  }, [quantities, showPanel]);
-
-  // Persist scroll position continuously
-  useEffect(() => {
-    const onScroll = () => {
-      clearTimeout(saveTimer.current);
-      saveTimer.current = setTimeout(() => saveState(quantities, showPanel, window.scrollY), 200);
-    };
-    window.addEventListener('scroll', onScroll, {passive:true});
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [quantities, showPanel]);
-
-  // Restore scroll after data loads
-  useEffect(() => {
-    if (appData && saved?.scrollY) {
-      setTimeout(() => window.scrollTo({top:saved.scrollY, behavior:'instant'}), 50);
-    }
-  }, [appData]);
+    saveTimer.current = setTimeout(() => saveState(quantities,showPanel,window.scrollY), 300);
+  }, [quantities,showPanel]);
 
   useEffect(() => {
-    fetch('data.json')
-      .then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
-      .then(d=>setAppData(d))
+    const onScroll = () => { clearTimeout(saveTimer.current); saveTimer.current = setTimeout(()=>saveState(quantities,showPanel,window.scrollY),200); };
+    window.addEventListener('scroll',onScroll,{passive:true});
+    return ()=>window.removeEventListener('scroll',onScroll);
+  }, [quantities,showPanel]);
+
+  useEffect(() => {
+    fetch('data.json').then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
+      .then(d=>{setAppData(d);if(saved?.scrollY)setTimeout(()=>window.scrollTo({top:saved.scrollY,behavior:'instant'}),80);})
       .catch(e=>setLoadError(e.message));
   }, []);
 
-  if (loadError) return <div className="error">Could not load data.json: {loadError}<br/><small>Run: python -m http.server 8000</small></div>;
+  if (loadError) return <div className="error-msg">Could not load data.json: {loadError}<br/><small>Run: python -m http.server 8000</small></div>;
   if (!appData)  return <div className="loading">Loading…</div>;
 
-  const setQty = (id,n) => setQuantities(prev=>{const next={...prev};if(n<=0)delete next[id];else next[id]=n;return next;});
-  const clearAll = () => { setQuantities({}); setShowPanel(false); setExpandedNote(null); window.scrollTo({top:0,behavior:'smooth'}); };
+  const setQty=(id,n)=>setQuantities(prev=>{const next={...prev};if(n<=0)delete next[id];else next[id]=n;return next;});
+  const clearAll=()=>{setQuantities({});setShowPanel(false);setExpandedNote(null);window.scrollTo({top:0,behavior:'smooth'});};
 
   const allItems    = appData.CATEGORIES.flatMap(c=>c.items);
   const activeCount = Object.keys(quantities).length;
   const report      = activeCount>0 ? computeReport(quantities,allItems,appData.DAILY) : null;
   const gigl        = activeCount>0 ? computeGIGL(quantities,allItems) : null;
 
-  const panelH = showPanel ? '80vh' : '130px';
+  const panelMaxH = showPanel ? '80vh' : '130px';
 
   return (
     <div>
       <PatternDefs/>
+      {showGiModal && gigl && <GiGlModal gigl={gigl} onClose={()=>setShowGiModal(false)}/>}
+
       <div className="app">
         {/* HEADER */}
-        <div className="header">
+        <div style={{marginBottom:24}}>
           <div className="eyebrow">FOOD AS MEDICINE</div>
           <h1>Build Your Meal</h1>
           <p className="subhead">Quality score grades the food, not the portion. Bars anchored to daily limits.</p>
@@ -642,28 +722,29 @@ function App() {
           </div>
         </div>
 
-        {/* CATEGORIES GRID */}
+        {/* CATEGORIES */}
         <div className="categories-grid">
           {appData.CATEGORIES.map((cat,ci) => (
             <div key={ci} className="category">
               <div className="cat-header">
-                <span className="cat-icon">{cat.icon}</span>
+                <span style={{fontSize:20}}>{cat.icon}</span>
                 <div><div className="cat-name">{cat.name}</div><div className="cat-desc">{cat.desc}</div></div>
               </div>
               <div className="items-list">
                 {cat.items.map(item => {
                   const qty=quantities[item.id]||0, active=qty>0, isOpen=expandedNote===item.id;
+                  const giColor = item.gi>0 ? (item.gi<55?'#2d8a56':item.gi<70?'#c4943a':'#c43a3a') : '#555';
                   return (
                     <div key={item.id}>
                       <div className={`item-row${active?' active':''}`}>
                         <QtyStepper qty={qty} max={item.max} unit={item.unit} onSet={n=>setQty(item.id,n)} dark={active}/>
                         <div style={{flex:1,minWidth:0}}>
-                          <div className="item-name" style={{color:active?'#eee':'#333'}}>
+                          <div className="item-name-line" style={{color:active?'#eee':'#333'}}>
                             {item.name}
                             {item.hydrogenatedOil && <span className="tag" style={{background:'#c43a3a33',color:'#c43a3a'}}>HYD</span>}
                             {item.processed>=3    && <span className="tag" style={{background:'#d4733333',color:'#d47333'}}>UPF</span>}
                             {item.animal          && <span className="tag" style={{background:'#a0705033',color:'#a07050'}}>🐄</span>}
-                            {item.gi>0            && <span className="tag" style={{background:'#33333333',color:'#888'}}>GI {item.gi}</span>}
+                            {item.gi>0            && <span className="tag" style={{background:`${giColor}22`,color:giColor}}>GI {item.gi}</span>}
                           </div>
                           <div className="item-brand" style={{color:active?'#777':'#bbb'}}>
                             {item.brand}{active&&<span style={{color:'#aaa'}}> · {formatPortion(qty,item.unit)}</span>}
@@ -675,7 +756,7 @@ function App() {
                             :<><div style={{fontSize:14,fontWeight:800,color:'#555'}}>{item.cal}</div><div style={{fontSize:8,color:'#bbb'}}>/{item.unit}</div></>
                           }
                         </div>
-                        {item.addedSugar>=8   && <div className="sugar-dot" style={{background:'#7a3ac4'}}/>}
+                        {item.addedSugar>=8   && <div className="sugar-dot" style={{background:SEG.addedSugar.textColor}}/>}
                         {item.addedSugar>=4&&item.addedSugar<8 && <div className="sugar-dot" style={{background:'#c4943a'}}/>}
                         <button className="info-btn" style={{background:active?'#333':'#f0ede8',color:active?'#777':'#aaa',border:'none'}}
                                 onClick={()=>setExpandedNote(isOpen?null:item.id)}>i</button>
@@ -685,21 +766,22 @@ function App() {
                         <div className="info-panel" style={{borderLeft:`3px solid ${item.hydrogenatedOil?'#c43a3a':item.processed>=2?'#d47333':'#444'}`}}>
                           <div style={{marginBottom:8}}>{item.note}</div>
                           <div className="info-section-title">MACRO BREAKDOWN (per {item.unit})</div>
-                          <MacroBar item={item} small={false}/>
-                          {item.gi > 0 && (
-                            <div style={{marginTop:8,marginBottom:4}}>
-                              <GiBadge gi={item.gi}/>
-                              <span style={{fontSize:9,color:'#666',marginLeft:8}}>
-                                GL per {item.unit}: {(item.gi * Math.max(0,item.carbs-item.fiber) / 100).toFixed(1)}
-                              </span>
+                          <MacroBar fat={item.fat} satFat={item.satFat} transFat={item.transFat||0}
+                                    carbs={item.carbs} fiber={item.fiber} sugar={item.sugar} addedSugar={item.addedSugar}
+                                    protein={item.protein} refinedCarbs={item.refinedCarbs} animalProteinFrac={item.animalProtein||0}
+                                    cal={item.cal} small={false}/>
+                          {item.gi>0 && (
+                            <div style={{marginTop:8,fontSize:10,color:'#888'}}>
+                              <span style={{color:giColor,fontWeight:700}}>GI {item.gi}</span>
+                              <span style={{marginLeft:8}}>GL per serving = {item.gi} × {item.carbs} ÷ 100 = <strong style={{color:'#ccc'}}>{item.gl}</strong></span>
+                              <div style={{fontSize:8,color:'#555',marginTop:2}}>{item.giSource}</div>
                             </div>
                           )}
                           <div className="info-stats">
-                            <span>{item.cal} cal</span>
-                            <span>Na {item.sodium}mg</span>
-                            {item.refinedCarbs>0 && <span style={{color:'#6a9be4'}}>Refined {item.refinedCarbs}g</span>}
-                            {item.caffeine>0     && <span style={{color:'#6b4a2a'}}>Caffeine {item.caffeine}mg</span>}
-                            {item.transFat>0     && <span style={{color:'#c46a3a'}}>Trans fat ~{item.transFat}g (trace)</span>}
+                            <span>{item.cal} cal</span><span>Na {item.sodium}mg</span>
+                            {item.refinedCarbs>0 && <span style={{color:SEG.refinedStarch.textColor}}>Refined {item.refinedCarbs}g</span>}
+                            {item.caffeine>0     && <span style={{color:'#c4943a'}}>Caffeine {item.caffeine}mg</span>}
+                            {item.transFat>0     && <span style={{color:SEG.transFat.textColor}}>Trans ~{item.transFat}g (trace)</span>}
                           </div>
                         </div>
                       )}
@@ -710,91 +792,105 @@ function App() {
             </div>
           ))}
         </div>
-      </div>{/* end .app */}
+      </div>
 
-      {/* ── STICKY BOTTOM PANEL ── */}
-      <div className="bottom-panel" style={{maxHeight:panelH}}>
+      {/* STICKY BOTTOM */}
+      <div className="bottom-panel" style={{maxHeight:panelMaxH}}>
         <div className="bottom-inner">
           {activeCount===0 ? (
-            <div className="bottom-empty">Use +/− to add items · <button className="clear-btn" onClick={clearAll} style={{display:'inline'}}>Clear</button></div>
+            <div className="bottom-empty">Use +/− to add items</div>
           ) : (
             <>
-              {/* Always-visible summary row */}
-              <div className="summary-row" onClick={()=>setShowPanel(!showPanel)}>
+              {/* Summary row — always visible */}
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
                 <div className="grade-badge" style={{background:report.gradeColor}}>
-                  <span className="grade-letter">{report.grade}</span>
+                  <span style={{fontSize:22,fontWeight:900,color:'#fff',lineHeight:1}}>{report.grade}</span>
                 </div>
-                <div className="summary-info">
-                  <div className="summary-top">
+                <div style={{flex:1}} onClick={()=>setShowPanel(!showPanel)} className="summary-row" style={{flex:1,cursor:'pointer'}}>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
                     <span style={{fontSize:10,color:report.gradeColor,fontWeight:700}}>{report.gradeLabel}</span>
-                    <span className="collapse-hint">{showPanel?'▼ collapse':'▲ details'}</span>
+                    <span style={{fontSize:9,color:'#555'}}>{showPanel?'▼ collapse':'▲ details'}</span>
                   </div>
-                  <div className="summary-cal">
-                    <span className="cal-big">{Math.round(report.totals.cal)}</span>
-                    <span className="cal-unit">cal</span>
-                    <span className="quality-score">quality {report.score}/100</span>
-                    {gigl&&gigl.gi>0 && <GiBadge gi={gigl.gi}/>}
-                    {gigl&&gigl.gl>0 && <GlBadge gl={gigl.gl}/>}
+                  <div style={{display:'flex',alignItems:'baseline',gap:6,flexWrap:'wrap'}}>
+                    <span style={{fontSize:26,fontWeight:900,color:'#fff',lineHeight:1}}>{Math.round(report.totals.cal)}</span>
+                    <span style={{fontSize:10,color:'#555'}}>cal</span>
+                    <span style={{fontSize:10,color:'#444'}}>quality {report.score}/100</span>
+                    {gigl?.avgGI>0 && (
+                      <span onClick={e=>{e.stopPropagation();setShowGiModal(true);}}
+                            className="gi-badge" style={{background:gigl.avgGI<55?'#2d8a5622':gigl.avgGI<70?'#c4943a22':'#c43a3a22',color:gigl.avgGI<55?'#2d8a56':gigl.avgGI<70?'#c4943a':'#c43a3a'}}>
+                        GI {gigl.avgGI} ⓘ
+                      </span>
+                    )}
+                    {gigl?.totalGL>0 && (
+                      <span onClick={e=>{e.stopPropagation();setShowGiModal(true);}}
+                            className="gl-badge" style={{background:gigl.totalGL<10?'#2d8a5622':gigl.totalGL<20?'#c4943a22':'#c43a3a22',color:gigl.totalGL<10?'#2d8a56':gigl.totalGL<20?'#c4943a':'#c43a3a'}}>
+                        GL {gigl.totalGL} ⓘ
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
 
               {showPanel && (
-                <div style={{borderTop:'1px solid #2a2a2a',paddingTop:10,marginTop:8}}>
+                <>
+                  {/* Sticky collapse button visible anywhere in scroll */}
+                  <div className="collapse-toggle">
+                    <button onClick={()=>setShowPanel(false)}>▼ collapse</button>
+                  </div>
 
-                  {/* Main macro bar */}
-                  <div className="panel-section" style={{marginTop:0}}>MACRO DISTRIBUTION</div>
-                  <MacroBar totals={{...report.totals}} small={false}/>
+                  <div style={{borderTop:'1px solid #2a2a2a',paddingTop:10}}>
+                    <div className="panel-section" style={{marginTop:0}}>MACRO DISTRIBUTION</div>
+                    <MacroBar fat={report.totals.fat} satFat={report.totals.satFat} transFat={report.totals.transFat||0}
+                              carbs={report.totals.carbs} fiber={report.totals.fiber} sugar={report.totals.sugar} addedSugar={report.totals.addedSugar}
+                              protein={report.totals.protein} refinedCarbs={report.totals.refinedCarbs} animalProteinFrac={report.totals.animalProteinFrac||0}
+                              cal={report.totals.cal} small={false}/>
 
-                  {/* Flags */}
-                  {report.flags.length>0 && (
-                    <>
-                      <div className="panel-section">WARNINGS</div>
-                      {report.flags.map(f=>(
-                        <div key={f.key}>
-                          <button className="flag-btn" onClick={()=>setExpandedFlag(expandedFlag===f.key?null:f.key)}
-                                  style={{background:`${f.color}15`,color:f.color}}>
-                            <span>⚠ {f.label}</span>
-                            <span style={{fontSize:8,color:'#555'}}>{expandedFlag===f.key?'▼':'▶'} {f.items?.length||0} item{(f.items?.length||0)!==1?'s':''}</span>
-                          </button>
-                          {expandedFlag===f.key && (
-                            <div className="flag-detail" style={{background:'#1a1a1a',borderLeft:`3px solid ${f.color}`,marginBottom:8}}>
-                              <div style={{fontSize:10,color:'#888',marginBottom:6,lineHeight:1.5}}>{f.detail}</div>
-                              {f.items&&f.items.map((c,ci)=>(
-                                <div key={ci} className="flag-item" style={{borderBottom:ci<f.items.length-1?'1px solid #222':'none'}}>
-                                  <div className="flag-dot" style={{background:f.color}}/>
-                                  <div>
-                                    <div style={{fontSize:11,fontWeight:700,color:'#ccc'}}>
-                                      {c.name} <span style={{fontWeight:400,color:'#666'}}>×{c.qty}</span>
-                                      {c.score>1&&<span style={{marginLeft:6,fontSize:8,background:`${f.color}25`,color:f.color,padding:'1px 5px',borderRadius:2,fontWeight:800}}>severity {c.score}/3</span>}
+                    {report.flags.length>0 && (
+                      <>
+                        <div className="panel-section">WARNINGS</div>
+                        {report.flags.map(f=>(
+                          <div key={f.key}>
+                            <button className="flag-btn" onClick={()=>setExpandedFlag(expandedFlag===f.key?null:f.key)}
+                                    style={{background:`${f.color}15`,color:f.color}}>
+                              <span>⚠ {f.label}</span>
+                              <span style={{fontSize:8,color:'#555'}}>{expandedFlag===f.key?'▼':'▶'} {f.items?.length||0} item{(f.items?.length||0)!==1?'s':''}</span>
+                            </button>
+                            {expandedFlag===f.key && (
+                              <div className="flag-detail" style={{background:'#1a1a1a',borderLeft:`3px solid ${f.color}`,marginBottom:8}}>
+                                <div style={{fontSize:10,color:'#888',marginBottom:6,lineHeight:1.5}}>{f.detail}</div>
+                                {f.items&&f.items.map((c,ci)=>(
+                                  <div key={ci} className="flag-item" style={{borderBottom:ci<f.items.length-1?'1px solid #222':'none'}}>
+                                    <div className="flag-dot" style={{background:f.color}}/>
+                                    <div>
+                                      <div style={{fontSize:11,fontWeight:700,color:'#ccc'}}>
+                                        {c.name} <span style={{fontWeight:400,color:'#666'}}>×{c.qty}</span>
+                                        {c.score>1&&<span style={{marginLeft:6,fontSize:8,background:`${f.color}25`,color:f.color,padding:'1px 5px',borderRadius:2,fontWeight:800}}>severity {c.score}/3</span>}
+                                      </div>
+                                      <div style={{fontSize:9,color:'#777',lineHeight:1.5,marginTop:2}}>{c.reason}</div>
                                     </div>
-                                    <div style={{fontSize:9,color:'#777',lineHeight:1.5,marginTop:2}}>{c.reason}</div>
                                   </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </>
-                  )}
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </>
+                    )}
 
-                  {/* Danger bars */}
-                  <div className="panel-section">WATCH THESE</div>
-                  {report.dangers.map(d=><MetricBar key={d.key} d={d}/>)}
+                    <div className="panel-section">WATCH THESE</div>
+                    {report.dangers.map(d=><MetricBar key={d.key} d={d}/>)}
 
-                  {/* Positive bars */}
-                  <div className="panel-section">WANT MORE OF</div>
-                  {report.positives.map(p=><MetricBar key={p.key} d={{...p,max:p.target}} isPositive/>)}
+                    <div className="panel-section">WANT MORE OF</div>
+                    {report.positives.map(p=><MetricBar key={p.key} d={{...p,max:p.target}} isPositive/>)}
 
-                  {/* Carb sub-charts */}
-                  {report.totals.carbs > 0 && (
-                    <>
-                      <div className="panel-section">CARB BREAKDOWN</div>
-                      <CarbSubCharts totals={report.totals} gigl={gigl||{gi:0,gl:0}}/>
-                    </>
-                  )}
-                </div>
+                    {report.totals.carbs>0 && (
+                      <>
+                        <div className="panel-section">CARB BREAKDOWN</div>
+                        <CarbSubCharts totals={report.totals} gigl={gigl||{avgGI:0,totalGL:0}}/>
+                      </>
+                    )}
+                  </div>
+                </>
               )}
             </>
           )}
