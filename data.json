@@ -1,986 +1,1071 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Food as Medicine</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#f7f5f2;font-family:'Outfit',sans-serif;color:#1e1e1e}
-button{font-family:'Outfit',sans-serif;cursor:pointer}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#ddd}::-webkit-scrollbar-thumb{background:#bbb;border-radius:2px}
-.loading,.error-msg{text-align:center;padding:60px 20px;font-size:14px;color:#999}
-.error-msg{color:#c43a3a}
-.app{max-width:1100px;margin:0 auto;padding:24px 16px 240px}
-h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin:4px 0;line-height:1.1}
-.eyebrow{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#bbb;font-weight:700}
-.subhead{font-size:12px;color:#999}
-.header-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center}
-.clear-btn{border:none;background:#e8e5e0;border-radius:4px;padding:5px 14px;font-size:10px;color:#888;font-weight:600}
-.clear-btn:hover{background:#ddd}
-.categories-grid{display:grid;grid-template-columns:1fr;gap:0}
-@media(min-width:700px){.categories-grid{grid-template-columns:1fr 1fr;gap:0 24px}}
-.category{margin-bottom:22px}
-.cat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;border-bottom:1px solid #e8e5e0;padding-bottom:6px}
-.cat-name{font-size:13px;font-weight:700}.cat-desc{font-size:10px;color:#aaa}
-.items-list{display:flex;flex-direction:column;gap:4px}
-.item-row{display:flex;align-items:center;gap:8px;border-radius:8px;padding:8px 10px;transition:background .15s;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.item-row.active{background:#1e1e1e;box-shadow:none}
-.item-name-line{font-size:13px;font-weight:600;line-height:1.2;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-.item-brand{font-size:9px;margin-top:1px}
-.item-cal{text-align:right;flex-shrink:0;min-width:44px}
-.tag{font-size:7px;padding:1px 4px;border-radius:2px;font-weight:800}
-.sugar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.info-btn{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:none}
-.info-panel{margin:2px 0 4px;padding:10px 12px;background:#1e1e1e;border-radius:6px;font-size:11px;line-height:1.6;color:#aaa}
-.isect{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin:8px 0 4px}
-.isect:first-child{margin-top:0}
-.info-stats{display:flex;gap:8px;flex-wrap:wrap;font-size:8px;color:#666;font-weight:600;margin-top:6px}
-.stepper{display:flex;align-items:center;border-radius:6px;overflow:hidden;flex-shrink:0}
-.stepper button{width:28px;height:28px;border:none;background:transparent;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.stepper-val{min-width:38px;text-align:center;font-weight:700;line-height:1.1;padding:0 2px}
-
-/* Bottom panel */
-.bottom-panel{position:fixed;bottom:0;left:0;right:0;background:#141414f8;backdrop-filter:blur(12px);border-top:1px solid #2a2a2a;z-index:100;overflow-y:auto;transition:max-height .3s ease}
-.bottom-inner{max-width:1100px;margin:0 auto;padding:10px 16px 16px}
-.bottom-empty{text-align:center;font-size:12px;color:#555;padding:16px 0}
-.grade-badge{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-/* Sticky collapse always visible at top of scrollable panel */
-.collapse-toggle{position:sticky;top:0;z-index:20;display:flex;justify-content:flex-end;padding-bottom:4px;background:#141414f8}
-.collapse-toggle button{background:#2a2a2a;border:none;color:#aaa;font-size:11px;padding:3px 12px;border-radius:12px}
-.collapse-toggle button:hover{background:#3a3a3a;color:#eee}
-.psect{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;font-weight:700;margin:12px 0 6px}
-.psect:first-of-type{margin-top:4px}
-
-/* Metric bars */
-.mbar{margin-bottom:7px}
-.mbar-top{display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px;align-items:baseline}
-.mbar-track{height:5px;background:#333;overflow:hidden}
-.mbar-fill{height:100%;transition:width .3s}
-.mbar-foot{display:flex;justify-content:space-between;font-size:8px;margin-top:1px}
-
-/* Flags */
-.flag-btn{border:none;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.flag-detail{padding:8px 10px;border-radius:0 0 4px 4px;margin-bottom:8px}
-.flag-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;padding-bottom:6px}
-.flag-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
-
-/* GI/GL */
-.gi-badge,.gl-badge{display:inline-block;font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;cursor:pointer;user-select:none}
-.gi-badge:hover,.gl-badge:hover{opacity:.8}
-
-/* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal-box{background:#1a1a1a;border:1px solid #333;border-radius:10px;max-width:580px;width:100%;max-height:88vh;overflow-y:auto;color:#ccc}
-.modal-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #2a2a2a;position:sticky;top:0;background:#1a1a1a;z-index:1}
-.modal-close{background:none;border:none;color:#888;font-size:20px;line-height:1}
-.msect{padding:14px 16px;border-bottom:1px solid #1e1e1e}
-.msect:last-child{border-bottom:none}
-.gi-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
-.gi-table th,.gi-table td{padding:4px 8px;text-align:left;border-bottom:1px solid #222}
-.gi-table th{color:#666;font-weight:600;font-size:9px;letter-spacing:1px;text-transform:uppercase}
-
-/* Legend */
-.leg-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:3px;font-size:9px;align-items:center}
-.leg-grp-label{font-size:8px;font-weight:800;text-transform:uppercase;min-width:36px}
-.leg-item{display:flex;align-items:center;gap:3px;font-weight:600}
-.leg-swatch{display:inline-block;width:20px;height:11px;flex-shrink:0}
-
-/* Carb sub-charts */
-.cchart{margin-bottom:10px}
-.cchart-title{font-size:9px;font-weight:700;color:#888;margin-bottom:3px}
-
-/* Tooltip */
-.seg-tip{position:fixed;background:#111;border:1px solid #444;border-radius:4px;padding:4px 9px;font-size:10px;color:#eee;pointer-events:none;z-index:400;white-space:nowrap;transform:translate(-50%,-110%)}
-</style>
-</head>
-<body>
-<div id="root"><div class="loading">Loading…</div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<script type="text/babel">
-const { useState, useEffect, useRef } = React;
-
-// ═══════════════════════════════════════════════════════════════════
-// COLOUR + PATTERN SYSTEM
-// Blue = carbs, Yellow = fat, Red = protein
-// Patterns use objectBoundingBox so they scale correctly regardless
-// of the SVG viewBox or rendered size.
-// Sub-segments show BOTH the parent group texture (inherited) AND
-// their own distinguishing texture layered on top.
-// ═══════════════════════════════════════════════════════════════════
-const GC = { carb:'#3a6bc4', fat:'#c4a83a', prot:'#c43a3a' };
-
-// SEG definition
-// patId     : references a <pattern> in PatternDefs
-// baseColor : the dominant group color shown in legend swatch bg
-// fill      : CSS for the legend swatch (can be gradient/repeating)
-// textColor : label + value color in legend
-// label     : display name
-// group     : 'carb'|'fat'|'prot'
-// kcalPg    : kcal per gram (for proportional bar sizing)
-// overlayPatId: transparent-bg pattern layered ON TOP of baseColor fill
-// null = solid only (no texture needed — the base color IS the identity)
-const SEG = {
-  // ── CARBS (blue family, healthiest → least) ──────────────────────
-  fiber:         { patId:'p-fiber', baseColor:'#1a3570', overlayPatId:'p-fiber-ov', textColor:'#7aaae0', label:'Fiber',          group:'carb', kcalPg:2 },
-  wholeStarch:   { patId:'p-ws',   baseColor:'#3a6bc4', overlayPatId:null,          textColor:'#6a9be4', label:'Whole Starch',   group:'carb', kcalPg:4 },
-  natSugar:      { patId:'p-ns',   baseColor:'#3a9bc4', overlayPatId:'p-ns-ov',     textColor:'#6acce4', label:'Natural Sugar',  group:'carb', kcalPg:4 },
-  refinedStarch: { patId:'p-rs',   baseColor:'#5a8ad4', overlayPatId:'p-rs-ov',     textColor:'#9abce4', label:'Refined Starch', group:'carb', kcalPg:4 },
-  addedSugar:    { patId:'p-as',   baseColor:'#2a3a8a', overlayPatId:'p-as-ov',     textColor:'#6a7ae4', label:'Added Sugar',    group:'carb', kcalPg:4 },
-  // ── FAT (yellow family, healthiest → least) ──────────────────────
-  unsatFat:      { patId:'p-uf',   baseColor:'#c4a83a', overlayPatId:null,          textColor:'#e4c85a', label:'Unsat Fat',      group:'fat',  kcalPg:9 },
-  satFat:        { patId:'p-sf',   baseColor:'#a47820', overlayPatId:'p-sf-ov',     textColor:'#c49840', label:'Sat Fat',        group:'fat',  kcalPg:9 },
-  transFat:      { patId:'p-tf',   baseColor:'#c47820', overlayPatId:'p-tf-ov',     textColor:'#e48040', label:'Trans Fat',      group:'fat',  kcalPg:9 },
-  // ── PROTEIN (red family, healthiest → least) ─────────────────────
-  plantProtein:  { patId:'p-pp',   baseColor:'#c43a3a', overlayPatId:null,          textColor:'#e46a6a', label:'Plant Protein',  group:'prot', kcalPg:4 },
-  animalProtein: { patId:'p-ap',   baseColor:'#8a2020', overlayPatId:'p-ap-ov',     textColor:'#c45a5a', label:'Animal Protein', group:'prot', kcalPg:4 },
-};
-
-const LEG_ORDER = {
-  carb: ['fiber','wholeStarch','natSugar','refinedStarch','addedSugar'],
-  fat:  ['unsatFat','satFat','transFat'],
-  prot: ['plantProtein','animalProtein'],
-};
-
-// ═══════════════════════════════════════════════════════════════════
-// SVG PATTERN DEFS
-// Using objectBoundingBox so patterns tile relative to the filled
-// shape, not the SVG user coordinate space. This means they scale
-// correctly at any bar width/height.
-// Each segment has:
-//   Layer 1 (base): the GROUP colour fill (shows inheritance)
-//   Layer 2 (overlay): the SEGMENT-specific distinguishing texture
-// For the bar we stack two <rect> elements per segment cell:
-//   - base fill rect
-//   - pattern overlay rect (transparent bg + opaque texture)
-// We implement this with two separate patterns per segment that
-// get applied via a <g> with two rects in the MacroBar render.
-// ═══════════════════════════════════════════════════════════════════
-function PatternDefs() {
-  // All patterns use objectBoundingBox + percentage-based coords.
-  // width/height in % of the bounding box of the filled element.
-  return (
-    <svg width="0" height="0" style={{position:'absolute',overflow:'hidden',pointerEvents:'none'}}>
-      <defs>
-        {/* ─── CARBS ─────────────────────────────────────── */}
-        {/* Fiber: deep blue base + circular dots */}
-        <pattern id="p-fiber" patternUnits="objectBoundingBox" width="0.15" height="0.8">
-          <rect width="100%" height="100%" fill="#1a3570"/>
-          <circle cx="50%" cy="30%" r="18%" fill="#5a8ad4"/>
-          <circle cx="50%" cy="80%" r="18%" fill="#5a8ad4"/>
-        </pattern>
-
-        {/* Whole Starch: solid mid-blue (parent reference, no extra texture) */}
-        <pattern id="p-ws" patternUnits="objectBoundingBox" width="1" height="1">
-          <rect width="100%" height="100%" fill="#3a6bc4"/>
-        </pattern>
-
-        {/* Natural Sugar: cyan-blue base + horizontal stripes (parent blue → lighter) */}
-        <pattern id="p-ns" patternUnits="objectBoundingBox" width="1" height="0.4">
-          <rect width="100%" height="100%" fill="#3a9bc4"/>
-          <rect width="100%" height="40%" y="60%" fill="#1a6a8a"/>
-        </pattern>
-
-        {/* Refined Starch: mid-blue lighter base + diagonal lines NE */}
-        <pattern id="p-rs" patternUnits="objectBoundingBox" width="0.2" height="1">
-          <rect width="100%" height="100%" fill="#5a8ad4"/>
-          <line x1="100%" y1="0%" x2="0%" y2="100%" stroke="#2a50a0" strokeWidth="0.08" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-
-        {/* Added Sugar: dark blue base + crosshatch (danger) */}
-        <pattern id="p-as" patternUnits="objectBoundingBox" width="0.2" height="0.8">
-          <rect width="100%" height="100%" fill="#2a3a8a"/>
-          <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="#1a2060" strokeWidth="0.06" vectorEffect="non-scaling-stroke"/>
-          <line x1="100%" y1="0%" x2="0%" y2="100%" stroke="#1a2060" strokeWidth="0.06" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-
-        {/* ─── FAT ───────────────────────────────────────── */}
-        {/* Unsat Fat: solid amber */}
-        <pattern id="p-uf" patternUnits="objectBoundingBox" width="1" height="1">
-          <rect width="100%" height="100%" fill="#c4a83a"/>
-        </pattern>
-
-        {/* Sat Fat: dark gold base + diagonal lines SW */}
-        <pattern id="p-sf" patternUnits="objectBoundingBox" width="0.2" height="1">
-          <rect width="100%" height="100%" fill="#a47820"/>
-          <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="#7a5800" strokeWidth="0.08" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-
-        {/* Trans Fat: orange-gold base + zigzag (danger) */}
-        <pattern id="p-tf" patternUnits="objectBoundingBox" width="0.4" height="1">
-          <rect width="100%" height="100%" fill="#c47820"/>
-          <polyline points="0%,80% 25%,20% 50%,80% 75%,20% 100%,80%"
-                    fill="none" stroke="#8a3000" strokeWidth="0.06" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-
-        {/* ─── PROTEIN ───────────────────────────────────── */}
-        {/* Plant Protein: solid red */}
-        <pattern id="p-pp" patternUnits="objectBoundingBox" width="1" height="1">
-          <rect width="100%" height="100%" fill="#c43a3a"/>
-        </pattern>
-
-        {/* Animal Protein: dark crimson base + horizontal lines */}
-        <pattern id="p-ap" patternUnits="objectBoundingBox" width="1" height="0.4">
-          <rect width="100%" height="100%" fill="#8a2020"/>
-          <rect width="100%" height="30%" y="70%" fill="#5a0a0a"/>
-        </pattern>
-
-        {/* ─── Carb sub-chart extras ──────────────────── */}
-        <pattern id="p-wholefood" patternUnits="objectBoundingBox" width="0.2" height="0.8">
-          <rect width="100%" height="100%" fill="#1a3a7a"/>
-          <circle cx="50%" cy="50%" r="28%" fill="none" stroke="#4a7ac4" strokeWidth="0.06" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-
-        {/* ─── OVERLAY-ONLY variants (transparent bg, texture only) ─── */}
-        {/* These are layered ON TOP of a solid base color rect, showing inheritance */}
-        <pattern id="p-fiber-ov" patternUnits="objectBoundingBox" width="0.15" height="0.8">
-          <circle cx="50%" cy="30%" r="18%" fill="rgba(90,138,212,0.7)"/>
-          <circle cx="50%" cy="80%" r="18%" fill="rgba(90,138,212,0.7)"/>
-        </pattern>
-        <pattern id="p-ns-ov" patternUnits="objectBoundingBox" width="1" height="0.4">
-          <rect width="100%" height="30%" y="70%" fill="rgba(26,106,138,0.6)"/>
-        </pattern>
-        <pattern id="p-rs-ov" patternUnits="objectBoundingBox" width="0.2" height="1">
-          <line x1="100%" y1="0%" x2="0%" y2="100%" stroke="rgba(42,80,160,0.7)" strokeWidth="0.1" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-        <pattern id="p-as-ov" patternUnits="objectBoundingBox" width="0.2" height="0.8">
-          <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="rgba(26,32,96,0.7)" strokeWidth="0.08" vectorEffect="non-scaling-stroke"/>
-          <line x1="100%" y1="0%" x2="0%" y2="100%" stroke="rgba(26,32,96,0.7)" strokeWidth="0.08" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-        <pattern id="p-sf-ov" patternUnits="objectBoundingBox" width="0.2" height="1">
-          <line x1="0%" y1="0%" x2="100%" y2="100%" stroke="rgba(122,88,0,0.7)" strokeWidth="0.1" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-        <pattern id="p-tf-ov" patternUnits="objectBoundingBox" width="0.4" height="1">
-          <polyline points="0%,80% 25%,20% 50%,80% 75%,20% 100%,80%"
-                    fill="none" stroke="rgba(138,48,0,0.8)" strokeWidth="0.08" vectorEffect="non-scaling-stroke"/>
-        </pattern>
-        <pattern id="p-ap-ov" patternUnits="objectBoundingBox" width="1" height="0.4">
-          <rect width="100%" height="30%" y="70%" fill="rgba(90,10,10,0.6)"/>
-        </pattern>
-      </defs>
-    </svg>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// TOOLTIP
-// ═══════════════════════════════════════════════════════════════════
-function SegTip({ tip }) {
-  if (!tip) return null;
-  return <div className="seg-tip" style={{left:tip.x, top:tip.y}}>{tip.text}</div>;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// BUILD SEGMENTS
-// ═══════════════════════════════════════════════════════════════════
-function buildSegs(fat, satFat, transFat, carbs, fiber, sugar, addedSugar, protein, refinedCarbs, animalFrac) {
-  const tFat = transFat || 0;
-  const complexC = Math.max(0, carbs - sugar - fiber);
-  const refC  = Math.min(complexC, refinedCarbs || 0);
-  const whlC  = Math.max(0, complexC - refC);
-  const natSug= Math.max(0, sugar - addedSugar);
-  const unsat = Math.max(0, fat - satFat - tFat);
-  const plantP= protein * Math.max(0, 1 - (animalFrac||0));
-  const animP = protein * (animalFrac||0);
-
-  return [
-    { key:'fiber',         g:fiber,     s:SEG.fiber        },
-    { key:'wholeStarch',   g:whlC,      s:SEG.wholeStarch  },
-    { key:'natSugar',      g:natSug,    s:SEG.natSugar     },
-    { key:'refinedStarch', g:refC,      s:SEG.refinedStarch},
-    { key:'addedSugar',    g:addedSugar,s:SEG.addedSugar   },
-    { key:'unsatFat',      g:unsat,     s:SEG.unsatFat     },
-    { key:'satFat',        g:satFat,    s:SEG.satFat       },
-    { key:'transFat',      g:tFat,      s:SEG.transFat     },
-    { key:'plantProtein',  g:plantP,    s:SEG.plantProtein },
-    { key:'animalProtein', g:animP,     s:SEG.animalProtein},
-  ].filter(s => s.g > 0.05).map(s => ({ ...s, kcal: s.g * s.s.kcalPg }));
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// MACRO BAR
-// ═══════════════════════════════════════════════════════════════════
-function MacroBar({ fat=0, satFat=0, transFat=0, carbs=0, fiber=0, sugar=0, addedSugar=0, protein=0, refinedCarbs=0, animalFrac=0, cal=0, small=false }) {
-  const [tip, setTip] = useState(null);
-  if (cal <= 0) return null;
-
-  const segs = buildSegs(fat, satFat, transFat, carbs, fiber, sugar, addedSugar, protein, refinedCarbs, animalFrac);
-  const total = segs.reduce((a,s) => a+s.kcal, 0) || 1;
-  const h = small ? 14 : 26;
-
-  // Find group-boundary X positions
-  const boundaries = [];
-  let xAcc = 0, prevGroup = null;
-  segs.forEach(s => {
-    const w = (s.kcal/total)*100;
-    if (prevGroup && s.s.group !== prevGroup) boundaries.push(xAcc);
-    prevGroup = s.s.group;
-    xAcc += w;
-  });
-
-  const showTip = (e, s) => {
-    const pct = Math.round((s.kcal/total)*100);
-    const parent = {carb:'Carb',fat:'Fat',prot:'Protein'}[s.s.group];
-    setTip({ x:e.clientX, y:e.clientY, text:`${parent} › ${s.s.label}: ${s.g.toFixed(1)}g (${pct}% of cal)` });
-  };
-  const showTipTouch = (e, s) => {
-    const t = e.touches[0];
-    const pct = Math.round((s.kcal/total)*100);
-    const parent = {carb:'Carb',fat:'Fat',prot:'Protein'}[s.s.group];
-    setTip({ x:t.clientX, y:t.clientY, text:`${parent} › ${s.s.label}: ${s.g.toFixed(1)}g (${pct}% of cal)` });
-    setTimeout(()=>setTip(null), 2200);
-  };
-
-  let xCur = 0;
-  const rects = segs.map((s,i) => {
-    const w = Math.max((s.kcal/total)*100, 0);
-    const rx = xCur; xCur += w;
-    // TWO-LAYER INHERITANCE:
-    // Layer 1 = solid baseColor rect (shows which macro group this belongs to)
-    // Layer 2 = overlay-only pattern (transparent bg, just the texture marks)
-    // Solid-only segs (overlayPatId===null) skip layer 2 — base color IS the identity
-    return (
-      <g key={i} onMouseMove={e=>showTip(e,s)} onMouseLeave={()=>setTip(null)}
-         onTouchStart={e=>showTipTouch(e,s)} style={{cursor:'crosshair'}}>
-        <rect x={rx} y={0} width={w} height={h} fill={s.s.baseColor}/>
-        {s.s.overlayPatId &&
-          <rect x={rx} y={0} width={w} height={h} fill={`url(#${s.s.overlayPatId})`}/>
+{
+  "DAILY": {
+    "addedSugar": 36,
+    "satFat": 13,
+    "refinedCarbs": 50,
+    "sodium": 2300,
+    "fiber": 28,
+    "protein": 64,
+    "caffeine": 400
+  },
+  "CATEGORIES": [
+    {
+      "name": "Base",
+      "icon": "🥣",
+      "desc": "Pick your foundation",
+      "items": [
+        {
+          "id": "steel_oats",
+          "name": "Steel Cut Oats",
+          "brand": "Trader Joe's Organic",
+          "unit": "¼ cup",
+          "max": 9,
+          "cal": 150,
+          "fat": 2.5,
+          "satFat": 0.5,
+          "carbs": 27,
+          "fiber": 4,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 5,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 1,
+          "processedReason": null,
+          "note": "Lowest GI oat (~42). Single ingredient: oats.",
+          "gi": 50,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Rolled Oats (CEREALS)",
+          "giNote": "Steel cut slightly lower ~42-50; dataset lists Rolled Oats=50",
+          "gl": 13.5
+        },
+        {
+          "id": "quaker_oats",
+          "name": "Old Fashioned Oats",
+          "brand": "Quaker (PepsiCo)",
+          "unit": "½ cup",
+          "max": 9,
+          "cal": 150,
+          "fat": 3,
+          "satFat": 0.5,
+          "carbs": 27,
+          "fiber": 4,
+          "sugar": 1,
+          "addedSugar": 0,
+          "protein": 5,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 1,
+          "processedReason": null,
+          "note": "GI ~55. Single ingredient: oats. Clean despite PepsiCo ownership.",
+          "gi": 55,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Oatmeal Average (CEREALS)",
+          "giNote": "Old fashioned = oatmeal average",
+          "gl": 14.85
+        },
+        {
+          "id": "instant_reg",
+          "name": "Instant Oatmeal (Regular)",
+          "brand": "House Recipe / Sysco",
+          "unit": "packet",
+          "max": 9,
+          "cal": 110,
+          "fat": 2,
+          "satFat": 0,
+          "carbs": 19,
+          "fiber": 3,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 4,
+          "sodium": 75,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.7,
+          "processedReason": "Guar gum, caramel color, ferric orthophosphate",
+          "note": "No added sugar. Light processing.",
+          "gi": 79,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Instant Oatmeal (CEREALS)",
+          "giNote": "Instant oatmeal, plain",
+          "gl": 15.01
+        },
+        {
+          "id": "instant_apple",
+          "name": "Instant (Apple Cinnamon)",
+          "brand": "House Recipe / Sysco",
+          "unit": "packet",
+          "max": 9,
+          "cal": 130,
+          "fat": 1.5,
+          "satFat": 0,
+          "carbs": 27,
+          "fiber": 3,
+          "sugar": 12,
+          "addedSugar": 9,
+          "protein": 3,
+          "sodium": 170,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.3,
+          "processedReason": "9g added sugar, sodium sulfite-treated apples, natural flavor, caramel color",
+          "note": "9g added sugar. Sulfite-treated apples. Caramel color.",
+          "gi": 79,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Instant Oatmeal (CEREALS)",
+          "giNote": "Flavored instant; same base GI, added sugar raises effective impact",
+          "gl": 21.33
+        },
+        {
+          "id": "instant_sweet",
+          "name": "Instant (Maple/Cinn/Raisin)",
+          "brand": "House Recipe / Sysco",
+          "unit": "packet",
+          "max": 9,
+          "cal": 160,
+          "fat": 2,
+          "satFat": 0,
+          "carbs": 32,
+          "fiber": 3,
+          "sugar": 13,
+          "addedSugar": 10,
+          "protein": 4,
+          "sodium": 230,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.2,
+          "processedReason": "10-12g added sugar, caramel color (potential 4-MEI), natural flavor",
+          "note": "All three flavors ≈ 160 cal, 10-12g added sugar.",
+          "gi": 79,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Instant Oatmeal (CEREALS)",
+          "giNote": "Flavored instant; same base GI",
+          "gl": 25.28
+        },
+        {
+          "id": "bagel",
+          "name": "Bagel (½)",
+          "brand": "Generic",
+          "unit": "half",
+          "max": 9,
+          "cal": 135,
+          "fat": 0.8,
+          "satFat": 0,
+          "carbs": 27,
+          "fiber": 1,
+          "sugar": 3,
+          "addedSugar": 2.5,
+          "protein": 5,
+          "sodium": 215,
+          "refinedCarbs": 23,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.2,
+          "processedReason": "Enriched (refined) wheat flour, added sugar, high sodium",
+          "note": "GI ~72. Nearly all starch is refined. High sodium.",
+          "gi": 72,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Bagel White Frozen / Plain Bagel (BAKERY & BREAD / GRAINS)",
+          "giNote": "White bagel = 72 (BAKERY), Plain Bagel = 72 (GRAINS) — consistent",
+          "gl": 19.44
+        },
+        {
+          "id": "bread",
+          "name": "Bread",
+          "brand": "Whole wheat loaf",
+          "unit": "slice",
+          "max": 9,
+          "cal": 80,
+          "fat": 1,
+          "satFat": 0,
+          "carbs": 15,
+          "fiber": 2,
+          "sugar": 2,
+          "addedSugar": 1,
+          "protein": 4,
+          "sodium": 130,
+          "refinedCarbs": 8,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.5,
+          "processedReason": "Likely refined flour blend, added sugar",
+          "note": "If whole wheat #1: GI ~54. If not: ~71.",
+          "gi": 69,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Whole Wheat Bread (BAKERY & BREAD)",
+          "giNote": "Whole wheat bread; if actually white use 70-75",
+          "gl": 10.35
         }
-      </g>
-    );
-  });
-
-  // Inline SVG swatch — renders the EXACT same two-layer pattern as the bar segment
-  const Swatch = ({ segKey }) => {
-    const s = SEG[segKey];
-    return (
-      <svg width="20" height="11" style={{display:'inline-block',flexShrink:0,verticalAlign:'middle'}}>
-        <rect width="20" height="11" fill={s.baseColor}/>
-        {s.overlayPatId &&
-          <rect width="20" height="11" fill={`url(#${s.overlayPatId})`}/>
+      ]
+    },
+    {
+      "name": "Fruit",
+      "icon": "🍎",
+      "desc": "Whole food — fiber intact, sugar buffered",
+      "items": [
+        {
+          "id": "apple",
+          "name": "Apple",
+          "brand": "Red",
+          "unit": "apple",
+          "max": 9,
+          "cal": 95,
+          "fat": 0.3,
+          "satFat": 0,
+          "carbs": 25,
+          "fiber": 4.4,
+          "sugar": 19,
+          "addedSugar": 0,
+          "protein": 0.5,
+          "sodium": 2,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 1,
+          "processedReason": null,
+          "note": "Whole food. GI ~36. Pectin feeds gut bacteria. Quercetin antioxidant.",
+          "gi": 36,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Apple (FRUITS)",
+          "giNote": "Consistent across sources",
+          "gl": 9
+        },
+        {
+          "id": "banana",
+          "name": "Banana",
+          "brand": "Fresh",
+          "unit": "medium",
+          "max": 9,
+          "cal": 105,
+          "fat": 0.4,
+          "satFat": 0.1,
+          "carbs": 27,
+          "fiber": 3.1,
+          "sugar": 14,
+          "addedSugar": 0,
+          "protein": 1.3,
+          "sodium": 1,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 1,
+          "processedReason": null,
+          "note": "Whole food. Potassium, B6. GI ~51 ripe. Resistant starch in firmer fruit.",
+          "gi": 48,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Banana (FRUITS)",
+          "giNote": "Ripe banana; firm banana lower ~42",
+          "gl": 12.96
+        },
+        {
+          "id": "orange",
+          "name": "Orange",
+          "brand": "Fresh",
+          "unit": "orange",
+          "max": 9,
+          "cal": 62,
+          "fat": 0.2,
+          "satFat": 0,
+          "carbs": 15,
+          "fiber": 3.1,
+          "sugar": 12,
+          "addedSugar": 0,
+          "protein": 1.2,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 1,
+          "processedReason": null,
+          "note": "Whole food. Vit C. GI ~43. Hesperidin supports vascular health.",
+          "gi": 45,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Oranges (FRUITS)",
+          "giNote": "Dataset: Oranges=45",
+          "gl": 6.75
         }
-      </svg>
-    );
-  };
-
-  return (
-    <div>
-      <SegTip tip={tip}/>
-      <svg width="100%" height={h} viewBox={`0 0 100 ${h}`} preserveAspectRatio="none" style={{display:'block'}}>
-        <rect width="100" height={h} fill="#2a2a2a"/>
-        {rects}
-        {boundaries.map((bx,i) => (
-          <rect key={i} x={bx-0.4} y={0} width={0.8} height={h} fill="#0a0a0a"/>
-        ))}
-      </svg>
-
-      {!small && (
-        <div style={{marginTop:6}}>
-          {['carb','fat','prot'].map(grp => {
-            const grpSegs = segs.filter(s=>s.s.group===grp);
-            if (!grpSegs.length) return null;
-            return (
-              <div key={grp} className="leg-row" style={{marginBottom:4}}>
-                <span className="leg-grp-label" style={{color:GC[grp]}}>{grp==='prot'?'PROT':grp.toUpperCase()}</span>
-                {LEG_ORDER[grp].map(key => {
-                  const seg = grpSegs.find(s=>s.key===key);
-                  if (!seg) return null;
-                  const pct = Math.round((seg.kcal/total)*100);
-                  return (
-                    <span key={key} className="leg-item" style={{color:SEG[key].textColor}}>
-                      <Swatch segKey={key}/>
-                      {SEG[key].label} {seg.g.toFixed(1)}g
-                      <span style={{color:'#555',fontWeight:400}}>({pct}%)</span>
-                    </span>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+      ]
+    },
+    {
+      "name": "Spreads & Toppings",
+      "icon": "🥜",
+      "desc": "Add flavor (and calories)",
+      "items": [
+        {
+          "id": "skippy",
+          "name": "Skippy Creamy PB",
+          "brand": "Hormel Foods",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 95,
+          "fat": 8,
+          "satFat": 1.5,
+          "carbs": 3,
+          "fiber": 1,
+          "sugar": 1.5,
+          "addedSugar": 1,
+          "protein": 3.5,
+          "sodium": 75,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": true,
+          "transFatRisk": true,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.3,
+          "processedReason": "Hydrogenated vegetable oil (cottonseed/soybean/rapeseed), added sugar — trace trans fats possible below labeling threshold",
+          "note": "Hydrogenated oils. Trace trans fats possible below 0.5g threshold.",
+          "gi": 14,
+          "animalProtein": 0,
+          "transFat": 0.2,
+          "giSource": "Peanuts (BEANS & NUTS)",
+          "giNote": "Peanut butter GI ~14; closest match Peanuts=13",
+          "gl": 0.42
+        },
+        {
+          "id": "cream_cheese",
+          "name": "Cream Cheese",
+          "brand": "Philadelphia / Kraft Heinz",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 40,
+          "fat": 3.5,
+          "satFat": 2.3,
+          "carbs": 1,
+          "fiber": 0,
+          "sugar": 0.5,
+          "addedSugar": 0,
+          "protein": 1,
+          "sodium": 63,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 1,
+          "wholeFood": 0.6,
+          "processedReason": "Guar gum emulsifier",
+          "note": "Pasteurized milk, cream, salt, guar gum. High saturated fat density.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0,
+          "giSource": "N/A — negligible carbs",
+          "giNote": "No meaningful carbs (1g/tbsp); GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "country_crock",
+          "name": "Country Crock",
+          "brand": "Upfield",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 50,
+          "fat": 5,
+          "satFat": 1.5,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0,
+          "sodium": 90,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": true,
+          "transFatRisk": true,
+          "animal": false,
+          "processed": 3,
+          "wholeFood": 0,
+          "processedReason": "Soybean/palm/palm kernel oils + mono/diglycerides + polysorbate 60 + potassium sorbate + EDTA — trace trans fat risk via emulsifiers",
+          "note": "Not butter. 39% vegetable oil spread + emulsifiers.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0.3,
+          "giSource": "N/A — no carbs",
+          "giNote": "Fat only; no carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "jam",
+          "name": "Strawberry Spread",
+          "brand": "Kirkland Organic",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 35,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 9,
+          "fiber": 0,
+          "sugar": 9,
+          "addedSugar": 8,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.4,
+          "processedReason": "Organic cane sugar is still sugar",
+          "note": "Organic but 8g added sugar per tbsp.",
+          "gi": 51,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Approx strawberry jam",
+          "giNote": "Not in dataset; strawberry jam ~51 per general GI research",
+          "gl": 4.59
+        },
+        {
+          "id": "craisins",
+          "name": "Craisins",
+          "brand": "Ocean Spray",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 33,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 8,
+          "fiber": 0.8,
+          "sugar": 7,
+          "addedSugar": 6,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.2,
+          "processedReason": "Added cane sugar, refined sunflower oil processing aid",
+          "note": "Candy marketed as fruit. 6g added sugar/tbsp.",
+          "gi": 64,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Raisins (FRUITS)",
+          "giNote": "Dried cranberries similar to raisins=64; added sugar raises effective GI",
+          "gl": 5.12
+        },
+        {
+          "id": "sugar",
+          "name": "Sugar",
+          "brand": "White granulated",
+          "unit": "tsp",
+          "max": 9,
+          "cal": 16,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 4,
+          "fiber": 0,
+          "sugar": 4,
+          "addedSugar": 4,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 3,
+          "wholeFood": 0,
+          "processedReason": "100% refined sucrose — pure empty calories",
+          "note": "Pure refined sucrose → glucose + fructose hit. (Tracked entirely as added sugar.)",
+          "gi": 65,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Sucrose (SWEETENERS)",
+          "giNote": "White sugar = sucrose = 65",
+          "gl": 2.6
+        },
+        {
+          "id": "stevia",
+          "name": "Stevia",
+          "brand": "Generic",
+          "unit": "packet",
+          "max": 9,
+          "cal": 0,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.3,
+          "processedReason": null,
+          "note": "Zero calorie, zero glycemic response.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Stevia Natural (SWEETENERS)",
+          "giNote": "GI=0, no blood glucose effect",
+          "gl": 0
+        }
+      ]
+    },
+    {
+      "name": "Drinks",
+      "icon": "☕",
+      "desc": "What's washing it down",
+      "items": [
+        {
+          "id": "tea",
+          "name": "Tea (plain)",
+          "brand": "Various",
+          "unit": "cup",
+          "max": 9,
+          "cal": 2,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 30,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 0,
+          "wholeFood": 0.9,
+          "processedReason": null,
+          "note": "L-theanine + ~30mg caffeine. Calmer alertness than coffee.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "N/A — no carbs",
+          "giNote": "No carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "nescafe",
+          "name": "Nescafé Clásico",
+          "brand": "Nestlé",
+          "unit": "cup",
+          "max": 9,
+          "cal": 4,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 65,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.2,
+          "processedReason": "Spray-dried instant coffee, acrylamide from high-temp processing",
+          "note": "~65mg caffeine. Adenosine block → crash. Half-life 5-6 hrs.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "N/A — no carbs",
+          "giNote": "No carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "mate",
+          "name": "Yerba Mate",
+          "brand": "Generic",
+          "unit": "cup",
+          "max": 9,
+          "cal": 5,
+          "fat": 0,
+          "satFat": 0,
+          "carbs": 1,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 85,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.7,
+          "processedReason": null,
+          "note": "~85mg caffeine + theobromine. Less crash, still dependency.",
+          "gi": 0,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "N/A — negligible carbs",
+          "giNote": "Negligible carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "coffeemate",
+          "name": "Coffee Mate",
+          "brand": "Nestlé",
+          "unit": "tbsp",
+          "max": 9,
+          "cal": 20,
+          "fat": 1,
+          "satFat": 0.5,
+          "carbs": 3,
+          "fiber": 0,
+          "sugar": 1,
+          "addedSugar": 1,
+          "protein": 0,
+          "sodium": 10,
+          "refinedCarbs": 2,
+          "caffeine": 0,
+          "hydrogenatedOil": true,
+          "transFatRisk": true,
+          "animal": false,
+          "processed": 3,
+          "wholeFood": 0,
+          "processedReason": "CORN SYRUP SOLIDS + HYDROGENATED VEGETABLE OIL + sodium caseinate + dipotassium phosphate + mono/diglycerides",
+          "note": "Industrial whitener, not food. Trace trans fats.",
+          "gi": 65,
+          "animalProtein": 0.3,
+          "transFat": 0.2,
+          "giSource": "Sucrose (SWEETENERS) proxy",
+          "giNote": "Corn syrup solids behave like sucrose; no direct entry in dataset",
+          "gl": 1.95
+        },
+        {
+          "id": "silk_soy",
+          "name": "Silk Soy Original",
+          "brand": "Danone",
+          "unit": "½ cup",
+          "max": 9,
+          "cal": 55,
+          "fat": 2.3,
+          "satFat": 0.3,
+          "carbs": 4,
+          "fiber": 1,
+          "sugar": 2.5,
+          "addedSugar": 2,
+          "protein": 4,
+          "sodium": 58,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.5,
+          "processedReason": "Cane sugar, gellan gum, natural flavor",
+          "note": "8g protein/full cup. Non-GMO.",
+          "gi": 44,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Soy Milk (DAIRY PRODUCTS)",
+          "giNote": "Dataset: Soy Milk=44",
+          "gl": 1.76
+        },
+        {
+          "id": "almond_milk",
+          "name": "Almond Milk",
+          "brand": "Unsweetened",
+          "unit": "½ cup",
+          "max": 9,
+          "cal": 15,
+          "fat": 1.3,
+          "satFat": 0,
+          "carbs": 0.5,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 0.5,
+          "sodium": 85,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.5,
+          "processedReason": null,
+          "note": "Low cal. Zero sugar. Almost no protein.",
+          "gi": 25,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Estimated (not in dataset)",
+          "giNote": "Unsweetened almond milk ~25; no direct dataset entry",
+          "gl": 0.13
+        }
+      ]
+    },
+    {
+      "name": "Snacks (3pm)",
+      "icon": "🍿",
+      "desc": "DRBU snack-time options",
+      "items": [
+        {
+          "id": "cheezits",
+          "name": "Cheez-Its",
+          "brand": "Kellanova",
+          "unit": "27 crackers",
+          "max": 9,
+          "cal": 150,
+          "fat": 8,
+          "satFat": 2,
+          "carbs": 17,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 3,
+          "sodium": 230,
+          "refinedCarbs": 16,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 3,
+          "wholeFood": 0,
+          "processedReason": "Enriched wheat flour, vegetable oils (palm, soybean), TBHQ preservative, annatto color, milk-derived cheese",
+          "note": "Enriched flour + palm/soy oils + TBHQ. UPF. Animal-derived (cheese).",
+          "gi": 74,
+          "animalProtein": 0.5,
+          "transFat": 0,
+          "giSource": "Soda Crackers (SNACK FOODS)",
+          "giNote": "Enriched wheat crackers close to soda crackers=74",
+          "gl": 12.58
+        },
+        {
+          "id": "mixed_nuts",
+          "name": "Salted Mixed Nuts",
+          "brand": "Kirkland Signature",
+          "unit": "1 oz",
+          "max": 9,
+          "cal": 170,
+          "fat": 16,
+          "satFat": 2,
+          "carbs": 6,
+          "fiber": 2,
+          "sugar": 1,
+          "addedSugar": 0,
+          "protein": 5,
+          "sodium": 85,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 1,
+          "wholeFood": 0.9,
+          "processedReason": "Peanut oil used in roasting, sea salt",
+          "note": "Cashews, almonds, pecans, Brazil nuts, macadamia nuts, peanut oil, sea salt. No added sugar. 0g trans fat. One of the cleanest snack options available. High in unsaturated fats, 5g protein. Brazil nuts = selenium.",
+          "gi": 21,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Avg Cashews=22, Peanuts=13 (BEANS & NUTS)",
+          "giNote": "Mixed nuts; avg of cashews + peanuts + macadamia (all ~14-25)",
+          "gl": 1.26
+        },
+        {
+          "id": "mega_omega",
+          "name": "Mega Omega Trail Mix",
+          "brand": "Power Up / GourmetNut",
+          "unit": "¼ cup",
+          "max": 9,
+          "cal": 140,
+          "fat": 8,
+          "satFat": 1,
+          "carbs": 16,
+          "fiber": 2,
+          "sugar": 11,
+          "addedSugar": 5,
+          "protein": 3,
+          "sodium": 0,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.6,
+          "processedReason": "Dried cranberries sweetened with cane sugar + sunflower oil, dried mango sweetened with sugar + citric acid",
+          "note": "Cranberries, mango, almonds, walnuts, pumpkin seeds. Walnuts = ALA omega-3. 5g added sugar from sweetened fruit. No sodium, no hydrogenated oils. Better than most trail mixes.",
+          "gi": 45,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Blended estimate",
+          "giNote": "Walnuts ~15, almonds ~0, dried cranberries ~64, mango ~60; blended ~45",
+          "gl": 7.2
+        },
+        {
+          "id": "pb_pretzels",
+          "name": "PB Pretzel Squares",
+          "brand": "Kirkland",
+          "unit": "11 pcs",
+          "max": 9,
+          "cal": 150,
+          "fat": 7,
+          "satFat": 1.5,
+          "carbs": 18,
+          "fiber": 1,
+          "sugar": 3,
+          "addedSugar": 3,
+          "protein": 4,
+          "sodium": 230,
+          "refinedCarbs": 14,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 3,
+          "wholeFood": 0.1,
+          "processedReason": "Enriched wheat flour pretzel, palm oil, mono/diglycerides, soy lecithin, added sugar",
+          "note": "Enriched flour pretzel + processed PB filling + palm oil.",
+          "gi": 83,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Pretzels (SNACK FOODS)",
+          "giNote": "Pretzel base dominates; Pretzels=83 in dataset",
+          "gl": 14.94
+        },
+        {
+          "id": "potato_chips",
+          "name": "Potato Chips",
+          "brand": "Kirkland",
+          "unit": "~15 chips",
+          "max": 9,
+          "cal": 160,
+          "fat": 10,
+          "satFat": 1.5,
+          "carbs": 15,
+          "fiber": 1,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 2,
+          "sodium": 170,
+          "refinedCarbs": 14,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": false,
+          "processed": 2,
+          "wholeFood": 0.3,
+          "processedReason": "Fried in vegetable oil, high acrylamide from high-temp frying, refined starch",
+          "note": "Acrylamide from frying. Behaves like refined carbs in body.",
+          "gi": 56,
+          "animalProtein": 0,
+          "transFat": 0,
+          "giSource": "Potato Chips Average (SNACK FOODS)",
+          "giNote": "Direct match in dataset",
+          "gl": 8.4
+        },
+        {
+          "id": "belvita",
+          "name": "BelVita Crackers",
+          "brand": "Mondelez",
+          "unit": "4 pack",
+          "max": 9,
+          "cal": 230,
+          "fat": 8,
+          "satFat": 1.5,
+          "carbs": 35,
+          "fiber": 3,
+          "sugar": 11,
+          "addedSugar": 10,
+          "protein": 4,
+          "sodium": 170,
+          "refinedCarbs": 12,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 3,
+          "wholeFood": 0.1,
+          "processedReason": "10g added sugar, partially refined flour blend, palm/canola oils, soy lecithin, contains milk/honey",
+          "note": "10g added sugar. Contains milk. 'Breakfast biscuit' = dessert.",
+          "gi": 57,
+          "animalProtein": 0.2,
+          "transFat": 0,
+          "giSource": "Approx wheat cracker",
+          "giNote": "BelVita not in dataset; similar to wheat-based crackers ~57",
+          "gl": 19.95
+        },
+        {
+          "id": "mm",
+          "name": "Peanut M&Ms",
+          "brand": "Mars Wrigley",
+          "unit": "1 oz (~12 pcs)",
+          "max": 9,
+          "cal": 140,
+          "fat": 8,
+          "satFat": 3,
+          "carbs": 17,
+          "fiber": 1,
+          "sugar": 14,
+          "addedSugar": 13,
+          "protein": 3,
+          "sodium": 15,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 3,
+          "wholeFood": 0,
+          "processedReason": "13g added sugar, palm oil, corn syrup, dextrin, 6 artificial dye colors (Blue 1, Yellow 6, Red 40, Yellow 5, Blue 2 Lake + Lakes), soy lecithin, carnauba wax, gum acacia. Contains bioengineered ingredients.",
+          "note": "Peanuts buried under milk chocolate, sugar, palm oil, corn syrup, dextrin, and 6 artificial colors. 13g added sugar per oz. Contains bioengineered ingredients (declared on label). Animal: milk + lactose.",
+          "gi": 33,
+          "animalProtein": 1,
+          "transFat": 0,
+          "giSource": "M&M's Peanut (SNACK FOODS)",
+          "giNote": "Direct match in dataset: M&Ms Peanut=33",
+          "gl": 5.61
+        },
+        {
+          "id": "string_cheese",
+          "name": "Mozzarella String Cheese",
+          "brand": "Generic",
+          "unit": "stick",
+          "max": 9,
+          "cal": 80,
+          "fat": 6,
+          "satFat": 3.5,
+          "carbs": 1,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 6,
+          "sodium": 200,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 1,
+          "wholeFood": 0.7,
+          "processedReason": "Cultured pasteurized milk, salt, enzymes",
+          "note": "Real cheese, minimal processing. 6g protein. High sat fat.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0,
+          "giSource": "N/A — no carbs",
+          "giNote": "Negligible carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "tillamook",
+          "name": "Tillamook Cheddar Square",
+          "brand": "Tillamook",
+          "unit": "0.75 oz",
+          "max": 9,
+          "cal": 80,
+          "fat": 7,
+          "satFat": 4,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 5,
+          "sodium": 130,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 1,
+          "wholeFood": 0.8,
+          "processedReason": "Pasteurized milk, salt, enzymes, annatto color",
+          "note": "Real cheese. High sat fat. Animal product.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0,
+          "giSource": "N/A — no carbs",
+          "giNote": "No carbs; GI not applicable",
+          "gl": 0
+        },
+        {
+          "id": "babybel",
+          "name": "Mini Babybel (red wax)",
+          "brand": "Bel Group",
+          "unit": "wheel",
+          "max": 9,
+          "cal": 70,
+          "fat": 6,
+          "satFat": 4,
+          "carbs": 0,
+          "fiber": 0,
+          "sugar": 0,
+          "addedSugar": 0,
+          "protein": 5,
+          "sodium": 160,
+          "refinedCarbs": 0,
+          "caffeine": 0,
+          "hydrogenatedOil": false,
+          "transFatRisk": false,
+          "animal": true,
+          "processed": 1,
+          "wholeFood": 0.7,
+          "processedReason": "Pasteurized milk, salt, enzymes, annatto/paprika color",
+          "note": "Real cheese in wax. High sat fat. Animal product.",
+          "gi": 0,
+          "animalProtein": 1,
+          "transFat": 0,
+          "giSource": "N/A — no carbs",
+          "giNote": "No carbs; GI not applicable",
+          "gl": 0
+        }
+      ]
+    }
+  ]
 }
-
-// ═══════════════════════════════════════════════════════════════════
-// GI / GL
-// GL = GI × carbs ÷ 100 per item, summed for meal
-// ═══════════════════════════════════════════════════════════════════
-function computeGIGL(quantities, allItems) {
-  let totalGL = 0, totalCarbs = 0;
-  const breakdown = [];
-  Object.entries(quantities).forEach(([id, qty]) => {
-    const item = allItems.find(i=>i.id===id);
-    if (!item) return;
-    const itemCarbs = item.carbs * qty;
-    const itemGL = (item.gi||0) * itemCarbs / 100;
-    totalGL += itemGL;
-    totalCarbs += itemCarbs;
-    breakdown.push({ name:item.name, gi:item.gi||0, carbs:itemCarbs, gl:parseFloat(itemGL.toFixed(2)), giSource:item.giSource||'', qty });
-  });
-  // avgGI = (totalGL / totalCarbs) × 100, i.e. carb-weighted mean GI
-  const avgGI = totalCarbs > 0 ? Math.round((totalGL/totalCarbs)*100) : 0;
-  return { avgGI, totalGL:parseFloat(totalGL.toFixed(1)), totalCarbs:parseFloat(totalCarbs.toFixed(1)), breakdown };
-}
-
-function giColor(gi) { return gi<55?'#2d8a56':gi<70?'#c4943a':'#c43a3a'; }
-function glColor(gl) { return gl<10?'#2d8a56':gl<20?'#c4943a':'#c43a3a'; }
-
-// ═══════════════════════════════════════════════════════════════════
-// GI/GL MODAL
-// ═══════════════════════════════════════════════════════════════════
-function GiGlModal({ gigl, onClose }) {
-  const { avgGI, totalGL, totalCarbs, breakdown } = gigl;
-  const gc = giColor(avgGI), glc = glColor(totalGL);
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={e=>e.stopPropagation()}>
-        <div className="modal-hdr">
-          <span style={{fontSize:13,fontWeight:700,color:'#eee'}}>Glycemic Index & Load</span>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
-
-        {/* ── CURRENT SELECTION ── */}
-        <div className="msect">
-          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:10}}>YOUR CURRENT MEAL</div>
-          <div style={{display:'flex',gap:10,marginBottom:12,flexWrap:'wrap'}}>
-            {[
-              {label:'Avg GI',val:avgGI,unit:'',color:gc,sub:avgGI<55?'Low GI':avgGI<70?'Medium GI':'High GI'},
-              {label:'Total GL',val:totalGL,unit:'',color:glc,sub:totalGL<10?'Low GL':totalGL<20?'Medium GL':'High GL'},
-              {label:'Total Carbs',val:totalCarbs.toFixed(0),unit:'g',color:'#888',sub:'in this meal'},
-            ].map((b,i) => (
-              <div key={i} style={{flex:'1 1 90px',background:'#111',borderRadius:6,padding:'10px 12px'}}>
-                <div style={{fontSize:9,color:'#555',marginBottom:2}}>{b.label}</div>
-                <div style={{fontSize:26,fontWeight:900,color:b.color,lineHeight:1}}>{b.val}{b.unit}</div>
-                <div style={{fontSize:8,color:b.color,marginTop:2}}>{b.sub}</div>
-              </div>
-            ))}
-          </div>
-          <div style={{fontSize:9,color:'#666',marginBottom:6}}>
-            Formula: <span style={{color:'#aaa',fontFamily:'monospace'}}>GL = GI × carbs ÷ 100</span> per item, then summed.
-          </div>
-          <table className="gi-table">
-            <thead><tr><th>Item</th><th>×</th><th>GI</th><th>Carbs g</th><th>GL</th><th>Source</th></tr></thead>
-            <tbody>
-              {breakdown.map((r,i) => (
-                <tr key={i}>
-                  <td style={{color:'#ccc'}}>{r.name}</td>
-                  <td style={{color:'#666'}}>{r.qty}</td>
-                  <td style={{color:giColor(r.gi),fontWeight:700}}>{r.gi||'—'}</td>
-                  <td style={{color:'#aaa'}}>{r.carbs.toFixed(1)}</td>
-                  <td style={{color:glColor(r.gl),fontWeight:700}}>{r.gl}</td>
-                  <td style={{color:'#444',fontSize:8}}>{r.giSource}</td>
-                </tr>
-              ))}
-              <tr style={{borderTop:'2px solid #333'}}>
-                <td colSpan={3} style={{color:'#777',fontWeight:700,fontSize:9}}>TOTAL</td>
-                <td style={{color:'#aaa',fontWeight:700}}>{totalCarbs.toFixed(1)}</td>
-                <td style={{color:glc,fontWeight:700}}>{totalGL}</td>
-                <td/>
-              </tr>
-            </tbody>
-          </table>
-          <div style={{fontSize:8,color:'#444',marginTop:8,lineHeight:1.6}}>
-            Avg GI = (sum of GL) ÷ (total carbs) × 100 — a carb-weighted average GI for the meal.
-          </div>
-        </div>
-
-        {/* ── PRINCIPLES ── */}
-        <div className="msect">
-          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:8}}>WHAT IS GLYCEMIC INDEX?</div>
-          <p style={{fontSize:11,lineHeight:1.7,color:'#aaa',marginBottom:8}}>
-            <strong style={{color:'#ccc'}}>GI</strong> ranks how fast a food raises blood glucose compared to pure glucose (GI=100). It's a property of the food itself — the same carb grams but different absorption speed.
-          </p>
-          <table className="gi-table">
-            <thead><tr><th>GI Range</th><th>Category</th><th>What it means</th></tr></thead>
-            <tbody>
-              <tr><td style={{color:'#2d8a56',fontWeight:700}}>0–54</td><td style={{color:'#ccc'}}>Low GI</td><td style={{color:'#888'}}>Slow rise — sustained energy, low insulin demand</td></tr>
-              <tr><td style={{color:'#c4943a',fontWeight:700}}>55–69</td><td style={{color:'#ccc'}}>Medium GI</td><td style={{color:'#888'}}>Moderate spike — watch portion size</td></tr>
-              <tr><td style={{color:'#c43a3a',fontWeight:700}}>70+</td><td style={{color:'#ccc'}}>High GI</td><td style={{color:'#888'}}>Rapid spike → insulin surge → crash → hunger</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="msect">
-          <div style={{fontSize:9,letterSpacing:1.5,textTransform:'uppercase',color:'#555',fontWeight:700,marginBottom:8}}>WHAT IS GLYCEMIC LOAD?</div>
-          <p style={{fontSize:11,lineHeight:1.7,color:'#aaa',marginBottom:8}}>
-            <strong style={{color:'#ccc'}}>GL</strong> corrects for portion size. A food can have high GI but low GL if you eat a small amount — because the total carb load is small.
-          </p>
-          <p style={{fontSize:11,fontFamily:'monospace',color:'#ccc',background:'#111',padding:'8px 12px',borderRadius:4,marginBottom:8}}>
-            GL = GI × carbs(g) ÷ 100
-          </p>
-          <p style={{fontSize:11,lineHeight:1.7,color:'#888',marginBottom:8}}>
-            Example: skim milk — GI 31, 12g carbs → GL = 31 × 12 ÷ 100 = <strong style={{color:'#ccc'}}>3.7</strong>
-          </p>
-          <table className="gi-table">
-            <thead><tr><th>GL</th><th>Category</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td style={{color:'#2d8a56',fontWeight:700}}>0–9</td><td style={{color:'#ccc'}}>Low GL</td><td style={{color:'#888'}}>Minimal insulin demand</td></tr>
-              <tr><td style={{color:'#c4943a',fontWeight:700}}>10–19</td><td style={{color:'#ccc'}}>Medium GL</td><td style={{color:'#888'}}>Moderate — manageable in context</td></tr>
-              <tr><td style={{color:'#c43a3a',fontWeight:700}}>20+</td><td style={{color:'#ccc'}}>High GL</td><td style={{color:'#888'}}>Significant insulin demand per meal</td></tr>
-            </tbody>
-          </table>
-          <p style={{fontSize:9,color:'#444',marginTop:8,lineHeight:1.6}}>
-            GI values from gi-data.json (Australian GI Research). Unmapped items use literature estimates; source noted above.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// CARB SUB-CHARTS
-// ═══════════════════════════════════════════════════════════════════
-function CarbBar({ segs, groups, gigl, openModal }) {
-  const [tip, setTip] = useState(null);
-  const total = segs.reduce((a,s)=>a+s.g,0)||1;
-  const h = 14;
-  let xCur = 0;
-  const rects = segs.filter(s=>s.g>0.05).map((s,i)=>{
-    const w = Math.max((s.g/total)*100,0);
-    const rx = xCur; xCur+=w;
-    const p = SEG[s.key];
-    const tipText = `Carb › ${p.label}: ${s.g.toFixed(1)}g (${Math.round((s.g/total)*100)}%)`;
-    return (
-      <g key={i} onMouseMove={e=>setTip({x:e.clientX,y:e.clientY,text:tipText})}
-         onMouseLeave={()=>setTip(null)}
-         onTouchStart={e=>{const t=e.touches[0];setTip({x:t.clientX,y:t.clientY,text:tipText});setTimeout(()=>setTip(null),2000);}}
-         style={{cursor:'crosshair'}}>
-        <rect x={rx} y={0} width={w} height={h} fill={p.baseColor}/>
-        {p.overlayPatId && <rect x={rx} y={0} width={w} height={h} fill={`url(#${p.overlayPatId})`}/>}
-      </g>
-    );
-  });
-
-  // Inline SVG swatch matching the bar exactly
-  const Swatch = ({ k }) => {
-    const p = SEG[k];
-    return (
-      <svg width="16" height="10" style={{display:'inline-block',flexShrink:0,verticalAlign:'middle'}}>
-        <rect width="16" height="10" fill={p.baseColor}/>
-        {p.overlayPatId && <rect width="16" height="10" fill={`url(#${p.overlayPatId})`}/>}
-      </svg>
-    );
-  };
-
-  return (
-    <div>
-      <SegTip tip={tip}/>
-      <svg width="100%" height={h} viewBox="0 0 100 14" preserveAspectRatio="none" style={{display:'block'}}>
-        <rect width="100" height="14" fill="#2a2a2a"/>
-        {rects}
-      </svg>
-      <div style={{display:'flex',gap:10,flexWrap:'wrap',marginTop:3,fontSize:8}}>
-        {groups&&groups.map((g,i)=>{
-          const gTotal=segs.filter(s=>g.keys.includes(s.key)).reduce((a,s)=>a+s.g,0);
-          if(gTotal<0.05) return null;
-          return <span key={i} style={{color:g.color,fontWeight:700}}>{g.label} {gTotal.toFixed(1)}g ({Math.round((gTotal/total)*100)}%)</span>;
-        })}
-      </div>
-      <div className="leg-row" style={{marginTop:2}}>
-        {segs.filter(s=>s.g>0.05).map((s,i)=>(
-          <span key={i} className="leg-item" style={{color:SEG[s.key].textColor}}>
-            <Swatch k={s.key}/>
-            {SEG[s.key].label} {s.g.toFixed(1)}g
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CarbSubCharts({ totals, gigl, openModal }) {
-  if (!totals||totals.carbs<=0) return null;
-  const {carbs=0,fiber=0,sugar=0,addedSugar=0,refinedCarbs:rawRef=0}=totals;
-  const complex=Math.max(0,carbs-sugar-fiber);
-  const refined=Math.min(complex,rawRef||0);
-  const whole=Math.max(0,complex-refined);
-  const natSug=Math.max(0,sugar-addedSugar);
-
-  const charts=[
-    {title:'Whole-food vs Processed',segs:[{key:'wholeStarch',g:whole},{key:'fiber',g:fiber},{key:'natSugar',g:natSug},{key:'refinedStarch',g:refined},{key:'addedSugar',g:addedSugar}],groups:[{label:'Whole-food',keys:['wholeStarch','fiber','natSugar'],color:'#3a6bc4'},{label:'Processed',keys:['refinedStarch','addedSugar'],color:'#2a3a8a'}],showGi:true},
-    {title:'Slow vs Fast Carbs',segs:[{key:'wholeStarch',g:whole},{key:'fiber',g:fiber},{key:'refinedStarch',g:refined},{key:'natSugar',g:natSug},{key:'addedSugar',g:addedSugar}],groups:[{label:'Slow',keys:['wholeStarch','fiber'],color:'#2d8a56'},{label:'Fast',keys:['refinedStarch','natSugar','addedSugar'],color:'#c43a3a'}],showGi:true},
-    {title:'Carbs by Source',segs:[{key:'natSugar',g:natSug},{key:'fiber',g:fiber},{key:'wholeStarch',g:whole},{key:'refinedStarch',g:refined},{key:'addedSugar',g:addedSugar}],groups:[{label:'Fruit',keys:['natSugar','fiber'],color:'#3a9bc4'},{label:'Grains',keys:['wholeStarch','refinedStarch'],color:'#3a6bc4'},{label:'Processed',keys:['addedSugar'],color:'#2a3a8a'}],showGi:false},
-  ];
-
-  return (
-    <div>
-      {charts.map((c,i)=>(
-        <div key={i} className="cchart">
-          <div className="cchart-title">
-            {c.title}
-            {c.showGi&&gigl?.avgGI>0&&<span onClick={openModal} className="gi-badge" style={{marginLeft:6,background:giColor(gigl.avgGI)+'22',color:giColor(gigl.avgGI)}}>GI {gigl.avgGI} ⓘ</span>}
-            {c.showGi&&gigl?.totalGL>0&&<span onClick={openModal} className="gl-badge" style={{marginLeft:4,background:glColor(gigl.totalGL)+'22',color:glColor(gigl.totalGL)}}>GL {gigl.totalGL} ⓘ</span>}
-          </div>
-          <CarbBar segs={c.segs} groups={c.groups} gigl={c.showGi?gigl:null} openModal={openModal}/>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// REPORT
-// ═══════════════════════════════════════════════════════════════════
-function computeReport(quantities, allItems, daily) {
-  const KEYS=['cal','fat','satFat','transFat','carbs','fiber','sugar','addedSugar','protein','sodium','refinedCarbs','caffeine'];
-  const totals={}; KEYS.forEach(k=>totals[k]=0);
-  totals.animalG=0;
-  let hasHyd=false,hasTrans=false,hasAnimal=false;
-  const procC=[],actItems=[];
-  let wholeCal=0;
-
-  Object.entries(quantities).forEach(([id,qty])=>{
-    const item=allItems.find(i=>i.id===id);
-    if(!item) return;
-    actItems.push({item,qty});
-    KEYS.forEach(k=>{totals[k]+=(item[k]||0)*qty;});
-    totals.animalG+=(item.animalProtein||0)*item.protein*qty;
-    if(item.hydrogenatedOil) hasHyd=true;
-    if(item.transFatRisk||item.transFat>0) hasTrans=true;
-    if(item.animal) hasAnimal=true;
-    if(item.processed>=2&&item.processedReason) procC.push({name:item.name,qty,score:item.processed,reason:item.processedReason});
-    wholeCal+=(item.cal*qty)*item.wholeFood;
-  });
-  procC.sort((a,b)=>b.score-a.score);
-  const wholePct=totals.cal>0?(wholeCal/totals.cal)*100:0;
-  const animalFrac=totals.protein>0?totals.animalG/totals.protein:0;
-  totals.animalFrac=animalFrac;
-
-  // Metric colors mapped to segment legend colors
-  const dangers=[
-    {key:'addedSugar', label:'Added Sugar',   value:totals.addedSugar,  max:daily.addedSugar,  unit:'g', color:SEG.addedSugar.textColor, maxLabel:'daily limit (36g)',         context:totals.addedSugar<=4?'Minimal':totals.addedSugar<=12?'Notable insulin response':totals.addedSugar<=24?'Liver fat production active':'Near daily limit'},
-    {key:'satFat',     label:'Sat Fat',        value:totals.satFat,      max:daily.satFat,      unit:'g', color:SEG.satFat.textColor,     maxLabel:'daily limit (13g)',          context:totals.satFat<=3?'Low':totals.satFat<=6?'Moderate':totals.satFat<=10?'LDL increasing':'At daily limit'},
-    {key:'refined',    label:'Refined Carbs',  value:totals.refinedCarbs,max:daily.refinedCarbs,unit:'g', color:SEG.refinedStarch.textColor,maxLabel:'high-meal threshold (50g)',context:totals.refinedCarbs<=5?'Minimal':totals.refinedCarbs<=20?'Glucose spike likely':'Behaves like pure sugar'},
-    {key:'transFat',   label:'Trans Fat',      value:totals.transFat,    max:2,                 unit:'g', color:SEG.transFat.textColor,    maxLabel:'AHA max (2g) — WHO says 0', context:totals.transFat<0.1?'Negligible (trace)':totals.transFat<1?'Low but nonzero':'Significant — cardiovascular risk'},
-    {key:'caffeine',   label:'Caffeine',        value:totals.caffeine,   max:daily.caffeine,    unit:'mg',color:'#c4943a',                maxLabel:'FDA ceiling (400mg)',       context:totals.caffeine===0?'None':totals.caffeine<=100?'Mild':totals.caffeine<=200?'Moderate — cortisol elevated':totals.caffeine<=300?'High — sleep impact':'Near ceiling'},
-    {key:'sodium',     label:'Sodium',          value:totals.sodium,     max:daily.sodium,      unit:'mg',color:'#8a7a6a',                maxLabel:'daily max (2300mg)',        context:totals.sodium<=200?'Low':totals.sodium<=600?'Moderate':totals.sodium<=1000?'High for one meal':'Very high'},
-  ];
-  const flags=[];
-  if(hasHyd)   flags.push({key:'hyd',   label:'Hydrogenated Oils',color:'#c43a3a',detail:'Industrially hardened fats — structure foreign to metabolism.',items:procC.filter(c=>c.reason.toLowerCase().includes('hydrogenated'))});
-  if(hasTrans) flags.push({key:'trans', label:'Trans Fat Risk',   color:'#c43a3a',detail:'Trace trans fats possible below 0.5g labeling threshold. No safe intake level (WHO).',items:procC.filter(c=>c.reason.toLowerCase().includes('trans')||c.reason.toLowerCase().includes('hydrogenated'))});
-  if(procC.some(c=>c.score>=3)) flags.push({key:'upf',label:'Ultra-Processed',color:'#c46a3a',detail:'Industrial ingredients detected. Sorted by severity:',items:procC});
-  if(hasAnimal) flags.push({key:'animal',label:'Animal Products',color:'#a07050',detail:'Contains dairy or other animal-derived ingredients.',items:actItems.filter(({item})=>item.animal).map(({item,qty})=>({name:item.name,qty,score:1,reason:'Dairy or animal-derived'}))});
-
-  const positives=[
-    {key:'fiber',       label:'Fiber',          value:totals.fiber,  target:daily.fiber,  unit:'g',color:SEG.fiber.textColor,        maxLabel:'daily target (28g)',context:totals.fiber>=8?'Strong — buffers glucose':totals.fiber>=3?'Some':'Low — unbuffered'},
-    {key:'plantProt',   label:'Plant Protein',   value:totals.protein*(1-animalFrac),target:daily.protein,unit:'g',color:SEG.plantProtein.textColor, maxLabel:'daily target (64g)',context:totals.protein*(1-animalFrac)>=10?'Good plant protein':'Low plant protein'},
-    {key:'animalProt',  label:'Animal Protein',  value:totals.protein*animalFrac, target:daily.protein, unit:'g',color:SEG.animalProtein.textColor, maxLabel:'daily target (64g)',context:totals.protein*animalFrac>0?`${Math.round(animalFrac*100)}% of protein`:'None'},
-    {key:'whole',       label:'Whole Food %',    value:wholePct,      target:100,          unit:'%',color:'#2d8a56',                    maxLabel:'100% whole-food',  context:wholePct>=70?'Mostly whole foods':wholePct>=40?'Mixed':'Highly processed'},
-  ];
-
-  const p=v=>totals.cal>0?(v/totals.cal)*100:0;
-  let score=60;
-  const asd=p(totals.addedSugar),sfd=p(totals.satFat),rcd=p(totals.refinedCarbs),fbd=p(totals.fiber),prd=p(totals.protein);
-  if(asd>1) score-=Math.min(25,(asd-1)*6);
-  if(sfd>1) score-=Math.min(15,(sfd-1)*5);
-  if(rcd>3) score-=Math.min(20,(rcd-3)*2);
-  if(hasTrans) score-=12; if(hasHyd) score-=6;
-  if(wholePct<30) score-=8; else if(wholePct<60) score-=3;
-  if(fbd>=2.5) score+=10; else if(fbd>=1.5) score+=5;
-  if(prd>=4) score+=5;
-  if(wholePct>=80) score+=8;
-  if(!hasHyd&&!hasTrans&&asd<1) score+=5;
-  score=Math.max(0,Math.min(100,Math.round(score)));
-
-  let grade,gColor,gLabel;
-  if(score>=80){grade='A';gColor='#2d8a56';gLabel='Clean fuel';}
-  else if(score>=65){grade='B';gColor='#6b9e7a';gLabel='Decent';}
-  else if(score>=50){grade='C';gColor='#c4943a';gLabel='Mediocre';}
-  else if(score>=35){grade='D';gColor='#d47333';gLabel='Damage mode';}
-  else{grade='F';gColor='#c43a3a';gLabel='Metabolic hit';}
-
-  return {totals,dangers,flags,positives,score,grade,gradeColor:gColor,gradeLabel:gLabel,wholePct,animalFrac};
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// METRIC BAR
-// value text is colored with metric color whenever value > 0
-// ═══════════════════════════════════════════════════════════════════
-function MetricBar({d, isPositive}) {
-  const pct=Math.min(100,(d.value/(isPositive?d.target:d.max))*100);
-  const barC=isPositive?(pct>=75?d.color:pct>=40?'#444':'#333'):(pct>75?d.color:pct>50?'#c4943a':'#3a5a3a');
-  const valColored = d.value > 0;
-  return (
-    <div className="mbar">
-      <div className="mbar-top">
-        <span style={{fontWeight:600,color:valColored?d.color:'#888'}}>{d.label}</span>
-        <span style={{fontWeight:700,color:valColored?d.color:'#555',fontSize:11}}>
-          {typeof d.value==='number'?d.value.toFixed(d.unit==='mg'?0:1):d.value}{d.unit}
-        </span>
-      </div>
-      <div className="mbar-track">
-        <div className="mbar-fill" style={{width:`${pct}%`,background:barC}}/>
-      </div>
-      <div className="mbar-foot">
-        <span style={{color:valColored?d.color:'#555',fontWeight:500}}>{d.context}</span>
-        <span style={{color:'#444',fontStyle:'italic'}}>{d.maxLabel}</span>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// QTY STEPPER
-// ═══════════════════════════════════════════════════════════════════
-function QtyStepper({qty,max,unit,onSet,dark}) {
-  const c=dark?'#999':'#555',bg=dark?'#333':'#eae7e2';
-  return (
-    <div className="stepper" style={{background:bg}} onClick={e=>e.stopPropagation()}>
-      <button onClick={()=>onSet(Math.max(0,qty-1))} style={{color:c}}>−</button>
-      <div className="stepper-val" style={{color:dark?'#eee':'#333'}}>
-        <div style={{fontSize:14}}>{qty}</div>
-        <div style={{fontSize:8,color:dark?'#777':'#aaa'}}>{unit}</div>
-      </div>
-      <button onClick={()=>onSet(Math.min(max,qty+1))} style={{color:c}}>+</button>
-    </div>
-  );
-}
-
-function fmtPortion(qty,unit){return qty===1?`1 ${unit}`:`${qty} × ${unit}`;}
-
-// ═══════════════════════════════════════════════════════════════════
-// STATE PERSISTENCE
-// ═══════════════════════════════════════════════════════════════════
-const SK='fam_v3';
-function loadSt(){try{const r=localStorage.getItem(SK);return r?JSON.parse(r):null;}catch{return null;}}
-function saveSt(q,p,y){try{localStorage.setItem(SK,JSON.stringify({q,p,y,t:Date.now()}));}catch{}}
-
-// ═══════════════════════════════════════════════════════════════════
-// APP
-// ═══════════════════════════════════════════════════════════════════
-function App() {
-  const saved=loadSt();
-  const [quantities,  setQtys]   = useState(saved?.q||{});
-  const [expanded,    setExp]    = useState(null);
-  const [showPanel,   setPanel]  = useState(saved?.p||false);
-  const [xFlag,       setXFlag]  = useState(null);
-  const [appData,     setData]   = useState(null);
-  const [loadErr,     setErr]    = useState(null);
-  const [showGi,      setGi]     = useState(false);
-  const timer=useRef(null);
-
-  const persist=(q,p)=>{
-    clearTimeout(timer.current);
-    timer.current=setTimeout(()=>saveSt(q,p,window.scrollY),300);
-  };
-
-  useEffect(()=>{persist(quantities,showPanel);},[quantities,showPanel]);
-  useEffect(()=>{
-    const fn=()=>{clearTimeout(timer.current);timer.current=setTimeout(()=>saveSt(quantities,showPanel,window.scrollY),200);};
-    window.addEventListener('scroll',fn,{passive:true});
-    return()=>window.removeEventListener('scroll',fn);
-  },[quantities,showPanel]);
-
-  useEffect(()=>{
-    fetch('data.json').then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();})
-      .then(d=>{setData(d);if(saved?.y)setTimeout(()=>window.scrollTo({top:saved.y,behavior:'instant'}),80);})
-      .catch(e=>setErr(e.message));
-  },[]);
-
-  if(loadErr) return <div className="error-msg">Could not load data.json: {loadErr}<br/><small>Run: python -m http.server 8000</small></div>;
-  if(!appData) return <div className="loading">Loading…</div>;
-
-  const setQty=(id,n)=>setQtys(prev=>{const next={...prev};if(n<=0)delete next[id];else next[id]=n;return next;});
-  const clearAll=()=>{setQtys({});setPanel(false);setExp(null);window.scrollTo({top:0,behavior:'smooth'});};
-
-  const allItems=appData.CATEGORIES.flatMap(c=>c.items);
-  const ac=Object.keys(quantities).length;
-  const report=ac>0?computeReport(quantities,allItems,appData.DAILY):null;
-  const gigl=ac>0?computeGIGL(quantities,allItems):null;
-  const panelH=showPanel?'82vh':'130px';
-
-  return (
-    <div>
-      <PatternDefs/>
-      {showGi&&gigl&&<GiGlModal gigl={gigl} onClose={()=>setGi(false)}/>}
-
-      <div className="app">
-        <div style={{marginBottom:24}}>
-          <div className="eyebrow">FOOD AS MEDICINE</div>
-          <h1>Build Your Meal</h1>
-          <p className="subhead">Quality score grades the food, not the portion. Bars anchored to daily limits.</p>
-          <div className="header-actions">
-            <button className="clear-btn" onClick={clearAll}>⌫ Clear all</button>
-            {ac>0&&<span style={{fontSize:11,color:'#aaa'}}>{ac} item{ac>1?'s':''} selected</span>}
-          </div>
-        </div>
-
-        <div className="categories-grid">
-          {appData.CATEGORIES.map((cat,ci)=>(
-            <div key={ci} className="category">
-              <div className="cat-header">
-                <span style={{fontSize:20}}>{cat.icon}</span>
-                <div><div className="cat-name">{cat.name}</div><div className="cat-desc">{cat.desc}</div></div>
-              </div>
-              <div className="items-list">
-                {cat.items.map(item=>{
-                  const qty=quantities[item.id]||0,active=qty>0,isOpen=expanded===item.id;
-                  const gc=item.gi>0?giColor(item.gi):'#555';
-                  const animalF=item.animalProtein||0;
-                  return (
-                    <div key={item.id}>
-                      <div className={`item-row${active?' active':''}`}>
-                        <QtyStepper qty={qty} max={item.max} unit={item.unit} onSet={n=>setQty(item.id,n)} dark={active}/>
-                        <div style={{flex:1,minWidth:0}}>
-                          <div className="item-name-line" style={{color:active?'#eee':'#333'}}>
-                            {item.name}
-                            {item.hydrogenatedOil&&<span className="tag" style={{background:'#c43a3a33',color:'#c43a3a'}}>HYD</span>}
-                            {item.processed>=3    &&<span className="tag" style={{background:'#d4733333',color:'#d47333'}}>UPF</span>}
-                            {item.animal          &&<span className="tag" style={{background:'#a0705033',color:'#a07050'}}>🐄</span>}
-                            {item.gi>0            &&<span className="tag" style={{background:gc+'22',color:gc}}>GI {item.gi}</span>}
-                          </div>
-                          <div className="item-brand" style={{color:active?'#777':'#bbb'}}>
-                            {item.brand}{active&&<span style={{color:'#aaa'}}> · {fmtPortion(qty,item.unit)}</span>}
-                          </div>
-                        </div>
-                        <div className="item-cal">
-                          {active
-                            ?<><div style={{fontSize:16,fontWeight:900,color:'#fff'}}>{Math.round(item.cal*qty)}</div><div style={{fontSize:8,color:'#666'}}>cal</div></>
-                            :<><div style={{fontSize:14,fontWeight:800,color:'#555'}}>{item.cal}</div><div style={{fontSize:8,color:'#bbb'}}>/{item.unit}</div></>
-                          }
-                        </div>
-                        {item.addedSugar>=8  &&<div className="sugar-dot" style={{background:SEG.addedSugar.textColor}}/>}
-                        {item.addedSugar>=4&&item.addedSugar<8&&<div className="sugar-dot" style={{background:'#c4943a'}}/>}
-                        <button className="info-btn" style={{background:active?'#333':'#f0ede8',color:active?'#777':'#aaa',border:'none'}}
-                                onClick={()=>setExp(isOpen?null:item.id)}>i</button>
-                      </div>
-
-                      {isOpen&&(
-                        <div className="info-panel" style={{borderLeft:`3px solid ${item.hydrogenatedOil?'#c43a3a':item.processed>=2?'#d47333':'#444'}`}}>
-                          <div style={{marginBottom:8}}>{item.note}</div>
-                          <div className="isect">MACRO BREAKDOWN (per {item.unit})</div>
-                          <MacroBar fat={item.fat} satFat={item.satFat} transFat={item.transFat||0}
-                                    carbs={item.carbs} fiber={item.fiber} sugar={item.sugar} addedSugar={item.addedSugar}
-                                    protein={item.protein} refinedCarbs={item.refinedCarbs} animalFrac={animalF}
-                                    cal={item.cal} small={false}/>
-                          {item.gi>0&&(
-                            <div style={{marginTop:8,fontSize:10,color:'#888'}}>
-                              <span style={{color:gc,fontWeight:700}}>GI {item.gi}</span>
-                              <span style={{marginLeft:8}}>GL = {item.gi} × {item.carbs} ÷ 100 = <strong style={{color:'#ccc'}}>{item.gl}</strong></span>
-                              <div style={{fontSize:8,color:'#444',marginTop:1}}>{item.giSource}</div>
-                            </div>
-                          )}
-                          <div className="info-stats">
-                            <span>{item.cal} cal</span><span>Na {item.sodium}mg</span>
-                            {item.refinedCarbs>0&&<span style={{color:SEG.refinedStarch.textColor}}>Refined {item.refinedCarbs}g</span>}
-                            {item.caffeine>0    &&<span style={{color:'#c4943a'}}>Caffeine {item.caffeine}mg</span>}
-                            {(item.transFat||0)>0&&<span style={{color:SEG.transFat.textColor}}>Trans ~{item.transFat}g (trace)</span>}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ══ STICKY BOTTOM PANEL ══ */}
-      <div className="bottom-panel" style={{maxHeight:panelH}}>
-        <div className="bottom-inner">
-          {ac===0?(
-            <div className="bottom-empty">Use +/− to add items</div>
-          ):(
-            <>
-              {/* Summary — always visible at top of panel */}
-              <div style={{display:'flex',alignItems:'center',gap:12,cursor:'pointer'}} onClick={()=>setPanel(!showPanel)}>
-                <div className="grade-badge" style={{background:report.gradeColor}}>
-                  <span style={{fontSize:22,fontWeight:900,color:'#fff',lineHeight:1}}>{report.grade}</span>
-                </div>
-                <div style={{flex:1}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline'}}>
-                    <span style={{fontSize:10,color:report.gradeColor,fontWeight:700}}>{report.gradeLabel}</span>
-                    <span style={{fontSize:9,color:'#555'}}>{showPanel?'▼ tap to collapse':'▲ tap for details'}</span>
-                  </div>
-                  <div style={{display:'flex',alignItems:'baseline',gap:6,flexWrap:'wrap'}}>
-                    <span style={{fontSize:26,fontWeight:900,color:'#fff',lineHeight:1}}>{Math.round(report.totals.cal)}</span>
-                    <span style={{fontSize:10,color:'#555'}}>cal</span>
-                    <span style={{fontSize:10,color:'#444'}}>quality {report.score}/100</span>
-                    {gigl?.avgGI>0&&<span onClick={e=>{e.stopPropagation();setGi(true);}} className="gi-badge" style={{background:giColor(gigl.avgGI)+'22',color:giColor(gigl.avgGI)}}>GI {gigl.avgGI} ⓘ</span>}
-                    {gigl?.totalGL>0&&<span onClick={e=>{e.stopPropagation();setGi(true);}} className="gl-badge" style={{background:glColor(gigl.totalGL)+'22',color:glColor(gigl.totalGL)}}>GL {gigl.totalGL} ⓘ</span>}
-                  </div>
-                </div>
-              </div>
-
-              {showPanel&&(
-                <>
-                  {/* Always-visible collapse button — sticky within the scrollable panel */}
-                  <div className="collapse-toggle">
-                    <button onClick={e=>{e.stopPropagation();setPanel(false);}}>▼ collapse panel</button>
-                  </div>
-
-                  <div style={{borderTop:'1px solid #2a2a2a',paddingTop:10}}>
-                    <div className="psect" style={{marginTop:0}}>MACRO DISTRIBUTION</div>
-                    <MacroBar fat={report.totals.fat} satFat={report.totals.satFat} transFat={report.totals.transFat||0}
-                              carbs={report.totals.carbs} fiber={report.totals.fiber} sugar={report.totals.sugar} addedSugar={report.totals.addedSugar}
-                              protein={report.totals.protein} refinedCarbs={report.totals.refinedCarbs} animalFrac={report.animalFrac||0}
-                              cal={report.totals.cal} small={false}/>
-
-                    {report.flags.length>0&&(
-                      <>
-                        <div className="psect">WARNINGS</div>
-                        {report.flags.map(f=>(
-                          <div key={f.key}>
-                            <button className="flag-btn" onClick={()=>setXFlag(xFlag===f.key?null:f.key)} style={{background:`${f.color}15`,color:f.color}}>
-                              <span>⚠ {f.label}</span>
-                              <span style={{fontSize:8,color:'#555'}}>{xFlag===f.key?'▼':'▶'} {f.items?.length||0} item{(f.items?.length||0)!==1?'s':''}</span>
-                            </button>
-                            {xFlag===f.key&&(
-                              <div className="flag-detail" style={{background:'#1a1a1a',borderLeft:`3px solid ${f.color}`,marginBottom:8}}>
-                                <div style={{fontSize:10,color:'#888',marginBottom:6,lineHeight:1.5}}>{f.detail}</div>
-                                {f.items&&f.items.map((c,ci)=>(
-                                  <div key={ci} className="flag-item" style={{borderBottom:ci<f.items.length-1?'1px solid #222':'none'}}>
-                                    <div className="flag-dot" style={{background:f.color}}/>
-                                    <div>
-                                      <div style={{fontSize:11,fontWeight:700,color:'#ccc'}}>
-                                        {c.name} <span style={{fontWeight:400,color:'#666'}}>×{c.qty}</span>
-                                        {c.score>1&&<span style={{marginLeft:6,fontSize:8,background:`${f.color}25`,color:f.color,padding:'1px 5px',borderRadius:2,fontWeight:800}}>sev {c.score}/3</span>}
-                                      </div>
-                                      <div style={{fontSize:9,color:'#666',lineHeight:1.5,marginTop:2}}>{c.reason}</div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </>
-                    )}
-
-                    <div className="psect">WATCH THESE</div>
-                    {report.dangers.map(d=><MetricBar key={d.key} d={d}/>)}
-
-                    <div className="psect">WANT MORE OF</div>
-                    {report.positives.map(p=><MetricBar key={p.key} d={{...p,max:p.target}} isPositive/>)}
-
-                    {report.totals.carbs>0&&(
-                      <>
-                        <div className="psect">CARB BREAKDOWN</div>
-                        <CarbSubCharts totals={report.totals} gigl={gigl||{avgGI:0,totalGL:0}} openModal={()=>setGi(true)}/>
-                      </>
-                    )}
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-</script>
-</body>
-</html>
