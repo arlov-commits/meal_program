@@ -2,6 +2,7 @@
   "DAILY": {
     "addedSugar": 36,
     "satFat": 13,
+    "transFat": 2,
     "refinedCarbs": 50,
     "sodium": 2300,
     "fiber": 28,
@@ -37,13 +38,13 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Lowest GI oat (~42). Single ingredient: oats.",
+          "note": "Lowest-GI oat option. Single ingredient: oats.",
           "gi": 50,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Rolled Oats (CEREALS)",
           "giNote": "Steel cut slightly lower ~42-50; dataset lists Rolled Oats=50",
-          "gl": 13.5
+          "gl": 11.5
         },
         {
           "id": "quaker_oats",
@@ -74,7 +75,7 @@
           "transFat": 0,
           "giSource": "Oatmeal Average (CEREALS)",
           "giNote": "Old fashioned = oatmeal average",
-          "gl": 14.85
+          "gl": 12.65
         },
         {
           "id": "instant_reg",
@@ -105,7 +106,7 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Instant oatmeal, plain",
-          "gl": 15.01
+          "gl": 12.64
         },
         {
           "id": "instant_apple",
@@ -136,7 +137,7 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Flavored instant; same base GI, added sugar raises effective impact",
-          "gl": 21.33
+          "gl": 18.96
         },
         {
           "id": "instant_sweet",
@@ -167,7 +168,7 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Flavored instant; same base GI",
-          "gl": 25.28
+          "gl": 22.91
         },
         {
           "id": "bagel",
@@ -198,7 +199,7 @@
           "transFat": 0,
           "giSource": "Bagel White Frozen / Plain Bagel (BAKERY & BREAD / GRAINS)",
           "giNote": "White bagel = 72 (BAKERY), Plain Bagel = 72 (GRAINS) — consistent",
-          "gl": 19.44
+          "gl": 18.72
         },
         {
           "id": "bread",
@@ -223,13 +224,13 @@
           "processed": 1,
           "wholeFood": 0.5,
           "processedReason": "Likely refined flour blend, added sugar",
-          "note": "If whole wheat #1: GI ~54. If not: ~71.",
+          "note": "If 100% whole grain is the first ingredient: GI ~51. If a refined-flour blend: ~70–75.",
           "gi": 69,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Whole Wheat Bread (BAKERY & BREAD)",
           "giNote": "Whole wheat bread; if actually white use 70-75",
-          "gl": 10.35
+          "gl": 8.97
         }
       ]
     },
@@ -267,7 +268,7 @@
           "transFat": 0,
           "giSource": "Apple (FRUITS)",
           "giNote": "Consistent across sources",
-          "gl": 9
+          "gl": 7.42
         },
         {
           "id": "banana",
@@ -292,13 +293,13 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Potassium, B6. GI ~51 ripe. Resistant starch in firmer fruit.",
+          "note": "Whole food. Potassium, B6. GI rises with ripeness. Resistant starch in firmer fruit.",
           "gi": 48,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Banana (FRUITS)",
           "giNote": "Ripe banana; firm banana lower ~42",
-          "gl": 12.96
+          "gl": 11.47
         },
         {
           "id": "orange",
@@ -309,7 +310,7 @@
           "cal": 62,
           "fat": 0.2,
           "satFat": 0,
-          "carbs": 15,
+          "carbs": 15.4,
           "fiber": 3.1,
           "sugar": 12,
           "addedSugar": 0,
@@ -323,13 +324,13 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Vit C. GI ~43. Hesperidin supports vascular health.",
+          "note": "Whole food. Vit C. Hesperidin supports vascular health.",
           "gi": 45,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Oranges (FRUITS)",
           "giNote": "Dataset: Oranges=45",
-          "gl": 6.75
+          "gl": 5.54
         }
       ]
     },
@@ -367,7 +368,7 @@
           "transFat": 0.2,
           "giSource": "Peanuts (BEANS & NUTS)",
           "giNote": "Peanut butter GI ~14; closest match Peanuts=13",
-          "gl": 0.42
+          "gl": 0.28
         },
         {
           "id": "cream_cheese",
@@ -491,7 +492,7 @@
           "transFat": 0,
           "giSource": "Raisins (FRUITS)",
           "giNote": "Dried cranberries similar to raisins=64; added sugar raises effective GI",
-          "gl": 5.12
+          "gl": 4.61
         },
         {
           "id": "sugar",
@@ -674,7 +675,7 @@
           "caffeine": 0,
           "hydrogenatedOil": true,
           "transFatRisk": true,
-          "animal": false,
+          "animal": true,
           "processed": 3,
           "wholeFood": 0,
           "processedReason": "CORN SYRUP SOLIDS + HYDROGENATED VEGETABLE OIL + sodium caseinate + dipotassium phosphate + mono/diglycerides",
@@ -715,7 +716,7 @@
           "transFat": 0,
           "giSource": "Soy Milk (DAIRY PRODUCTS)",
           "giNote": "Dataset: Soy Milk=44",
-          "gl": 1.76
+          "gl": 1.32
         },
         {
           "id": "almond_milk",
@@ -746,7 +747,7 @@
           "transFat": 0,
           "giSource": "Estimated (not in dataset)",
           "giNote": "Unsweetened almond milk ~25; no direct dataset entry",
-          "gl": 0.13
+          "gl": 0.12
         }
       ]
     },
@@ -815,7 +816,7 @@
           "transFat": 0,
           "giSource": "Avg Cashews=22, Peanuts=13 (BEANS & NUTS)",
           "giNote": "Mixed nuts; avg of cashews + peanuts + macadamia (all ~14-25)",
-          "gl": 1.26
+          "gl": 0.84
         },
         {
           "id": "mega_omega",
@@ -846,7 +847,7 @@
           "transFat": 0,
           "giSource": "Blended estimate",
           "giNote": "Walnuts ~15, almonds ~0, dried cranberries ~64, mango ~60; blended ~45",
-          "gl": 7.2
+          "gl": 6.3
         },
         {
           "id": "pb_pretzels",
@@ -877,7 +878,7 @@
           "transFat": 0,
           "giSource": "Pretzels (SNACK FOODS)",
           "giNote": "Pretzel base dominates; Pretzels=83 in dataset",
-          "gl": 14.94
+          "gl": 14.11
         },
         {
           "id": "potato_chips",
@@ -908,7 +909,7 @@
           "transFat": 0,
           "giSource": "Potato Chips Average (SNACK FOODS)",
           "giNote": "Direct match in dataset",
-          "gl": 8.4
+          "gl": 7.84
         },
         {
           "id": "belvita",
@@ -939,7 +940,7 @@
           "transFat": 0,
           "giSource": "Approx wheat cracker",
           "giNote": "BelVita not in dataset; similar to wheat-based crackers ~57",
-          "gl": 19.95
+          "gl": 18.24
         },
         {
           "id": "mm",
@@ -966,11 +967,11 @@
           "processedReason": "13g added sugar, palm oil, corn syrup, dextrin, 6 artificial dye colors (Blue 1, Yellow 6, Red 40, Yellow 5, Blue 2 Lake + Lakes), soy lecithin, carnauba wax, gum acacia. Contains bioengineered ingredients.",
           "note": "Peanuts buried under milk chocolate, sugar, palm oil, corn syrup, dextrin, and 6 artificial colors. 13g added sugar per oz. Contains bioengineered ingredients (declared on label). Animal: milk + lactose.",
           "gi": 33,
-          "animalProtein": 1,
+          "animalProtein": 0.25,
           "transFat": 0,
           "giSource": "M&M's Peanut (SNACK FOODS)",
           "giNote": "Direct match in dataset: M&Ms Peanut=33",
-          "gl": 5.61
+          "gl": 5.28
         },
         {
           "id": "string_cheese",
