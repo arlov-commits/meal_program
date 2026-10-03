@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- The brand mark: a bowl with a leaf rising from it, white and gold on
+       the jade-to-sage gradient of the Ru-Yi palette (sage is the brand
+       secondary the lockup uses). Every PNG beside this file is rasterised
+       from it; redraw this, then re-render them together. -->
+  <defs>
+    <linearGradient id="g" x1="0.06" y1="0.12" x2="0.94" y2="0.88">
+      <stop offset="0" stop-color="#2f6d5e"/>
+      <stop offset="1" stop-color="#559986"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#g)"/>
+  <path fill="#ffffff" d="M11 32.5h42c0 11.6-9.4 19.3-21 19.3S11 44.1 11 32.5z"/>
+  <rect x="24" y="53.2" width="16" height="3.2" rx="1.6" fill="#ffffff"/>
+  <path fill="#ffd9a0" d="M32 8c7.9 4.5 9.8 13 2.3 19.9L32 30l-2.3-2.1C22.2 21 24.1 12.5 32 8z"/>
+  <path fill="none" stroke="#2f6d5e" stroke-width="1.5" stroke-linecap="round" d="M32 13.8v14"/>
+</svg>

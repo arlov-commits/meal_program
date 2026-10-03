@@ -1,7 +1,29 @@
-{
+/* Food as Medicine — the food list and the daily reference values.
+
+   Edited by hand. Everything after "window.MEAL_DATA =" is plain JSON: keep
+   the double quotes and leave no trailing commas. It is loaded by a script
+   tag rather than fetched, which is what lets index.html work straight off
+   the disk (file://) as well as from a web server.
+
+   Each food, per serving:
+     cal, fat, satFat, transFat, carbs (total, fiber included), fiber, sugar,
+     addedSugar, protein, refinedCarbs ........ grams (cal for calories)
+     sodium, caffeine ............................ milligrams
+     grams ........ what one serving weighs, in the state named by "weigh"
+     measure ...... "g", or "ml" for drinks (1 ml taken as 1 g)
+     gramsApprox .. true when the weight is a typical one, not read off this
+                    product's own label — check the package
+     gi ........... glycemic index; 0 means not applicable (no real carbs)
+     processed 0–3, wholeFood 0–1, animalProtein 0–1 (share of the protein)
+     hydrogenatedOil, transFatRisk, animal ........ true/false flags
+     gl ........... stored for reference only; the app recomputes it
+
+   The data checks under Methodology run on this file at every load. */
+window.MEAL_DATA = {
   "DAILY": {
     "addedSugar": 36,
     "satFat": 13,
+    "transFat": 2,
     "refinedCarbs": 50,
     "sodium": 2300,
     "fiber": 28,
@@ -19,6 +41,10 @@
           "name": "Steel Cut Oats",
           "brand": "Trader Joe's Organic",
           "unit": "¼ cup",
+          "grams": 40,
+          "measure": "g",
+          "weigh": "dry, before cooking",
+          "gramsApprox": false,
           "max": 9,
           "cal": 150,
           "fat": 2.5,
@@ -37,19 +63,23 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Lowest GI oat (~42). Single ingredient: oats.",
+          "note": "Lowest-GI oat option. Single ingredient: oats.",
           "gi": 50,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Rolled Oats (CEREALS)",
           "giNote": "Steel cut slightly lower ~42-50; dataset lists Rolled Oats=50",
-          "gl": 13.5
+          "gl": 11.5
         },
         {
           "id": "quaker_oats",
           "name": "Old Fashioned Oats",
           "brand": "Quaker (PepsiCo)",
           "unit": "½ cup",
+          "grams": 40,
+          "measure": "g",
+          "weigh": "dry, before cooking",
+          "gramsApprox": false,
           "max": 9,
           "cal": 150,
           "fat": 3,
@@ -74,13 +104,17 @@
           "transFat": 0,
           "giSource": "Oatmeal Average (CEREALS)",
           "giNote": "Old fashioned = oatmeal average",
-          "gl": 14.85
+          "gl": 12.65
         },
         {
           "id": "instant_reg",
           "name": "Instant Oatmeal (Regular)",
           "brand": "House Recipe / Sysco",
           "unit": "packet",
+          "grams": 28,
+          "measure": "g",
+          "weigh": "dry, straight from the packet",
+          "gramsApprox": true,
           "max": 9,
           "cal": 110,
           "fat": 2,
@@ -105,13 +139,17 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Instant oatmeal, plain",
-          "gl": 15.01
+          "gl": 12.64
         },
         {
           "id": "instant_apple",
           "name": "Instant (Apple Cinnamon)",
           "brand": "House Recipe / Sysco",
           "unit": "packet",
+          "grams": 35,
+          "measure": "g",
+          "weigh": "dry, straight from the packet",
+          "gramsApprox": true,
           "max": 9,
           "cal": 130,
           "fat": 1.5,
@@ -136,13 +174,17 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Flavored instant; same base GI, added sugar raises effective impact",
-          "gl": 21.33
+          "gl": 18.96
         },
         {
           "id": "instant_sweet",
           "name": "Instant (Maple/Cinn/Raisin)",
           "brand": "House Recipe / Sysco",
           "unit": "packet",
+          "grams": 43,
+          "measure": "g",
+          "weigh": "dry, straight from the packet",
+          "gramsApprox": true,
           "max": 9,
           "cal": 160,
           "fat": 2,
@@ -167,13 +209,17 @@
           "transFat": 0,
           "giSource": "Instant Oatmeal (CEREALS)",
           "giNote": "Flavored instant; same base GI",
-          "gl": 25.28
+          "gl": 22.91
         },
         {
           "id": "bagel",
           "name": "Bagel (½)",
           "brand": "Generic",
           "unit": "half",
+          "grams": 52,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 135,
           "fat": 0.8,
@@ -198,13 +244,17 @@
           "transFat": 0,
           "giSource": "Bagel White Frozen / Plain Bagel (BAKERY & BREAD / GRAINS)",
           "giNote": "White bagel = 72 (BAKERY), Plain Bagel = 72 (GRAINS) — consistent",
-          "gl": 19.44
+          "gl": 18.72
         },
         {
           "id": "bread",
           "name": "Bread",
           "brand": "Whole wheat loaf",
           "unit": "slice",
+          "grams": 32,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 80,
           "fat": 1,
@@ -223,13 +273,13 @@
           "processed": 1,
           "wholeFood": 0.5,
           "processedReason": "Likely refined flour blend, added sugar",
-          "note": "If whole wheat #1: GI ~54. If not: ~71.",
+          "note": "If 100% whole grain is the first ingredient: GI ~51. If a refined-flour blend: ~70–75.",
           "gi": 69,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Whole Wheat Bread (BAKERY & BREAD)",
           "giNote": "Whole wheat bread; if actually white use 70-75",
-          "gl": 10.35
+          "gl": 8.97
         }
       ]
     },
@@ -243,6 +293,10 @@
           "name": "Apple",
           "brand": "Red",
           "unit": "apple",
+          "grams": 182,
+          "measure": "g",
+          "weigh": "with skin, without the core",
+          "gramsApprox": false,
           "max": 9,
           "cal": 95,
           "fat": 0.3,
@@ -267,13 +321,17 @@
           "transFat": 0,
           "giSource": "Apple (FRUITS)",
           "giNote": "Consistent across sources",
-          "gl": 9
+          "gl": 7.42
         },
         {
           "id": "banana",
           "name": "Banana",
           "brand": "Fresh",
           "unit": "medium",
+          "grams": 118,
+          "measure": "g",
+          "weigh": "peeled",
+          "gramsApprox": false,
           "max": 9,
           "cal": 105,
           "fat": 0.4,
@@ -292,24 +350,28 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Potassium, B6. GI ~51 ripe. Resistant starch in firmer fruit.",
+          "note": "Whole food. Potassium, B6. GI rises with ripeness. Resistant starch in firmer fruit.",
           "gi": 48,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Banana (FRUITS)",
           "giNote": "Ripe banana; firm banana lower ~42",
-          "gl": 12.96
+          "gl": 11.47
         },
         {
           "id": "orange",
           "name": "Orange",
           "brand": "Fresh",
           "unit": "orange",
+          "grams": 131,
+          "measure": "g",
+          "weigh": "peeled",
+          "gramsApprox": false,
           "max": 9,
           "cal": 62,
           "fat": 0.2,
           "satFat": 0,
-          "carbs": 15,
+          "carbs": 15.4,
           "fiber": 3.1,
           "sugar": 12,
           "addedSugar": 0,
@@ -323,13 +385,13 @@
           "processed": 0,
           "wholeFood": 1,
           "processedReason": null,
-          "note": "Whole food. Vit C. GI ~43. Hesperidin supports vascular health.",
+          "note": "Whole food. Vit C. Hesperidin supports vascular health.",
           "gi": 45,
           "animalProtein": 0,
           "transFat": 0,
           "giSource": "Oranges (FRUITS)",
           "giNote": "Dataset: Oranges=45",
-          "gl": 6.75
+          "gl": 5.54
         }
       ]
     },
@@ -343,6 +405,10 @@
           "name": "Skippy Creamy PB",
           "brand": "Hormel Foods",
           "unit": "tbsp",
+          "grams": 16,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 95,
           "fat": 8,
@@ -367,13 +433,17 @@
           "transFat": 0.2,
           "giSource": "Peanuts (BEANS & NUTS)",
           "giNote": "Peanut butter GI ~14; closest match Peanuts=13",
-          "gl": 0.42
+          "gl": 0.28
         },
         {
           "id": "cream_cheese",
           "name": "Cream Cheese",
           "brand": "Philadelphia / Kraft Heinz",
           "unit": "tbsp",
+          "grams": 14.5,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 40,
           "fat": 3.5,
@@ -405,6 +475,10 @@
           "name": "Country Crock",
           "brand": "Upfield",
           "unit": "tbsp",
+          "grams": 14,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 50,
           "fat": 5,
@@ -436,6 +510,10 @@
           "name": "Strawberry Spread",
           "brand": "Kirkland Organic",
           "unit": "tbsp",
+          "grams": 18,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 35,
           "fat": 0,
@@ -467,6 +545,10 @@
           "name": "Craisins",
           "brand": "Ocean Spray",
           "unit": "tbsp",
+          "grams": 10,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 33,
           "fat": 0,
@@ -491,13 +573,17 @@
           "transFat": 0,
           "giSource": "Raisins (FRUITS)",
           "giNote": "Dried cranberries similar to raisins=64; added sugar raises effective GI",
-          "gl": 5.12
+          "gl": 4.61
         },
         {
           "id": "sugar",
           "name": "Sugar",
           "brand": "White granulated",
           "unit": "tsp",
+          "grams": 4,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 16,
           "fat": 0,
@@ -529,6 +615,10 @@
           "name": "Stevia",
           "brand": "Generic",
           "unit": "packet",
+          "grams": 1,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 0,
           "fat": 0,
@@ -567,6 +657,10 @@
           "name": "Tea (plain)",
           "brand": "Various",
           "unit": "cup",
+          "grams": 240,
+          "measure": "ml",
+          "weigh": "brewed",
+          "gramsApprox": false,
           "max": 9,
           "cal": 2,
           "fat": 0,
@@ -598,6 +692,10 @@
           "name": "Nescafé Clásico",
           "brand": "Nestlé",
           "unit": "cup",
+          "grams": 240,
+          "measure": "ml",
+          "weigh": "brewed",
+          "gramsApprox": false,
           "max": 9,
           "cal": 4,
           "fat": 0,
@@ -629,6 +727,10 @@
           "name": "Yerba Mate",
           "brand": "Generic",
           "unit": "cup",
+          "grams": 240,
+          "measure": "ml",
+          "weigh": "brewed",
+          "gramsApprox": false,
           "max": 9,
           "cal": 5,
           "fat": 0,
@@ -660,6 +762,10 @@
           "name": "Coffee Mate",
           "brand": "Nestlé",
           "unit": "tbsp",
+          "grams": 15,
+          "measure": "ml",
+          "weigh": "liquid creamer",
+          "gramsApprox": false,
           "max": 9,
           "cal": 20,
           "fat": 1,
@@ -674,7 +780,7 @@
           "caffeine": 0,
           "hydrogenatedOil": true,
           "transFatRisk": true,
-          "animal": false,
+          "animal": true,
           "processed": 3,
           "wholeFood": 0,
           "processedReason": "CORN SYRUP SOLIDS + HYDROGENATED VEGETABLE OIL + sodium caseinate + dipotassium phosphate + mono/diglycerides",
@@ -691,6 +797,10 @@
           "name": "Silk Soy Original",
           "brand": "Danone",
           "unit": "½ cup",
+          "grams": 120,
+          "measure": "ml",
+          "weigh": "as poured",
+          "gramsApprox": false,
           "max": 9,
           "cal": 55,
           "fat": 2.3,
@@ -715,13 +825,17 @@
           "transFat": 0,
           "giSource": "Soy Milk (DAIRY PRODUCTS)",
           "giNote": "Dataset: Soy Milk=44",
-          "gl": 1.76
+          "gl": 1.32
         },
         {
           "id": "almond_milk",
           "name": "Almond Milk",
           "brand": "Unsweetened",
           "unit": "½ cup",
+          "grams": 120,
+          "measure": "ml",
+          "weigh": "as poured",
+          "gramsApprox": false,
           "max": 9,
           "cal": 15,
           "fat": 1.3,
@@ -746,7 +860,7 @@
           "transFat": 0,
           "giSource": "Estimated (not in dataset)",
           "giNote": "Unsweetened almond milk ~25; no direct dataset entry",
-          "gl": 0.13
+          "gl": 0.12
         }
       ]
     },
@@ -760,6 +874,10 @@
           "name": "Cheez-Its",
           "brand": "Kellanova",
           "unit": "27 crackers",
+          "grams": 30,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 150,
           "fat": 8,
@@ -791,6 +909,10 @@
           "name": "Salted Mixed Nuts",
           "brand": "Kirkland Signature",
           "unit": "1 oz",
+          "grams": 28,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 170,
           "fat": 16,
@@ -815,13 +937,17 @@
           "transFat": 0,
           "giSource": "Avg Cashews=22, Peanuts=13 (BEANS & NUTS)",
           "giNote": "Mixed nuts; avg of cashews + peanuts + macadamia (all ~14-25)",
-          "gl": 1.26
+          "gl": 0.84
         },
         {
           "id": "mega_omega",
           "name": "Mega Omega Trail Mix",
           "brand": "Power Up / GourmetNut",
           "unit": "¼ cup",
+          "grams": 30,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 140,
           "fat": 8,
@@ -846,13 +972,17 @@
           "transFat": 0,
           "giSource": "Blended estimate",
           "giNote": "Walnuts ~15, almonds ~0, dried cranberries ~64, mango ~60; blended ~45",
-          "gl": 7.2
+          "gl": 6.3
         },
         {
           "id": "pb_pretzels",
           "name": "PB Pretzel Squares",
           "brand": "Kirkland",
           "unit": "11 pcs",
+          "grams": 30,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 150,
           "fat": 7,
@@ -877,13 +1007,17 @@
           "transFat": 0,
           "giSource": "Pretzels (SNACK FOODS)",
           "giNote": "Pretzel base dominates; Pretzels=83 in dataset",
-          "gl": 14.94
+          "gl": 14.11
         },
         {
           "id": "potato_chips",
           "name": "Potato Chips",
           "brand": "Kirkland",
           "unit": "~15 chips",
+          "grams": 28,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": true,
           "max": 9,
           "cal": 160,
           "fat": 10,
@@ -908,13 +1042,17 @@
           "transFat": 0,
           "giSource": "Potato Chips Average (SNACK FOODS)",
           "giNote": "Direct match in dataset",
-          "gl": 8.4
+          "gl": 7.84
         },
         {
           "id": "belvita",
           "name": "BelVita Crackers",
           "brand": "Mondelez",
           "unit": "4 pack",
+          "grams": 50,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 230,
           "fat": 8,
@@ -939,13 +1077,17 @@
           "transFat": 0,
           "giSource": "Approx wheat cracker",
           "giNote": "BelVita not in dataset; similar to wheat-based crackers ~57",
-          "gl": 19.95
+          "gl": 18.24
         },
         {
           "id": "mm",
           "name": "Peanut M&Ms",
           "brand": "Mars Wrigley",
           "unit": "1 oz (~12 pcs)",
+          "grams": 28,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 140,
           "fat": 8,
@@ -966,17 +1108,21 @@
           "processedReason": "13g added sugar, palm oil, corn syrup, dextrin, 6 artificial dye colors (Blue 1, Yellow 6, Red 40, Yellow 5, Blue 2 Lake + Lakes), soy lecithin, carnauba wax, gum acacia. Contains bioengineered ingredients.",
           "note": "Peanuts buried under milk chocolate, sugar, palm oil, corn syrup, dextrin, and 6 artificial colors. 13g added sugar per oz. Contains bioengineered ingredients (declared on label). Animal: milk + lactose.",
           "gi": 33,
-          "animalProtein": 1,
+          "animalProtein": 0.25,
           "transFat": 0,
           "giSource": "M&M's Peanut (SNACK FOODS)",
           "giNote": "Direct match in dataset: M&Ms Peanut=33",
-          "gl": 5.61
+          "gl": 5.28
         },
         {
           "id": "string_cheese",
           "name": "Mozzarella String Cheese",
           "brand": "Generic",
           "unit": "stick",
+          "grams": 28,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 80,
           "fat": 6,
@@ -1008,6 +1154,10 @@
           "name": "Tillamook Cheddar Square",
           "brand": "Tillamook",
           "unit": "0.75 oz",
+          "grams": 21,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 80,
           "fat": 7,
@@ -1039,6 +1189,10 @@
           "name": "Mini Babybel (red wax)",
           "brand": "Bel Group",
           "unit": "wheel",
+          "grams": 20,
+          "measure": "g",
+          "weigh": "as served",
+          "gramsApprox": false,
           "max": 9,
           "cal": 70,
           "fat": 6,
@@ -1068,4 +1222,4 @@
       ]
     }
   ]
-}
+};
