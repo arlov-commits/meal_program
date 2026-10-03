@@ -1,11 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <!-- A cinnabar seal carrying a bowl with a leaf rising from it: food taken
-       as medicine. The seal is its own ground, so the icon reads the same on
-       a light tab strip and a dark one and needs no theme variant. Every PNG
-       beside it is rasterised from this file; redraw this, then re-render. -->
-  <rect width="64" height="64" rx="14" fill="#96231D"/>
-  <path fill="#F8F4EC" d="M10.5 32.5h43c0 11.9-9.6 19.5-21.5 19.5S10.5 44.4 10.5 32.5z"/>
-  <rect x="23.5" y="53.2" width="17" height="3.4" rx="1.2" fill="#F8F4EC"/>
-  <path fill="#F8F4EC" d="M32 7.5c8.2 4.6 10.2 13.4 2.4 20.6L32 30.2l-2.4-2.1C21.8 20.9 23.8 12.1 32 7.5z"/>
-  <path fill="none" stroke="#96231D" stroke-width="1.6" stroke-linecap="round" d="M32 13.5v14.5"/>
+  <!-- The brand mark: a bowl with a leaf rising from it, white and gold on
+       the jade-to-sage gradient of the Ru-Yi palette (sage is the brand
+       secondary the lockup uses). Every PNG beside this file is rasterised
+       from it; redraw this, then re-render them together. -->
+  <defs>
+    <linearGradient id="g" x1="0.06" y1="0.12" x2="0.94" y2="0.88">
+      <stop offset="0" stop-color="#2f6d5e"/>
+      <stop offset="1" stop-color="#559986"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#g)"/>
+  <path fill="#ffffff" d="M11 32.5h42c0 11.6-9.4 19.3-21 19.3S11 44.1 11 32.5z"/>
+  <rect x="24" y="53.2" width="16" height="3.2" rx="1.6" fill="#ffffff"/>
+  <path fill="#ffd9a0" d="M32 8c7.9 4.5 9.8 13 2.3 19.9L32 30l-2.3-2.1C22.2 21 24.1 12.5 32 8z"/>
+  <path fill="none" stroke="#2f6d5e" stroke-width="1.5" stroke-linecap="round" d="M32 13.8v14"/>
 </svg>

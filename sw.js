@@ -4,7 +4,7 @@
    added to SHELL too, or an installed copy will not have it offline. Bump
    CACHE only to force every client to throw its copy away; ordinary edits do
    not need it, because each response is refreshed as it is served. */
-var CACHE = "meal-v1";
+var CACHE = "meal-v2";
 var SHELL = [
   "./",
   "index.html",
@@ -16,7 +16,13 @@ var SHELL = [
   "icon-192.png",
   "icon-512.png",
   "icon-maskable-512.png",
-  "apple-touch-icon.png"
+  "apple-touch-icon.png",
+  "fonts/inter-latin.woff2",
+  "fonts/inter-latin-ext.woff2",
+  "fonts/playfair-display-latin.woff2",
+  "fonts/playfair-display-latin-ext.woff2",
+  "fonts/playfair-display-italic-latin.woff2",
+  "fonts/playfair-display-italic-latin-ext.woff2"
 ];
 
 self.addEventListener("install", function (e) {
