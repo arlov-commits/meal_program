@@ -4,7 +4,7 @@
    added to SHELL too, or an installed copy will not have it offline. Bump
    CACHE only to force every client to throw its copy away; ordinary edits do
    not need it, because each response is refreshed as it is served. */
-var CACHE = "meal-v2";
+var CACHE = "meal-v3";
 var SHELL = [
   "./",
   "index.html",

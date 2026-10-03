@@ -1,10 +1,11 @@
 # Food as Medicine 良藥
 
-Plate a meal from the foods on the DRBU menu — by the serving, or by weight
-from a kitchen scale — and see at once what it adds up to: the carbohydrate
-to count, its glycemic load and index, its quality per calorie, and how it
-sits against a full day's limits. Built to be easy for someone managing
-diabetes, who weighs food and checks what it will do to their blood sugar.
+Build a plate from the foods on the DRBU menu the way you would build a bowl
+at a counter — tap a food to add it, by the serving or by weight from a
+kitchen scale — and see as you go what it adds up to: the carbohydrate to
+count, its glycemic load and index, its quality per calorie, and how it sits
+against a full day's limits. Built to be easy for someone managing diabetes,
+who weighs food and checks what it will do to their blood sugar.
 
 Open `index.html`. No build step, no dependencies, works straight off the
 filesystem — and, served over the web, installs as an app on a phone or a
@@ -14,8 +15,8 @@ desktop.
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The whole app: markup, CSS and vanilla ES5 in one file. Four views — **Plate**, **Totals**, **Look up**, **Settings** — each ending in the **Methodology**, then the footer. |
-| `data.js` | The food list and the daily reference values, as `window.MEAL_DATA`. Edited by hand. A script tag rather than a fetched file, so the app works over `file://`. |
+| `index.html` | The whole app: markup, CSS and vanilla ES5 in one file. Four views — **Plate** (the builder), **Totals**, **Look up**, **Settings** — each ending in the **Methodology**, then the footer. |
+| `data.js` | The food list — each food with the emoji on its tile — and the daily reference values, as `window.MEAL_DATA`. Edited by hand. A script tag rather than a fetched file, so the app works over `file://`. |
 | `gi-data.js` | The glycemic-index reference — 150 foods in 11 categories, glucose = 100 — as `window.GI_TABLE`. Read by Look up. |
 | `manifest.webmanifest` | Makes it installable: name, icons, standalone display. |
 | `sw.js` | The service worker. Keeps a copy of the app so an installed one opens offline. |
@@ -38,18 +39,37 @@ included. The page is fetched fresh whenever there is a network, racing a
 2.5-second timer so a slow connection cannot hang the launch. Opened straight
 off the disk it registers no service worker and needs none.
 
+## Building a plate
+
+**Plate** works like a build-a-bowl counter.
+
+1. The food groups — Base, Fruit, Spreads & Toppings, Drinks, Snacks — sit
+   in a bar under the header. Tap one to jump to it; each shows how many of
+   its foods are on the plate. **Find a food** narrows the tiles.
+2. Each food is a tile: its picture, name and brand, one serving and how it
+   is weighed, its carbs and glycemic index, its calories, and the one
+   warning that matters most. **Tap a tile to add a serving.** A stepper
+   takes the place of Add: − and + change the amount, or type it.
+3. **Your plate** keeps the running count — carbs to count, carb choices,
+   glycemic load and index, calories, the grade, and the list of foods, each
+   with × to take it off. On a wide screen it is a panel beside the tiles; on
+   a phone, a bar stuck to the foot of the screen that opens into the list.
+   **See full totals** opens Totals.
+4. The **i** on a tile opens that food's sheet: every warning, the full
+   nutrition per serving, how its glycemic load is worked out, how to weigh
+   it and how processed it is — and **Weigh it in Look up**.
+
 ## Weighing a meal
 
 1. On **Plate**, set **Count by** to **Weight**.
-2. Weigh each food **in the state its row names**: oats *dry, before
+2. Weigh each food **in the state its tile names**: oats *dry, before
    cooking*; banana and orange *peeled*; apple *with skin, without the core*;
    drinks *as poured* (1 ml taken as 1 g). One serving is defined that way,
    so weighing cooked oatmeal — which holds several times its weight in
    water — would multiply the carbs.
-3. Type the scale's reading into the food's card. The card answers at once
-   with servings, carbs and glycemic load; the readout pinned under the header
-   carries the plate's carbs, carb choices, GL, GI, calories and grade, and
-   opens **Totals** when tapped.
+3. Tap the food: it goes on at one serving's weight with the cursor in the
+   grams field. Type the scale's reading. The tile answers at once with
+   carbs, glycemic load, servings and calories, and **Your plate** adds it in.
 4. **Totals** breaks it down food by food.
 5. For anything not on the menu, **Look up** takes a label's serving size,
    carbohydrate and fiber, plus the weight on the scale, and gives the carbs,
@@ -76,8 +96,8 @@ All of these live in one block of `index.html`, between `@calc:start` and
 - **Glycemic load** — `GI × (carbs − fiber) ÷ 100` per food, times servings,
   summed. Net (available) carbohydrate, because published GI tests and GL
   tables use it. Bands: low ≤ 10, medium 10–20, high ≥ 20, judged on the
-  value shown — one decimal everywhere, the readout included; they are set
-  for one serving, so a full meal reads strictly.
+  value shown — one decimal everywhere, the plate bar included; they are
+  set for one serving, so a full meal reads strictly.
 - **Glycemic index** — the carb-weighted average of the foods that have one
   (the mixed-meal method). Foods with no meaningful carbohydrate are left out
   rather than dragging it down. Bands: low ≤ 55, medium 56–69, high ≥ 70.
@@ -112,6 +132,7 @@ sugars, added sugar, refined carbs, protein (g), sodium and caffeine (mg), and:
 | `processed`, `wholeFood`, `animalProtein` | Processing level 0–3, whole-food share 0–1, share of the protein from animal sources 0–1. |
 | `hydrogenatedOil`, `transFatRisk`, `animal` | The warning flags. |
 | `gl` | Kept for reference; the app recomputes it. |
+| `emoji` | The picture on the food's tile. Without one the tile shows its group's icon. |
 
 `DAILY` holds the reference values. Added sugar and protein can be set per
 reader in Settings; the rest are fixed there.
@@ -140,37 +161,34 @@ page (`fam_v3`) is carried over once; foods no longer on the menu are dropped.
 
 ## The look
 
-The **Ru-Yi Style System**, Mode A (editorial), as reverse-engineered from
-ruyimeditation.org. It replaces the Bodhi Precepts styling of the earlier
-version entirely: no paper, no ink washes, no seal.
+The **Ru-Yi Style System** — its tokens, type and card anatomy — laid out as
+a tool rather than a landing page: a build-a-bowl counter with a running
+plate, and nothing that waits to appear.
 
-- **Surfaces.** White `#ffffff` and a cool grey-blue cream `#f5f6f8`
-  alternate band by band down every view, never two of a colour together.
-  Each view has exactly one near-black band, `#14181f`, before the footer,
-  which is the same near-black. A search on Plate hides bands, so the ones
-  left showing are striped again.
+- **Surfaces.** White `#ffffff` and a cool grey-blue cream `#f5f6f8`. Every
+  view is a white head, a cream working area, the white Methodology and the
+  near-black footer. Near-black `#14181f` also carries the plate's running
+  count and the quality score, so the darkest thing on a screen is the
+  number that matters.
 - **Type.** Playfair Display for headings, numbers and the small uppercase
-  labels (eyebrows, card tags, column heads, 12–13px with wide tracking);
-  Inter for body text at 18px / 1.6. Every hero headline has a second line
-  in italic, rust-deep on light and pale gold on dark. Each band opens
-  eyebrow → heading → a 72 × 3px rust rule.
-- **Rust for fills, deep rust for text.** `#b8431c` paints rails, rules,
-  buttons and the high band; `#8c2f12` is rust set as text on a light
+  labels (eyebrows, tags, column heads, 11–12px with wide tracking); Inter for
+  the rest at 16px. Page titles carry one italic word in deep rust:
+  "Build your *plate*".
+- **Rust for fills, deep rust for text.** `#b8431c` paints rails, rules and
+  buttons and marks the high band; `#8c2f12` is rust set as text on a light
   ground.
-- **One accent per card.** Cards in a grid cycle rust, teal, violet, green,
-  pink and orange by position. A card's accent draws its left rail, the
-  blob bleeding off its top-right corner, its tag, and — on a device with a
-  pointer — the coloured shadow it lifts on. A food on the plate turns
-  *live*: its border and rail take the accent.
-- **The pieces.** The sticky frosted header with the current view underlined
-  on its bottom edge; on a phone, a drawer rendered outside the header. The
-  verse card under the Plate hero — the one warm strip — with one of the
-  Five Contemplations before a meal, chosen by the day of the year. Mission
-  grids (a heading that sticks while numbered cards pass it) for the carbs
-  on Totals and for Settings. Entry cards for glycemic load and index and
-  for the day's limits. List rows for the food table and the GI reference.
-  Two invitation banners at most per view, jade or maroon, at 118° with a
-  ghost character: 量 *measure* to Look up, 藥 *medicine* to Settings.
+- **One accent per card.** Tiles cycle rust, teal, violet, green, pink and
+  orange by position. A tile's accent tints its picture well, colours its
+  brand and draws a glow off its top corner; when the food is on the plate,
+  a gradient rail, an accent border and a check. On a device with a pointer a
+  tile lifts with a shadow in its own colour. Totals' summary cards and the
+  settings cards take the same cycle.
+- **The pieces.** A sticky, frosted header with the current view underlined
+  on its bottom edge — on a phone the name shrinks to its mark and the four
+  views stay in the header, with no menu to open. The food-group bar. The
+  tiles. **Your plate**. The food sheet: a centred card on a wide screen, a
+  sheet from the bottom on a phone. Summary cards and panels on Totals; the
+  system's warm numbered cards in Settings.
 - **Bands for blood sugar.** Low, medium and high are green `#2f9e44`, gold
   `#e0a93f` and rust `#b8431c` as fills, each with a deeper ink for text, and
   a grade is a gradient disc in its band colour.
@@ -178,20 +196,17 @@ version entirely: no paper, no ink washes, no seal.
   refined starch and added sugar picked out in orange and pink; fat gold and
   brown, trans fat rust; protein violet and lilac. Bars and legend swatches
   use the same classes, so they cannot disagree.
-- **Motion.** Each section rises 24px into view over 0.8s the first time it
-  is seen, staggered; a hero's rule draws outward from the centre. A
-  section already seen is redrawn without replaying, so a running total
-  never blinks, and with reduced motion asked for nothing moves.
-- **Layout.** A band has 110px of padding above and below and a 56px
-  gutter; 80px and 32px from 1024px down, 56px and 22px from 640px. Grids
-  drop from three columns to two at 1024px and to one at 640px (the mission
-  grids and warnings stack at 900px), and the header's links become a menu
-  button at 720px. On a phone the readout keeps to one row by leaving
-  calories off it (they stay in the dark band and Totals), and at 360px and
-  under the grade too.
+- **Motion.** No entrance animation: everything is there when the page is.
+  What moves is a state changing — a colour, a tile lifting under the
+  pointer — and with reduced motion asked for, not even that.
+- **Layout.** Tiles fill as many columns as fit at 200px or more, two on a
+  phone. **Your plate** is a 340px panel beside them (300px from 1100px down)
+  and turns into the bottom bar at 860px. Totals' summary cards run four
+  across, two from 1100px; its panels pair up above 900px. Look up keeps the
+  calculator beside the list above 960px. Gutters are 40px, 28px from
+  1024px and 16px from 640px.
 
-There is one theme. Ru-Yi is a light system, so the earlier dark mode is
-gone.
+There is one theme: Ru-Yi is a light system.
 
 Where the system's own colours fall short of WCAG AA, this copy departs
 from them, and only there:
@@ -203,11 +218,10 @@ from them, and only there:
   cream.
 - Footer column heads are `#d66a48`, the system's rust for dark grounds,
   not `#b8431c`, which measures 3.3:1 on `#14181f`.
-- Below 1024px an invitation's text runs across the light end of its
-  gradient, so that end is held a little darker; its button reads at 19px.
 
-Every line of text meets WCAG AA, measured against the pixels actually
-behind it, gradients and tints included.
+Every line of text meets WCAG AA, measured in the live page against the
+pixels actually behind it as it scrolls — on the tiles, in the plate panel
+and the sheet, on the dark panels.
 
 ## The foot of every view
 
@@ -230,9 +244,9 @@ node tests/calc.test.js
 python3 -m http.server 8000      # then open http://localhost:8000
 ```
 
-Serve the repo root. Check a phone and a desktop width (320px to 1440px),
-with motion on and with reduced motion, and watch for page errors, not only
-for a picture that looks right.
+Serve the repo root. Check a phone and a desktop width (320px to 1440px)
+with food on the plate and with none, open the plate on a phone and a food's
+sheet, and watch for page errors, not only for a picture that looks right.
 
 ## Open data questions
 
